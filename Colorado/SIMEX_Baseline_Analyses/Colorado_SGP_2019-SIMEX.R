@@ -1,112 +1,30 @@
 ################################################################################
 ###                                                                          ###
-###     Calculate SIMEX and Baseline SGPs for Colorado (CMAS Only) - 2019    ###
+###  Calculate CMAS SIMEX (2017-2019) and Baseline (2019) SGPs for Colorado  ###
 ###                                                                          ###
 ################################################################################
 
 require(SGP)
 require(data.table)
 
-setwd("/Users/avi/Data/CO/SIMEX")
-load("/Users/avi/Dropbox (SGP)/SGP/Colorado/Data/Colorado_SGP.Rdata")
-
-Colorado_Data_LONG <- Colorado_SGP@Data[CONTENT_AREA %in% c("ELA", "MATHEMATICS") & GRADE %in% 3:8]
-
-co.csem <- fread("/Users/avi/Syncplicity Folders/NCIEA_CMAS/CMAS 2015-2019 student level CSEMs.csv")
-setnames(co.csem, c("FPRC_DASY_KEY", "FPRC_SUMMATIVE_CSEM", "FPRC_SUMMATIVE_SCALE_SCORE"), c("YEAR", "SCALE_SCORE_CSEM", "SCALE_SCORE"))
-co.csem[, FPRC_KEY := as.character(FPRC_KEY)]
-co.csem[, YEAR := as.character(YEAR)]
-
-dim(Colorado_Data_LONG)
-
-##   Merge CSEM variables with 2015 - 2018 data
-setkey(co.csem, FPRC_KEY, YEAR, SCALE_SCORE)
-setkey(Colorado_Data_LONG, FPRC_KEY, YEAR, SCALE_SCORE)
-
-Colorado_Data_LONG <- merge(Colorado_Data_LONG, co.csem, all.x = TRUE)
-
-table(Colorado_Data_LONG[, YEAR, is.na(SCALE_SCORE_CSEM)])
-table(Colorado_Data_LONG[VALID_CASE=="VALID_CASE", GRADE, is.na(SCALE_SCORE_CSEM)])
-tmp.tbl <- Colorado_Data_LONG[VALID_CASE=="VALID_CASE" & is.na(SCALE_SCORE_CSEM) & GRADE %in% 3:8, as.list(summary(SCALE_SCORE)), keyby = c("CONTENT_AREA", "GRADE", "YEAR")]
-tmp.tbl[!is.na(Median)]
-
-#  3rd Grade ELA missing CSEMs
-table(Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "ELA" & GRADE == 3 & SCALE_SCORE==765, SCALE_SCORE_CSEM], exclude=NULL) # 650
-
-CSEM_Function <- splinefun(
-                    Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "ELA" & GRADE == 3 & !is.na(SCALE_SCORE), SCALE_SCORE],
-                    Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "ELA" & GRADE == 3 & !is.na(SCALE_SCORE), SCALE_SCORE_CSEM], method="natural")
-Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "ELA" & GRADE == 3 & !is.na(SCALE_SCORE) & is.na(SCALE_SCORE_CSEM), SCALE_SCORE_CSEM :=
-                    round(CSEM_Function(Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "ELA" & GRADE == 3 & !is.na(SCALE_SCORE) & is.na(SCALE_SCORE_CSEM), SCALE_SCORE]), 1)]
-
-table(Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "ELA" & GRADE == 3 & SCALE_SCORE==765, SCALE_SCORE_CSEM], exclude=NULL)
-
-#  7th Grade MATHEMATICS missing CSEMs
-table(Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 7 & SCALE_SCORE==754, SCALE_SCORE_CSEM], exclude=NULL) # 650
-
-CSEM_Function <- splinefun(
-                    Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 7 & !is.na(SCALE_SCORE), SCALE_SCORE],
-                    Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 7 & !is.na(SCALE_SCORE), SCALE_SCORE_CSEM], method="natural")
-Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 7 & !is.na(SCALE_SCORE) & is.na(SCALE_SCORE_CSEM), SCALE_SCORE_CSEM :=
-                    round(CSEM_Function(Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 7 & !is.na(SCALE_SCORE) & is.na(SCALE_SCORE_CSEM), SCALE_SCORE]), 1)]
-
-table(Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 7 & SCALE_SCORE==754, SCALE_SCORE_CSEM], exclude=NULL)
-
-#  8th Grade MATHEMATICS missing CSEMs
-table(Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 8 & SCALE_SCORE==831, SCALE_SCORE_CSEM], exclude=NULL) # 650
-
-CSEM_Function <- splinefun(
-                    Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 8 & !is.na(SCALE_SCORE), SCALE_SCORE],
-                    Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 8 & !is.na(SCALE_SCORE), SCALE_SCORE_CSEM], method="natural")
-Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 8 & !is.na(SCALE_SCORE) & is.na(SCALE_SCORE_CSEM), SCALE_SCORE_CSEM :=
-                    round(CSEM_Function(Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 8 & !is.na(SCALE_SCORE) & is.na(SCALE_SCORE_CSEM), SCALE_SCORE]), 1)]
-
-table(Colorado_Data_LONG[YEAR == "2015" & CONTENT_AREA == "MATHEMATICS" & GRADE == 8 & SCALE_SCORE==831, SCALE_SCORE_CSEM], exclude=NULL)
-
-grep("SGP", names(Colorado_Data_LONG), value=TRUE)
-setnames(Colorado_Data_LONG, gsub("SGP", "ORIG", names(Colorado_Data_LONG)))
-setnames(Colorado_Data_LONG, gsub("STATUS_3_YEAR", "STATUS_3_YEAR_ORIG", names(Colorado_Data_LONG)))
-
-Colorado_Data_LONG[, VC_ORIG := VALID_CASE]
-
-save(Colorado_Data_LONG, file="Data/Colorado_Data_LONG.rda")
-
+load("Data/Colorado_Data_LONG.rda")
 
 
 ##########
 #####        SIMEX SGPs Only, 2017 & 2018
 ##########
 
-
-require(SGP)
-require(data.table)
-
-setwd("/Users/avi/Data/CO/Colorado")
-load("./Data/Colorado_Data_LONG.rda")
-
 ###   Make changes to SGPstateData
 SGPstateData[["CO"]][["SGP_Configuration"]][["max.order.for.percentile"]] <- 2
 SGPstateData[["CO"]][["SGP_Configuration"]][["print.other.gp"]] <- TRUE
+SGPstateData[["CO"]][["SGP_Configuration"]][["print.sgp.order"]] <- TRUE
 
-###   Read in 2019 SGP Configuration Scripts and Combine
-# source("/Users/avi/Dropbox (SGP)/Github_Repos/Projects/Colorado/SGP_CONFIG/2019/ELA.R")
-# source("/Users/avi/Dropbox (SGP)/Github_Repos/Projects/Colorado/SGP_CONFIG/2019/MATHEMATICS.R")
-#
-# COLO_2019.config <- c(
-# 	ELA.2019.config,
-# 	MATHEMATICS.2019.config
-# )
-
-###
 ###    abcSGP - To produce CMAS SG Percentiles with SIMEX Only
-###
-
 Colorado_SGP <- abcSGP(
 		sgp_object=Colorado_Data_LONG[YEAR %in% 2015:2018],
-		# sgp.config = COLO_2019.config,
-    years=c("2017", "2018"), # , "2019"
+    years=c("2017", "2018"),
 		content_areas=c("ELA", "MATHEMATICS"),
-		steps=c("prepareSGP", "analyzeSGP"), # , "combineSGP", "outputSGP"
+		steps=c("prepareSGP", "analyzeSGP"),
 		sgp.percentiles = TRUE,
 		sgp.projections = TRUE,
 		sgp.projections.lagged = TRUE,
@@ -123,7 +41,7 @@ Colorado_SGP <- abcSGP(
       TYPE="doParallel",
       WORKERS=list(TAUS=8, SIMEX=8)))
 
-###  Save 2019 Colorado SGP object
+###  Save Colorado SGP object with 2017 & 2018 SIMEX SGPs
 save(Colorado_SGP, file="Data/Colorado_SGP.Rdata")
 
 
@@ -136,18 +54,20 @@ save(Colorado_SGP, file="Data/Colorado_SGP.Rdata")
 setkey(Colorado_SGP@Data, VALID_CASE, CONTENT_AREA, ID, GRADE, YEAR)
 setkey(Colorado_SGP@Data, VALID_CASE, CONTENT_AREA, ID, GRADE)
 dups <- data.table(Colorado_SGP@Data[unique(c(which(duplicated(Colorado_SGP@Data, by=key(Colorado_SGP@Data)))-1, which(duplicated(Colorado_SGP@Data, by=key(Colorado_SGP@Data))))), ], key=key(Colorado_SGP@Data))
-table(dups$VALID_CASE) # 1495 duplicates within GRADE are already INVALID_CASEs - 11354 still VALID_CASEs
+table(dups$VALID_CASE) # 1145 duplicates within GRADE are already INVALID_CASEs - 8888 still VALID_CASEs
 Colorado_SGP@Data[which(duplicated(Colorado_SGP@Data, by=key(Colorado_SGP@Data)))-1, VALID_CASE := "INVALID_CASE"]
 
 table(Colorado_SGP@Data[, VALID_CASE, VC_ORIG])
 
 Colorado_SGP@Data <- rbindlist(list(Colorado_SGP@Data, Colorado_Data_LONG[YEAR == 2019]), fill = TRUE)
-Colorado_SGP <- prepareSGP(Colorado_SGP, create.additional.variables=FALSE)
+setkeyv(Colorado_SGP@Data, SGP:::getKey(Colorado_SGP@Data))
+
 
 ###   Make changes to SGPstateData
 SGPstateData[["CO"]][["SGP_Configuration"]][["max.order.for.percentile"]] <- 2
 SGPstateData[["CO"]][["SGP_Configuration"]][["max.order.for.projection"]] <- 3 # Force uncorrected to match SIMEX
 SGPstateData[["CO"]][["SGP_Configuration"]][["print.other.gp"]] <- TRUE
+SGPstateData[["CO"]][["SGP_Configuration"]][["print.sgp.order"]] <- TRUE
 SGPstateData[["CO"]][["Growth"]][["System_Type"]] <- "Cohort and Baseline Referenced"
 
 
@@ -175,9 +95,13 @@ SGPstateData[["CO"]][["Growth"]][["System_Type"]] <- "Cohort and Baseline Refere
   )
 
 names(Colorado_SGP@SGP[[1]][["ELA.BASELINE.SIMEX"]][[2]])
+names(Colorado_SGP@SGP[[5]][["ELA.2019.BASELINE"]])
+
+Colorado_SGP@Data[, VC_BASELINE := VALID_CASE]
+Colorado_SGP@Data[, VALID_CASE := VC_ORIG]
+setkeyv(Colorado_SGP@Data, SGP:::getKey(Colorado_SGP@Data))
 
 Colorado_SGP <- combineSGP(Colorado_SGP,
-                    # years = "2019",
                     sgp.target.scale.scores = TRUE,
                     parallel.config = list(
                       BACKEND="PARALLEL",
@@ -186,6 +110,70 @@ Colorado_SGP <- combineSGP(Colorado_SGP,
 ###  Save 2019 Colorado SGP object
 save(Colorado_SGP, file="./Data/Colorado_SGP.Rdata")
 
-Colorado_SGP@Data[, grep("ORIG", names(Colorado_SGP@Data), value=TRUE) := NULL]
 
-outputSGP(Colorado_SGP, output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data"))
+###   Clean up unecessary variables and order for output
+
+table(Colorado_SGP@Data[, YEAR, SGP==ORIG])
+table(Colorado_SGP@Data[, YEAR, SGP_ORDER_1==ORIG_ORDER_1])
+table(Colorado_SGP@Data[, YEAR, SGP_ORDER_2==ORIG_ORDER_2])
+
+table(Colorado_SGP@Data[YEAR=='2017' & SGP!=ORIG, as.character(SGP_NORM_GROUP)]) # Not sure why some of these changed...
+
+Colorado_SGP@Data[, grep("PERCENTILE_CUT", names(Colorado_SGP@Data), value=TRUE) := NULL]
+Colorado_SGP@Data[, grep("CURRENT", names(Colorado_SGP@Data), value=TRUE) := NULL]
+Colorado_SGP@Data[, ORIG_PROJECTION_GROUP_SCALE_SCORES := NULL]
+Colorado_SGP@Data[, GRADE_REPORTED := NULL] # Same as GRADE for CMAS
+Colorado_SGP@Data[, PREFERENCE := NULL]
+Colorado_SGP@Data[, ORIG_NOTE := NULL]
+Colorado_SGP@Data[, VC_ORIG := NULL]
+
+table(Colorado_SGP@Data[!is.na(SGP_NORM_GROUP_BASELINE), as.character(SGP_NORM_GROUP_BASELINE) == as.character(SGP_NORM_GROUP)]) #  All 3 below are identical due to analysis design
+Colorado_SGP@Data[, SGP_NORM_GROUP_BASELINE_SCALE_SCORES := NULL]
+Colorado_SGP@Data[, SGP_NORM_GROUP_BASELINE := NULL]
+Colorado_SGP@Data[, SGP_BASELINE_ORDER := NULL]
+
+table(Colorado_SGP@Data[!is.na(SGP_TARGET_BASELINE_3_YEAR_CONTENT_AREA), SGP_TARGET_3_YEAR_CONTENT_AREA, SGP_TARGET_BASELINE_3_YEAR_CONTENT_AREA]) # Different -- keep
+Colorado_SGP@Data[, SGP_TARGET_BASELINE_3_YEAR_CONTENT_AREA := NULL]
+
+table(Colorado_SGP@Data[!is.na(SGP_LEVEL_BASELINE), SGP_LEVEL, SGP_LEVEL_BASELINE]) # Different -- keep
+table(Colorado_SGP@Data[!is.na(CATCH_UP_KEEP_UP_STATUS_BASELINE_3_YEAR), CATCH_UP_KEEP_UP_STATUS_3_YEAR, CATCH_UP_KEEP_UP_STATUS_BASELINE_3_YEAR]) # Different -- keep
+
+variable.order <- c(
+  'VALID_CASE', 'VC_BASELINE', 'ID', 'LAST_NAME', 'FIRST_NAME', 'YEAR', 'CONTENT_AREA', 'GRADE',
+  'SCALE_SCORE', 'SCALE_SCORE_CSEM', 'ACHIEVEMENT_LEVEL',
+  'SCALE_SCORE_PRIOR', 'SCALE_SCORE_PRIOR_STANDARDIZED', 'ACHIEVEMENT_LEVEL_PRIOR',
+  'TEST_FORMAT', 'FPRC_SUMM_SCORE_REC_UUID', 'FPRC_KEY', 'FSAT_KEY',
+  'GENDER', 'ETHNICITY', 'FREE_REDUCED_LUNCH_STATUS', 'ELL_STATUS', 'IEP_STATUS', 'GIFTED_TALENTED_PROGRAM_STATUS',
+  'EMH_LEVEL', 'SCHOOL_NAME', 'SCHOOL_NUMBER', 'DISTRICT_NAME', 'DISTRICT_NUMBER',
+  'SCHOOL_ENROLLMENT_STATUS', 'DISTRICT_ENROLLMENT_STATUS', 'STATE_ENROLLMENT_STATUS',
+
+  'SGP_LEVEL', 'SGP_NORM_GROUP', 'SGP_NORM_GROUP_SCALE_SCORES', 'SGP_ORDER',
+  'SGP', 'SGP_ORDER_1', 'SGP_ORDER_2',
+  'SGP_SIMEX', 'SGP_SIMEX_ORDER_1', 'SGP_SIMEX_ORDER_2',
+  'SGP_SIMEX_RANKED', 'SGP_SIMEX_RANKED_ORDER_1', 'SGP_SIMEX_RANKED_ORDER_2',
+
+  'SGP_LEVEL_BASELINE',
+  'SGP_BASELINE', 'SGP_BASELINE_ORDER_1', 'SGP_BASELINE_ORDER_2',
+  'SGP_SIMEX_BASELINE', 'SGP_SIMEX_BASELINE_ORDER_1', 'SGP_SIMEX_BASELINE_ORDER_2',
+  'SGP_SIMEX_BASELINE_RANKED', 'SGP_SIMEX_BASELINE_RANKED_ORDER_1', 'SGP_SIMEX_BASELINE_RANKED_ORDER_2',
+
+  'SGP_STANDARD_ERROR', 'SGP_ORDER_1_STANDARD_ERROR', 'SGP_ORDER_2_STANDARD_ERROR',
+  'SGP_BASELINE_STANDARD_ERROR', 'SGP_BASELINE_ORDER_1_STANDARD_ERROR', 'SGP_BASELINE_ORDER_2_STANDARD_ERROR',
+
+  'SGP_PROJECTION_GROUP', 'SGP_TARGET_3_YEAR_CONTENT_AREA',
+  'SGP_TARGET_3_YEAR', 'SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR',
+  'CATCH_UP_KEEP_UP_STATUS_3_YEAR', 'MOVE_UP_STAY_UP_STATUS_3_YEAR',
+
+  'SGP_TARGET_BASELINE_3_YEAR', 'SGP_TARGET_BASELINE_MOVE_UP_STAY_UP_3_YEAR',
+  'CATCH_UP_KEEP_UP_STATUS_BASELINE_3_YEAR', 'MOVE_UP_STAY_UP_STATUS_BASELINE_3_YEAR',
+
+  'ORIG_LEVEL', 'ORIG_NORM_GROUP', 'ORIG_NORM_GROUP_SCALE_SCORES', 'ORIG_ORDER',
+  'ORIG', 'ORIG_ORDER_1', 'ORIG_ORDER_2', 'ORIG_ORDER_3',
+  'ORIG_PROJECTION_GROUP', 'ORIG_TARGET_3_YEAR_CONTENT_AREA',
+  'ORIG_TARGET_3_YEAR', 'ORIG_TARGET_MOVE_UP_STAY_UP_3_YEAR',
+  'CATCH_UP_KEEP_UP_STATUS_3_YEAR_ORIG', 'MOVE_UP_STAY_UP_STATUS_3_YEAR_ORIG'
+)
+
+setcolorder(Colorado_SGP@Data, variable.order)
+
+outputSGP(Colorado_SGP, output.type=c("LONG_Data"))
