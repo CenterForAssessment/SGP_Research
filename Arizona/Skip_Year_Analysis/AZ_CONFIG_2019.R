@@ -15,8 +15,9 @@ ELA_2019.config <- list(
                  sgp.grade.sequences=list(c('3', '5'), c('3', '4', '6'), c('4', '5', '7'),
                                              c('5', '6', '8'), c('6', '7', '9'), c('7', '8', '10'),
                                              c('8', '9', '11')),
-                 sgp.projection.grade.sequences=list('3', c('3', '5'), c('4', '6'), c('5', '7'), c('6', '8'), c('7', '9'), c('8', '10')),
-                 sgp.projection.sequence="ELA")
+                 sgp.projection.grade.sequences=list(c("NO_PROJECTIONS"))
+#                 sgp.projection.grade.sequences=list('3', c('3', '5'), c('4', '6'), c('5', '7'), c('6', '8'), c('7', '9'), c('8', '10')),
+#                 sgp.projection.sequence="ELA")
 )
 
 
@@ -109,14 +110,14 @@ GEOMETRY_2019.config <- list(
                   sgp.grade.sequences=list(c('8', 'EOCT', 'EOCT')),
                   sgp.projection.grade.sequences=list(c("NO_PROJECTIONS")),
                   sgp.exact.grade.progression=TRUE,
-  		  sgp.norm.group.preference=3),
+        		  sgp.norm.group.preference=3),
      GEOMETRY.2019 = list(
                   sgp.content.areas=c('MATHEMATICS', 'ALGEBRA_I', 'GEOMETRY'), #650
                   sgp.panel.years=c('2016','2017', '2019'),
                   sgp.grade.sequences=list(c('7', 'EOCT', 'EOCT')),
                   sgp.exact.grade.progression=TRUE,
                   sgp.projection.sequence="ALGEBRA_I_FROM_7",
-  		  sgp.norm.group.preference=3),
+  		          sgp.norm.group.preference=3),
      GEOMETRY.2019 = list(
                   sgp.content.areas=c('ALGEBRA_I', 'GEOMETRY'), #650
                   sgp.panel.years=c('2017','2019'),
@@ -136,7 +137,7 @@ ALGEBRA_II_2019.config <- list(
                   sgp.grade.sequences=list(c('8', 'EOCT', 'EOCT')),
                   sgp.exact.grade.progression=TRUE,
                   sgp.projection.sequence="MATHEMATICS",
-  		  sgp.norm.group.preference=1),
+  		          sgp.norm.group.preference=1),
       ALGEBRA_II.2019 = list(
                   sgp.content.areas=c('MATHEMATICS', 'MATHEMATICS', 'ALGEBRA_II'),
                   sgp.panel.years=c('2016', '2017', '2019'),
