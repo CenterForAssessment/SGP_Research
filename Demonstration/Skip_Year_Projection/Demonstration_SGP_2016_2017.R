@@ -25,7 +25,7 @@ SGP_CONFIG_2016_2017 <- c(READING_2016_2017.config, MATHEMATICS_2016_2017.config
 
 ### Run analysis
 
-Demonstration_SGP <- abcSGP(
+Demonstration_SGP_2016_2017 <- abcSGP(
                         Demonstration_Data_LONG,
                         steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
                         sgp.percentiles=TRUE,
@@ -40,4 +40,4 @@ Demonstration_SGP <- abcSGP(
 
 ### Save results
 
-save(Demonstration_SGP, file="Data/Demonstration_SGP.Rdata")
+save(Demonstration_SGP_2016_2017, file="Data/Demonstration_SGP_2016_2017.Rdata")
