@@ -11,8 +11,7 @@ require(SGP)
 
 ### Load SGP objects
 
-load("Data/Demonstration_SGP_2016_2017.Rdata")
-load("Data/Demonstration_SGP_2018_2019.Rdata")
+load("Data/Demonstration_SGP_2018_2019_PART_1.Rdata")
 
 
 ### Utility function
@@ -40,15 +39,8 @@ convertToBaseline <- function(baseline_matrices) {
 
 ### Convert matrices to baseline
 
-tmp.baseline.matrices.2018_2019 <- convertToBaseline(Demonstration_SGP_2018_2019@SGP$Coefficient_Matrices)
-
-
-### Embed matrices into 2018_2019 SGP object to run projections
-
-Demonstration_SGP_2018_2019@SGP$Coefficient_Matrices$MATHEMATICS.BASELINE <- tmp.baseline.matrices.2018_2019$MATHEMATICS.BASELINE
-Demonstration_SGP_2018_2019@SGP$Coefficient_Matrices$READING.BASELINE <- tmp.baseline.matrices.2018_2019$READING.BASELINE
-
+Demonstration_Baseline_Matrices_2018_2019 <- convertToBaseline(Demonstration_SGP_2018_2019_PART_1@SGP$Coefficient_Matrices)
 
 ### Save 2018-2019 SGP object
 
-save(Demonstration_SGP_2018_2019, file="Data/Demonstration_SGP_2018_2019.Rdata")
+save(Demonstration_Baseline_Matrices_2018_2019, file="Data/Demonstration_Baseline_Matrices_2018_2019.Rdata")

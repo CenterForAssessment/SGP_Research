@@ -1,6 +1,6 @@
 ################################################################################
 ###
-### Initial SGP analyses for skip year simulation: 2016-2017
+### STEP 2: SGP analyses for skip year simulation: 2017 to 2019 Part 1
 ###
 ################################################################################
 
@@ -22,15 +22,15 @@ Demonstration_Data_LONG_2018_2019 <- sgpData_LONG[YEAR == "2018_2019"]
 
 ### Load configurations
 
-source("SGP_CONFIG/2018_2019/READING.R")
-source("SGP_CONFIG/2018_2019/MATHEMATICS.R")
+source("SGP_CONFIG/2018_2019_PART_1/READING.R")
+source("SGP_CONFIG/2018_2019_PART_1/MATHEMATICS.R")
 
-SGP_CONFIG_2018_2019 <- c(READING_2018_2019.config, MATHEMATICS_2018_2019.config)
+SGP_CONFIG_2018_2019_PART_1 <- c(READING_2018_2019.config, MATHEMATICS_2018_2019.config)
 
 
 ### Run analysis
 
-Demonstration_SGP_2018_2019 <- updateSGP(
+Demonstration_SGP_2018_2019_PART_1 <- updateSGP(
                         Demonstration_SGP_2016_2017,
                         Demonstration_Data_LONG_2018_2019,
                         steps=c("prepareSGP", "analyzeSGP"),
@@ -42,9 +42,9 @@ Demonstration_SGP_2018_2019 <- updateSGP(
                         sgp.projections.lagged.baseline=FALSE,
                         sgp.target.scale.scores=TRUE,
                         save.intermediate.results=FALSE,
-                        sgp.config=SGP_CONFIG_2018_2019)
+                        sgp.config=SGP_CONFIG_2018_2019_PART_1)
 
 
 ### Save results
 
-save(Demonstration_SGP_2018_2019, file="Data/Demonstration_SGP_2018_2019.Rdata")
+save(Demonstration_SGP_2018_2019_PART_1, file="Data/Demonstration_SGP_2018_2019_PART_1.Rdata")
