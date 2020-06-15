@@ -47,7 +47,6 @@ Demonstration_SGP_2019_2020 <- updateSGP(
                         sgp.projections.baseline=FALSE,
                         sgp.projections.lagged.baseline=FALSE,
                         sgp.target.scale.scores=TRUE,
-                        save.intermediate.results=FALSE,
                         sgp.config=SGP_CONFIG_2019_2020)
 
 

@@ -28,6 +28,7 @@ SGP_CONFIG_2018_2019_PART_2c <- c(READING_2018_2019.config, MATHEMATICS_2018_201
 
 ### Setup SGPstateData with baseline coefficient matrices grade specific projection sequences
 
+SGPstateData[["DEMO"]][["Growth"]][["System_Type"]] <- "Baseline Referenced"
 SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]][["MATHEMATICS.BASELINE"]] <- Demonstration_Baseline_Matrices_2018_2019$MATHEMATICS.BASELINE
 SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]][["READING.BASELINE"]] <- Demonstration_Baseline_Matrices_2018_2019$READING.BASELINE
 SGPstateData[["DEMO"]][["SGP_Configuration"]][["grade.projection.sequence"]] <- list(
@@ -94,8 +95,7 @@ Demonstration_SGP_2018_2019_PART_2c <- abcSGP(
                         sgp.percentiles.baseline=FALSE,
                         sgp.projections.baseline=FALSE,
                         sgp.projections.lagged.baseline=TRUE,
-                        sgp.target.scale.scores=FALSE,
-                        save.intermediate.results=FALSE,
+                        sgp.target.scale.scores=TRUE,
                         sgp.config=SGP_CONFIG_2018_2019_PART_2c)
 
 

@@ -93,8 +93,6 @@ Demonstration_SGP_2018_2019_PART_2b <- abcSGP(
                         sgp.percentiles.baseline=FALSE,
                         sgp.projections.baseline=TRUE,
                         sgp.projections.lagged.baseline=FALSE,
-                        sgp.target.scale.scores=FALSE,
-                        save.intermediate.results=FALSE,
                         sgp.config=SGP_CONFIG_2018_2019_PART_2b)
 
 

@@ -33,15 +33,13 @@ SGP_CONFIG_2018_2019_PART_1 <- c(READING_2018_2019.config, MATHEMATICS_2018_2019
 Demonstration_SGP_2018_2019_PART_1 <- updateSGP(
                         Demonstration_SGP_2016_2017,
                         Demonstration_Data_LONG_2018_2019,
-                        steps=c("prepareSGP", "analyzeSGP"),
+                        steps=c("prepareSGP", "analyzeSGP", "combineSGP"),
                         sgp.percentiles=TRUE,
                         sgp.projections=FALSE,
                         sgp.projections.lagged=FALSE,
                         sgp.percentiles.baseline=FALSE,
                         sgp.projections.baseline=FALSE,
                         sgp.projections.lagged.baseline=FALSE,
-                        sgp.target.scale.scores=TRUE,
-                        save.intermediate.results=FALSE,
                         sgp.config=SGP_CONFIG_2018_2019_PART_1)
 
 

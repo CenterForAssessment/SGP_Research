@@ -35,15 +35,13 @@ SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]][["RE
 
 Demonstration_SGP_2018_2019_PART_2a <- abcSGP(
                         Demonstration_SGP_2018_2019_PART_1,
-                        steps=c("prepareSGP", "analyzeSGP"),
+                        steps=c("prepareSGP", "analyzeSGP", "combineSGP"),
                         sgp.percentiles=FALSE,
                         sgp.projections=FALSE,
                         sgp.projections.lagged=FALSE,
                         sgp.percentiles.baseline=TRUE,
                         sgp.projections.baseline=FALSE,
                         sgp.projections.lagged.baseline=FALSE,
-                        sgp.target.scale.scores=FALSE,
-                        save.intermediate.results=FALSE,
                         sgp.config=SGP_CONFIG_2018_2019_PART_2a)
 
 
