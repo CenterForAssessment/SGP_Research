@@ -12,47 +12,47 @@ require(SGPdata)
 
 ### Load data
 
-load("Data/Demonstration_SGP_2016_2017.Rdata")
+load("Data/Demonstration_SGP_2019_2020_PART_2c.Rdata")
 
 
 ### Create subset of data
 
-Demonstration_Data_LONG_2018_2019 <- sgpData_LONG[YEAR == "2018_2019"]
+Demonstration_Data_LONG_2019_2020 <- sgpData_LONG[YEAR == "2019_2020"]
 
 
 ### Load configurations
 
-source("SGP_CONFIG/2018_2019_PART_1/READING.R")
-source("SGP_CONFIG/2018_2019_PART_1/MATHEMATICS.R")
+source("SGP_CONFIG/2019_2019_PART_1/READING.R")
+source("SGP_CONFIG/2019_2020_PART_1/MATHEMATICS.R")
 
-SGP_CONFIG_2018_2019_PART_1 <- c(READING_2018_2019.config, MATHEMATICS_2018_2019.config)
+SGP_CONFIG_2019_2020 <- c(READING_2019_2020.config, MATHEMATICS_2019_2020.config)
 
 
 ### Run analysis
 
-Demonstration_SGP_2018_2019_PART_1 <- updateSGP(
-                        Demonstration_SGP_2016_2017,
-                        Demonstration_Data_LONG_2018_2019,
+Demonstration_SGP_2019_2020 <- updateSGP(
+                        Demonstration_SGP_2018_2019_PART_2c,
+                        Demonstration_Data_LONG_2019_2020,
                         steps=c("prepareSGP", "analyzeSGP"),
                         sgp.percentiles=TRUE,
-                        sgp.projections=FALSE,
-                        sgp.projections.lagged=FALSE,
+                        sgp.projections=TRUE,
+                        sgp.projections.lagged=TRUE,
                         sgp.percentiles.baseline=FALSE,
                         sgp.projections.baseline=FALSE,
                         sgp.projections.lagged.baseline=FALSE,
                         sgp.target.scale.scores=TRUE,
                         save.intermediate.results=FALSE,
-                        sgp.config=SGP_CONFIG_2018_2019_PART_1)
+                        sgp.config=SGP_CONFIG_2019_2020)
 
 
 ### Save results
 
-save(Demonstration_SGP_2018_2019_PART_1, file="Data/Demonstration_SGP_2018_2019_PART_1.Rdata")
+save(Demonstration_SGP_2019_2020, file="Data/Demonstration_SGP_2019_2020.Rdata")
 
 
 ##################################################################################
 ###
-### Construct baseline matrices from matrices calculated in 2016_2017 and 2018_2019
+### Construct baseline matrices from matrices calculated in 2016_2017 and 2019_2020
 ###
 ##################################################################################
 
@@ -81,8 +81,8 @@ convertToBaseline <- function(baseline_matrices) {
 
 ### Convert matrices to baseline
 
-Demonstration_Baseline_Matrices_2018_2019 <- convertToBaseline(Demonstration_SGP_2018_2019_PART_1@SGP$Coefficient_Matrices)
+Demonstration_Baseline_Matrices_2019_2020 <- convertToBaseline(Demonstration_SGP_2019_2020_PART_1@SGP$Coefficient_Matrices)
 
 ### Save 2018-2019 SGP object
 
-save(Demonstration_Baseline_Matrices_2018_2019, file="Data/Demonstration_Baseline_Matrices_2018_2019.Rdata")
+save(Demonstration_Baseline_Matrices_2019_2020, file="Data/Demonstration_Baseline_Matrices_2019_2020.Rdata")

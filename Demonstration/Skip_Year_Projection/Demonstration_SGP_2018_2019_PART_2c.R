@@ -1,6 +1,6 @@
 ################################################################################
 ###
-### STEP 3: SGP analyses for skip year simulation: 2017 to 2019 Part 2
+### STEP 4: SGP lagged projections for skip year simulation: 2017 to 2019 Part 2
 ###
 ################################################################################
 
@@ -8,21 +8,22 @@
 
 require(SGP)
 require(SGPdata)
-debug(studentGrowthProjections)
+#debug(analyzeSGP)
+#debug(studentGrowthProjections)
 
 
 ### Load data
 
-load("Data/Demonstration_SGP_2018_2019_PART_1.Rdata")
+load("Data/Demonstration_SGP_2018_2019_PART_2b.Rdata")
 load("Data/Demonstration_Baseline_Matrices_2018_2019.Rdata")
 
 
 ### Load configurations
 
-source("SGP_CONFIG/2018_2019_PART_2/READING.R")
-source("SGP_CONFIG/2018_2019_PART_2/MATHEMATICS.R")
+source("SGP_CONFIG/2018_2019_PART_2c/READING.R")
+source("SGP_CONFIG/2018_2019_PART_2c/MATHEMATICS.R")
 
-SGP_CONFIG_2018_2019_PART_2 <- c(READING_2018_2019.config, MATHEMATICS_2018_2019.config)
+SGP_CONFIG_2018_2019_PART_2c <- c(READING_2018_2019.config, MATHEMATICS_2018_2019.config)
 
 
 ### Setup SGPstateData with baseline coefficient matrices grade specific projection sequences
@@ -84,20 +85,20 @@ SGPstateData[["DEMO"]][["SGP_Configuration"]][["max.forward.projection.sequence"
 
 ### Run analysis
 
-Demonstration_SGP_2018_2019_PART_2 <- abcSGP(
-                        Demonstration_SGP_2018_2019_PART_1,
+Demonstration_SGP_2018_2019_PART_2c <- abcSGP(
+                        Demonstration_SGP_2018_2019_PART_2b,
                         steps=c("prepareSGP", "analyzeSGP"),
                         sgp.percentiles=FALSE,
                         sgp.projections=FALSE,
                         sgp.projections.lagged=FALSE,
-                        sgp.percentiles.baseline=TRUE,
-                        sgp.projections.baseline=TRUE,
+                        sgp.percentiles.baseline=FALSE,
+                        sgp.projections.baseline=FALSE,
                         sgp.projections.lagged.baseline=TRUE,
                         sgp.target.scale.scores=FALSE,
                         save.intermediate.results=FALSE,
-                        sgp.config=SGP_CONFIG_2018_2019_PART_2)
+                        sgp.config=SGP_CONFIG_2018_2019_PART_2c)
 
 
 ### Save results
 
-save(Demonstration_SGP_2018_2019_PART_2, file="Data/Demonstration_SGP_2018_2019_PART_2.Rdata")
+save(Demonstration_SGP_2018_2019_PART_2c, file="Data/Demonstration_SGP_2018_2019_PART_2c.Rdata")

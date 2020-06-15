@@ -1,4 +1,4 @@
-### MATHEMATICS 2018_2019_2019 configurations (assuming a skipped year in 2017_2018_2019
+### MATHEMATICS 2018_2019 configurations (assuming a skipped year in 2017_2018
 
 MATHEMATICS_2018_2019.config <- list(
      MATHEMATICS.2018_2019 = list(
