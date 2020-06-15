@@ -1,6 +1,6 @@
 ################################################################################
 ###
-### STEP 6: SGP analyses for year after skip year: 2019 to 2020 
+### STEP 6: SGP analyses for year after skip year: 2019 to 2020
 ###
 ################################################################################
 
@@ -28,7 +28,7 @@ SGPstateData[["DEMO"]][["SGP_Configuration"]][["max.order.for.projection"]] <- 1
 
 ### Load configurations
 
-source("SGP_CONFIG/2019_2019/READING.R")
+source("SGP_CONFIG/2019_2020/READING.R")
 source("SGP_CONFIG/2019_2020/MATHEMATICS.R")
 
 SGP_CONFIG_2019_2020 <- c(READING_2019_2020.config, MATHEMATICS_2019_2020.config)
