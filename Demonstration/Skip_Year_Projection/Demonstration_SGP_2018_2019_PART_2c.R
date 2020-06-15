@@ -1,6 +1,6 @@
 ################################################################################
 ###
-### STEP 4: SGP lagged projections for skip year simulation: 2017 to 2019 Part 2
+### STEP 5: SGP lagged projections for skip year simulation: 2017 to 2019 Part 2c
 ###
 ################################################################################
 
@@ -87,7 +87,7 @@ SGPstateData[["DEMO"]][["SGP_Configuration"]][["max.forward.projection.sequence"
 
 Demonstration_SGP_2018_2019_PART_2c <- abcSGP(
                         Demonstration_SGP_2018_2019_PART_2b,
-                        steps=c("prepareSGP", "analyzeSGP"),
+                        steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
                         sgp.percentiles=FALSE,
                         sgp.projections=FALSE,
                         sgp.projections.lagged=FALSE,

@@ -1,6 +1,6 @@
 ################################################################################
 ###
-### SGP straight projections for skip year simulation: 2017 to 2019 Part 2a
+### STEP 3: SGP baseline SGPs for skip year simulation: 2017 to 2019 Part 2a
 ###
 ################################################################################
 
