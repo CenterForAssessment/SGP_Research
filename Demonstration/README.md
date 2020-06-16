@@ -4,9 +4,10 @@ SGP Research for Demonstration
 SGP analysis source code & documentation
 -----------------------------------------
 
-Source code and documentation contained in directories address some commonly encountered use cases by states. 
+Source code and documentation contained in directories address some commonly encountered use cases by states. If there is any use case you'd like to see documented, don't hesitate 
+to write and we'll do our best to set something up.
 
-* [COVID-19 Skip-Year Analyses]()
+* [COVID-19 Skip-Year Analyses](https://github.com/CenterForAssessment/SGP_Research/tree/master/Demonstration/Skip_Year_Analysis)
 
 ### Analysis source code
 
