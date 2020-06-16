@@ -8,8 +8,6 @@
 
 require(SGP)
 require(SGPdata)
-#debug(analyzeSGP)
-#debug(studentGrowthProjections)
 
 
 ### Load data

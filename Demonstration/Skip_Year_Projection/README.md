@@ -18,7 +18,29 @@ The analyses conducted in 2018-2019 are performed in two-parts where Part 1 invo
 student growth projections that are used for the calculation of AGPs. If your interest is only in the calcultion of SGPs, then you can forego Part 2.
 
 
-#### Part 1: Calculation of SGPs 
+#### Part 1: Calculation of SGPs
+
+SGP calculation across a skip-year or grade is fairly common in states. For example, several states have testing in grades 3 to 8 and grade 10. Those
+states often calculate SGPs for grade 10 using the grade 8 prior. States with end-of-course testing also calculate SGPs across two and sometimes three
+year spans of time. The R script [Demonstration_SGP_2018_2019_PART_1](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/Demonstration_SGP_2018_2019_PART_1.R) uses `updateSGP` applied to the SGP object from Step 1 together with the 2018_2019 data.
+Part 1 calculates **ONLY** SGPs. An [additional portion of the R script](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/Demonstration_SGP_2018_2019_PART_1.R#L51), which can be omitted if your goal is to just calculate SGPs, takes the coefficient
+matrices calculated in Step 1 and the skip-year matrices calculated here and creates _baseline_ matrices from them. These baseline matrices will be
+used in Part 2 to calculate student growth projections.
+
+#### Part 2: Calculate student growth projections (AGPs)
+
+The calculation of student growth projections requires a little more work than the SGPs. Those familiar with student growth projections know that there
+are two types of projections: _lagged_ projections and _straight_ projections. Lagged projections are projections made from the penultimate score (in this
+case from 2016-2017) and straight projections are made from the current score (in this case from 2018-2019). Straight projections assume (going forward)
+annual assessments. However, in the current year (2018-2019), coefficient matrices calculated involve a skip year and thus are not appropriate for
+projecting annual growth going forward. In order to project annual growth going forward we go back and use the most recent annual growth matrices
+(2016-2017). These matrices (and the skip year matrices) were converted to baseline matrices to use for this purpose.
+
+##### Part 2a: Calculate Baseline SGPs
+
+The R script [Demonstration_SGP_2018_2019_PART_2a](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/Demonstration_SGP_2018_2019_PART_2a.R) is used to calculate **JUST** the baseline SGPs using the baseline matrices. Note that these SGPs will be
+equivalent to the cohort referenced SGPs calculated in Part 1 of Step 2. They are calculated here because the program uses `SGP_BASELINE` to determine
+Catch-Up/Keep-Up and Move-Up/Stay-Up status. 
 
 
 

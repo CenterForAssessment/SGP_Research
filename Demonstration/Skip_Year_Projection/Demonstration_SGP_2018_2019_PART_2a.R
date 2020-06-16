@@ -8,7 +8,6 @@
 
 require(SGP)
 require(SGPdata)
-debug(studentGrowthProjections)
 
 
 ### Load data
