@@ -12,6 +12,13 @@ The analyses are illustrated across several steps that are descibed in greater d
 The R script [Demonstration_SGP_2016_2017.R](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/Demonstration_SGP_2016_2017.R) provides the source code associated with SGP/AGP calculation in 2016-2017, the second year of the testing data and the
 year before the skipped year (2017-2018). The analysis configurations for [READING](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/SGP_CONFIG/2016_2017/READING.R) and [MATHEMATICS](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/SGP_CONFIG/2016_2017/MATHEMATICS.R) are explicitly defined and read into the call to `abcSGP`.
 
+### Step 2: SGP Analysis in 2018-2019 (follow the skipped year)
+
+The analyses conducted in 2018-2019 are performed in two-parts where Part 1 involves the calculate of SGPs and Part 2 involves the calculation of
+student growth projections that are used for the calculation of AGPs. If your interest is only in the calcultion of SGPs, then you can forego Part 2.
+
+
+#### Part 1: Calculation of SGPs 
 
 
 
