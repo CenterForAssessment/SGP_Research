@@ -68,12 +68,15 @@ referenced (as opposed to baseline referenced) as we use the coefficient matrice
 [line 23](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/Demonstration_SGP_2019_2020.R#L23) we specify
 the max order for the SGPs and projections to be 1 (use a single prior from 2018-2019). It's possible to calculate SGPs using additional priors (from
 2016-2017 but those will only be available for students in grade 6 and higher). However, projections will only use 1 prior matrices as they are the
-most recent matrices capable of annual projections. 
+most recent matrices capable of annual projections.
 
+### Comments
 
-
-
-
+* It's likely possible to combine some of the Part 2a, 2b, and 2c scripts. They were separated into 3 pieces (SGPs, straight projections, lagged projections)
+to simplify the illustration of the results.
+* Going beyond grade-level testing and including end-of-course testing should be straight forward and will just require more complicated analysis configurations and grade projection configurations.
+* We're pretty happy we were able to accomplish this without adding any additional features to the SGP package and using already existing features.
+ 
 
 ### Prepared with :heart: by:
 
