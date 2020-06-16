@@ -85,13 +85,14 @@ SGPstateData[["DEMO"]][["SGP_Configuration"]][["max.forward.projection.sequence"
 
 Demonstration_SGP_2018_2019_PART_2b <- abcSGP(
                         Demonstration_SGP_2018_2019_PART_2a,
-                        steps=c("prepareSGP", "analyzeSGP"),
+                        steps=c("prepareSGP", "analyzeSGP", "combineSGP"),
                         sgp.percentiles=FALSE,
                         sgp.projections=FALSE,
                         sgp.projections.lagged=FALSE,
                         sgp.percentiles.baseline=FALSE,
                         sgp.projections.baseline=TRUE,
                         sgp.projections.lagged.baseline=FALSE,
+                        sgp.target.scale.scores=TRUE,
                         sgp.config=SGP_CONFIG_2018_2019_PART_2b)
 
 

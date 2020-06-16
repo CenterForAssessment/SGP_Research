@@ -40,7 +40,21 @@ projecting annual growth going forward. In order to project annual growth going 
 
 The R script [Demonstration_SGP_2018_2019_PART_2a](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/Demonstration_SGP_2018_2019_PART_2a.R) is used to calculate **JUST** the baseline SGPs using the baseline matrices. Note that these SGPs will be
 equivalent to the cohort referenced SGPs calculated in Part 1 of Step 2. They are calculated here because the program uses `SGP_BASELINE` to determine
-Catch-Up/Keep-Up and Move-Up/Stay-Up status. 
+Catch-Up/Keep-Up and Move-Up/Stay-Up status versus the projections calculated in the following steps.
+
+##### Part 2b: Calculate Baseline Referenced Straight Projections.
+
+The R script [Demonstration_SGP_2018_2019_PART_2b](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/Demonstration_SGP_2018_2019_PART_2b.R) is used to calculate **JUST** the baseline referenced _straight_ projections. Like with the other scripts
+examined thus far, configurations for [READING](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/SGP_CONFIG/2018_2019_PART_2b/READING.R) and [MATHEMATICS](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/SGP_CONFIG/2018_2019_PART_2b/MATHEMATICS.R) are provided that explicitly state what the baseline projection sequences are. In addition, the configurations
+reference grade projection sequences that are embedded within the `SGPstateData` beginning [on line 27](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/Demonstration_SGP_2018_2019_PART_2b.R#L27) of the analysis script. Straight projections have to be done
+separately from lagged projections due to the fact that lagged projections must skip a grade/year whereas straight projections don't skip.
+
+##### Part 2c: Calculate Baseline Referenced Lagged Projections.
+
+The R script [Demonstration_SGP_2018_2019_PART_2c](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/Demonstration_SGP_2018_2019_PART_2c.R) is used to calculate **JUST** the baseline referenced _lagged_ projections. Lagged projections are used to
+determine AGPs and evaluate the adequacy of growth toward a pre-defined standard in the current year. Part 2c is the last part of the 2018-2019 analyses.
+Note that the script (on [line 96](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Skip_Year_Projection/Demonstration_SGP_2018_2019_PART_2c.R#L96)) also calculates the associated scale score targets for the AGPs. 
+
 
 
 
