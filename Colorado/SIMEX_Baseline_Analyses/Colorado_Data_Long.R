@@ -4,14 +4,12 @@
 ###                                                                                    ###
 ##########################################################################################
 
-setwd("/Users/avi/Data/CO/SIMEX_Baseline_Analyses")
-
 ###   Load required packages
 require(SGP)
 require(data.table)
 
 ###   Load data and subset CMAS Subjects and Grades
-load("/Users/avi/Dropbox (SGP)/SGP/Colorado/Data/Colorado_SGP_LONG_Data.Rdata")
+load("../Colorado/Data/Colorado_SGP_LONG_Data.Rdata")
 Colorado_SGP_LONG_Data <- Colorado_SGP_LONG_Data[CONTENT_AREA %in% c("ELA", "MATHEMATICS") & GRADE %in% 3:8]
 
 ###   Rename ORIGINAL 'SGP' variables as 'ORIG'
