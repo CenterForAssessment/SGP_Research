@@ -40,6 +40,7 @@ Demonstration_SGP_2018_2019_PART_1 <- updateSGP(
                         sgp.percentiles.baseline=FALSE,
                         sgp.projections.baseline=FALSE,
                         sgp.projections.lagged.baseline=FALSE,
+			save.intermediate.results=FALSE,
                         sgp.config=SGP_CONFIG_2018_2019_PART_1)
 
 
