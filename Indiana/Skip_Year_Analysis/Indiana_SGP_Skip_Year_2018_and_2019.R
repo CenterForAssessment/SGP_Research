@@ -84,8 +84,9 @@ setnames(Indiana_SGP_LONG_Data_NO_SKIP, original.names, new.names)
 ### Merge in new columns
 
 Indiana_SGP_LONG_Data[,eval(new.names):=Indiana_SGP_LONG_Data_NO_SKIP[,new.names, with=FALSE]]
+Indiana_SGP_LONG_Data_SKIP_and_NO_SKIP <- Indiana_SGP_LONG_Data
 
 
 ### Save data
 
-save(Indiana_SGP_LONG_Data, file="Data/Indiana_SGP_LONG_Data.Rdata")
+save(Indiana_SGP_LONG_Data_SKIP_and_NO_SKIP, file="Data/Indiana_SGP_LONG_Data_SKIP_and_NO_SKIP.Rdata")
