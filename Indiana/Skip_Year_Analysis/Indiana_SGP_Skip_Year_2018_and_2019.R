@@ -13,7 +13,8 @@ require(data.table)
 
 ###   Load Official data and subset data for 2018 and 2019 skip year analyses
 
-load("/Users/conet/Github/CenterForAssessment/Indiana/master/Data/Indiana_SGP_LONG_Data.Rdata")
+#load("/Users/conet/Github/CenterForAssessment/Indiana/master/Data/Indiana_SGP_LONG_Data.Rdata")
+load("../../../Dropbox/Indiana/Data/Indiana_SGP_LONG_Data.Rdata")
 Indiana_Data_LONG <- Indiana_SGP_LONG_Data[SCHOOL_YEAR %in% c("2015", "2016", "2017", "2018", "2019"), c("VALID_CASE", "CONTENT_AREA", "SCHOOL_YEAR", "STUDENT_ID", "GRADE_ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL")]
 
 
