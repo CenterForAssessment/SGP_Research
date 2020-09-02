@@ -17,6 +17,17 @@ load("/Users/conet/Github/CenterForAssessment/Indiana/master/Data/Indiana_SGP_LO
 Indiana_Data_LONG <- Indiana_SGP_LONG_Data[SCHOOL_YEAR %in% c("2015", "2016", "2017", "2018", "2019"), c("VALID_CASE", "CONTENT_AREA", "SCHOOL_YEAR", "STUDENT_ID", "GRADE_ID", "SCALE_SCORE", "ACHIEVEMENT_LEVEL")]
 
 
+### Rename SGP derived/related variables by pre-pending NO_SKIP
+
+original.names <- c("SGP", "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_LEVEL", "SGP_NORM_GROUP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP",
+                        "SGP_TARGET_3_YEAR_CURRENT", "SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_CURRENT", "SGP_TARGET_3_YEAR", "ACHIEVEMENT_LEVEL_PRIOR", "SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR",
+                        "SGP_TARGET_3_YEAR_CONTENT_AREA", "SGP_NOTE", "SGP_ORDER_1", "SGP_ORDER_2", "SGP_ORDER_3", "SGP_ORDER", "SGP_PROJECTION_GROUP_SCALE_SCORES",
+                        "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS")
+original.names <- intersect(names(Indiana_SGP_LONG_Data_NO_SKIP), original.names)
+new.names <- paste0("NO_SKIP_", original.names)
+setnames(Indiana_SGP_LONG_Data_NO_SKIP, original.names, new.names)
+
+
 ###   Read in 2018 and 2019 SGP Configuration Scripts and Combine
 
 source("SGP_CONFIG/2018/ELA.R")
@@ -58,35 +69,3 @@ Indiana_SGP <- abcSGP(
 ### Save results
 
 save(Indiana_SGP, file="Data/SKIP_SGP_Data/Indiana_SGP.Rdata")
-
-
-###############################################################
-### Merge SKIP and NO_SKIP SGPs into single LONG file
-###############################################################
-
-load("/Users/conet/Github/CenterForAssessment/Indiana/master/Data/Indiana_SGP_LONG_Data.Rdata")
-Indiana_SGP_LONG_Data <- Indiana_SGP_LONG_Data[SCHOOL_YEAR >= "2015"]
-Indiana_SGP_LONG_Data_NO_SKIP <- Indiana_SGP_LONG_Data
-Indiana_SGP_LONG_Data <- copy(Indiana_SGP@Data)
-
-
-### Rename variables
-
-original.names <- c("SGP", "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED", "SGP_LEVEL", "SGP_NORM_GROUP", "SGP_NORM_GROUP_SCALE_SCORES", "SGP_PROJECTION_GROUP",
-                        "SGP_TARGET_3_YEAR_CURRENT", "SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR_CURRENT", "SGP_TARGET_3_YEAR", "ACHIEVEMENT_LEVEL_PRIOR", "SGP_TARGET_MOVE_UP_STAY_UP_3_YEAR",
-                        "SGP_TARGET_3_YEAR_CONTENT_AREA", "SGP_NOTE", "SGP_ORDER_1", "SGP_ORDER_2", "SGP_ORDER_3", "SGP_ORDER", "SGP_PROJECTION_GROUP_SCALE_SCORES",
-                        "CATCH_UP_KEEP_UP_STATUS", "MOVE_UP_STAY_UP_STATUS")
-original.names <- intersect(names(Indiana_SGP_LONG_Data_NO_SKIP), original.names)
-new.names <- paste0(original.names, "_NO_SKIP")
-setnames(Indiana_SGP_LONG_Data_NO_SKIP, original.names, new.names)
-
-
-### Merge in new columns
-
-Indiana_SGP_LONG_Data[,eval(new.names):=Indiana_SGP_LONG_Data_NO_SKIP[,new.names, with=FALSE]]
-Indiana_SGP_LONG_Data_SKIP_and_NO_SKIP <- Indiana_SGP_LONG_Data
-
-
-### Save data
-
-save(Indiana_SGP_LONG_Data_SKIP_and_NO_SKIP, file="Data/Indiana_SGP_LONG_Data_SKIP_and_NO_SKIP.Rdata")
