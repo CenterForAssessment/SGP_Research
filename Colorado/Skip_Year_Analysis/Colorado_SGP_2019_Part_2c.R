@@ -93,12 +93,12 @@ save(Colorado_SGP, file="Data/Colorado_SGP_2019_PART_2c.Rdata")
 #####
 
 Colorado_SGP@Data$DIFF<- as.numeric(NA)
-Colorado_SGP@Data[, DIFF := SGP - NO_SKIP]
+Colorado_SGP@Data[, DIFF := SGP - NO_SKIP_SGP]
 
-Colorado_SGP@Data[!is.na(SGP) & VALID_CASE=='VALID_CASE'][, list(
+Colorado_SGP@Data[YEAR == '2019' & !is.na(SGP) & VALID_CASE=='VALID_CASE'][, list(
   Test_Scores = round(cor(SCALE_SCORE, SCALE_SCORE_PRIOR_STANDARDIZED, use='pairwise.complete'), 2),
   Skip = format(round(cor(SGP, SCALE_SCORE_PRIOR_STANDARDIZED, use='pairwise.complete'), 2), nsmall = 2),
-  No_Skip = format(round(cor(NO_SKIP, SCALE_SCORE_NO_SKIP_PRIOR_STANDARDIZED, use='pairwise.complete'), 2), nsmall = 2),
-  SGP_Corr = format(round(cor(NO_SKIP, SGP, use='pairwise.complete'), 2), nsmall = 2),
+  No_Skip = format(round(cor(NO_SKIP_SGP, NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, use='pairwise.complete'), 2), nsmall = 2),
+  SGP_Corr = format(round(cor(NO_SKIP_SGP, SGP, use='pairwise.complete'), 2), nsmall = 2),
   Diff_Corr = format(round(cor(DIFF, SCALE_SCORE_PRIOR_STANDARDIZED, use='pairwise.complete'), 2), nsmall = 2),
-  N_Size = sum(!is.na(SGP))), keyby = list(CONTENT_AREA, GRADE)]
+  Corr_N = sum(!is.na(SGP) & !is.na(NO_SKIP_SGP))), keyby = list(CONTENT_AREA, GRADE)]

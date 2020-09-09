@@ -1,6 +1,7 @@
 ################################################################################
 ###                                                                          ###
-###     Historical One-Year Gap SGPs for Colorado 2021 Contingency Plan      ###
+###  STEP 1: Initial SGP analyses for skip year simulation: 2017             ###
+###          Historical One-Year Gap SGPs for Colorado 2021 Contingency Plan ###
 ###                                                                          ###
 ################################################################################
 
@@ -60,7 +61,7 @@ Colorado_SGP <- abcSGP(
 		sgp.projections.lagged.baseline = FALSE,
 		sgp.target.scale.scores=TRUE,
 		parallel.config = list(
-			BACKEND="PARALLEL", WORKERS=list(PERCENTILES = 8, PROJECTIONS=5, LAGGED_PROJECTIONS=2)))
+			BACKEND="PARALLEL", WORKERS=list(TAUS=11)))
 
 grep("SGP_TARGET", names(Colorado_SGP@Data), value=TRUE)  # Need to have SGP_TARGET_3_YEAR
 
