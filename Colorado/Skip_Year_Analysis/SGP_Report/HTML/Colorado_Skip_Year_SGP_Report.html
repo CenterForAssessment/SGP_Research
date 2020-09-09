@@ -1,0 +1,1790 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<title></title>
+
+
+
+
+
+<style type="text/css">
+#document {
+counter-reset: figure 0 section 0;
+}
+
+.content-node.image,
+.content-node.resource {
+counter-increment: figure;
+}
+.content-node .caption {
+margin: 0px 80px;
+padding: 15px 0;
+text-align:justify;
+text-indent: 0px;
+margin-bottom: 25px;
+}
+.caption > p {
+}
+.content-node .caption.empty {
+display: none;
+}
+
+.content-node.image {
+text-align: center;
+}
+.breakbefore {
+page-break-before: always;
+}
+.breakafter {
+page-break-after: always;
+}
+.breakboth {
+page-break-before: always;
+page-break-after: always;
+}
+.image-content {
+display: inline-block;
+position: relative;
+text-align: center;
+padding: 0;
+margin: 0;
+}
+
+.image-content img, .image-content div {
+margin: 0;
+max-width: 650px;
+min-width: 150px;
+min-height: 150px;
+display: block;
+padding: 5px 5px;
+text-align: center;
+}
+.image-content.placeholder .image-file {
+bottom: 30px;
+}
+.figure {
+display: inline-block;
+position: relative;
+text-align: center;
+padding: 0;
+margin: 10px;
+}
+.figure img {
+margin: 0px 100px;
+max-width: 650px;
+min-width: 200px;
+min-height: 150px;
+display: block;
+padding: 5px 5px;
+text-align: center;
+float: center;
+}
+#document .resource-url-area .url-label {
+color: #555;
+padding-top: 10px;
+padding-bottom: 10px;
+font-style: italic;
+}
+#document .resource-url-area {
+position: absolute;
+top: 0px;
+bottom: 0px;
+right: 0px;
+left: 0px;
+padding: 20px;
+border: 2px dashed #aaa;
+-webkit-border-radius: 10px;
+-moz-border-radius: 10px;
+border-radius: 10px;
+}
+.content-node.resource {
+text-align: center;
+}
+.content-node.resource img {
+padding: 0;
+margin: 0;
+max-width: 650px;
+display: block;
+padding: 5px 0;
+}
+.content-node.section {
+margin-bottom: 10px;
+}
+#document h1 {
+page-break-before: always;
+counter-reset: sub-section;
+font-size: 24px;
+border-top:none;
+border-bottom:none;
+text-transform:none;
+padding-top: 175px;
+}
+#document h2 {
+counter-reset: composite;
+border-top:none;
+border-bottom:none;
+text-transform:none;
+}
+#document .header-section-number {
+font-weight: bold;
+margin-right: 20px;
+}
+
+#document h1,
+#document h2,
+#document h3,
+#document h4 {
+font-weight: normal;
+margin: -100px 100px 0 100px;
+padding-top: 125px;
+padding-bottom: 10px;
+line-height: 1.6em;
+color: black;
+}
+#document h5,
+#document h6 {
+font-weight: normal;
+margin: -100px 100px 0 100px;
+padding-top: 110px;
+padding-bottom: 10px;
+line-height: 1.6em;
+color: black;
+}
+
+#document h1 a,
+#document h2 a,
+#document h3 a,
+#document h4 a {
+margin: -100px 100px 0 100px;
+padding: 100px 0px 0px 0px;
+line-height: 1.6em;
+}
+#document h2 {
+font-size: 20px;
+}
+#document h3 {
+font-size: 18px;
+font-style: italic;
+}
+#document .content-node.text .content {
+padding: 10px 0;
+}
+.content-node.section > p, ol {
+margin: 0 100px;
+}
+code {
+font-family: Monaco, Consolas, "Lucida Console", monospace;
+font-size: 12px;
+padding: 0px 3px;
+background: white;
+border: 1px solid #DDD;
+zoom: 1;
+}
+#document strong,
+#document b {
+font-weight: bold;
+}
+#document em,
+#document i {
+font-style: italic;
+}
+#document p {
+margin: 0px 100px 5px;
+min-height: 22px;
+text-indent:35px;
+}
+#document code {
+text-indent: 0px;
+}
+#document ol {
+padding-left: 20px;
+margin-bottom: 10px;
+margin-left: 100px;
+margin-right: 90px;
+min-height: 22px;
+}
+#document ul, li {
+padding-left: 20px;
+margin-top: 20px;
+margin-bottom: 10px;
+margin-left: 100px;
+margin-right: 90px;
+min-height: 22px;
+min-width: 300px;
+}
+
+#document ul ul {
+margin: 0px 0px 20px 20px;
+text-indent: -20px;
+min-height: 22px;
+-moz-padding-start: 0px;
+-webkit-padding-start: 0px;
+list-style-position: inside;
+}
+#document p + ul, ol {
+margin-top: 15px;
+}
+p {
+margin: 0 0 10px 0;
+text-align:justify;
+}
+p.info {
+font-style: italic;
+color: rgba(0, 0, 0, 0.7);
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+padding: 10px 0 5px 0;
+}
+h3,
+h4,
+h5,
+h6 {
+padding-top: 20px;
+}
+h2 {
+font-size: 160%;
+padding-bottom: 15px;
+}
+
+
+.content-node.document .document-title {
+font-size: 30px;
+line-height: 40px;
+padding-top: 100px;
+text-align: center;
+margin: 100px 100px 10px 100px;
+}
+.content-node.document .document-subtitle {
+font-size: 25px;
+font-style: italic;
+line-height: 30px;
+text-align: center;
+margin: 20px 100px 50px 100px;
+}
+.content-node.document .authors {
+font-size: 18px;
+line-height: 30px;
+text-align: center;
+margin-top: 50px;
+}
+.content-node.document .author_afil {
+font-size: 16px;
+font-style: italic;
+line-height: 30px;
+text-align: center;
+}
+.content-node.document .author_email {
+font-size: 16px;
+line-height: 30px;
+text-align: center;
+}
+.content-node.document .published {
+font-size: 18px;
+text-align: center;
+text-indent: 0px;
+padding-top: 50px;
+padding-bottom: 50px;
+}
+.content-node.document #document_lead {
+font-size: 18px;
+line-height: 1.2;
+font-style: italic;
+margin-top: 50px;
+text-align: center;
+margin-bottom: 150px;
+color: #999;
+padding: 0 25px 0 25px;
+}
+hr {
+display:none
+}
+
+#document .references p {
+margin: 0 100px;
+text-align:justify;
+min-height: 22px;
+padding-bottom: 15px;
+padding-left: 35px ;
+text-indent: -35px ;
+}
+.footnotes ol:before {
+content: "Footnotes";
+font-weight: bold;
+font-size: 24px ;
+font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+line-height: 3em;
+}
+#document #document_lens {
+display:none;
+}
+.footer{
+display:none;
+}
+.ui-font {
+font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+color: #111;
+-webkit-font-smoothing: antialiased;
+}
+.document-font {
+font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+font-weight: lighter;
+font-style: normal;
+}
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+font,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+tt,
+var,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead {
+margin: 0;
+padding: 0;
+border: 0;
+outline: 0;
+font-weight: inherit;
+font-style: inherit;
+font-size: 100%;
+font-family: inherit;
+text-align:justify;
+vertical-align: baseline;
+}
+:focus {
+outline: 0;
+}
+
+table{
+margin-left:100px;
+margin-right:auto;
+margin-top: 20px;
+margin-bottom: 20px;
+border-collapse: separate;
+border-spacing: 0;
+min-width: 300px;
+max-width: 650px;
+line-height: 1.6em;
+}
+.footnotes {
+margin-top: 3em;
+}
+#document .footnotes p {
+margin-left: 0px;
+}
+body {
+line-height: 1;
+color: black;
+background: white;
+}
+ol, ul {
+line-height: 1.6em;
+}
+caption,
+th,
+td {
+font-weight: normal;
+padding-left: 7px;
+padding-right: 7px;
+padding-top: 4px;
+}
+th {
+text-align: center;
+}
+th > img {
+max-width: 320px;
+float: left;
+}
+td > img {
+max-width: 320px;
+float: left;
+}
+h5 + p > img {
+max-width: 650px;
+display: block;
+padding-left: 10px;
+padding-bottom: 50px;
+}
+h6 + p > img {
+max-width: 320px;
+float: left;
+display: block;
+padding-left: 10px;
+}
+caption {
+width: 275%;
+max-width: 650px;
+padding-bottom: 10px;
+padding-left: 65px ;
+text-indent: -65px ;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+content: "";
+}
+blockquote,
+q {
+quotes: "" "";
+}
+
+* {
+box-sizing: border-box;
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+}
+.clear {
+clear: both;
+}
+.hidden {
+display: none;
+}
+.invisible {
+opacity: 0;
+}
+.right {
+float: right;
+}
+.left {
+float: left;
+}
+.nobr {
+white-space: nowrap;
+}
+.right-align {
+text-align: right;
+}
+.serif {
+font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+font-weight: lighter;
+font-style: normal;
+}
+.italic {
+font-style: italic;
+}
+
+html {
+margin: 0;
+padding: 0;
+-webkit-font-smoothing: antialiased;
+}
+img {
+border: none;
+}
+body {
+font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+color: #111;
+-webkit-font-smoothing: antialiased;
+font-size: 14px;
+margin: 0;
+padding: 0;
+background: #F0F1EB;
+color: #444;
+line-height: 1.5em;
+}
+a {
+text-decoration: none;
+color: #0000CD;
+padding: 0 0 1px 0;
+}
+a:hover {
+color: #000;
+border-bottom: 1px solid #999;
+}
+hr.separator {
+display: block;
+height: 1px;
+background: #c1c1c1;
+border: 0;
+margin: 0px;
+}
+hr.separator.nomargin {
+margin: 0px;
+}
+.border {
+border-top: 1px solid red;
+border-bottom: 1px solid green;
+margin-bottom: 15px;
+}
+
+li {
+-webkit-transition: background, background-color, border-color, color, opacity 0.35s linear;
+}
+a {
+-webkit-transition: background, background-color, border-color, color, opacity 0.35s linear;
+}
+label {
+-webkit-transition: background, background-color, border-color, color, opacity 0.35s linear;
+}
+input {
+-webkit-transition: background, background-color, border-color, color, opacity 0.35s linear;
+}
+textarea {
+-webkit-transition: background, background-color, border-color, color, opacity 0.35s linear;
+}
+img {
+-webkit-transition: opacity 0.35s linear;
+}
+
+#content_wrapper {
+position: relative;
+margin: 0;
+}
+html,
+body {
+height: 100%;
+}
+body {
+min-width: 1200px;
+}
+#document {
+font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+font-weight: lighter;
+font-style: normal;
+width: 850px;
+color: #000;
+position: relative;
+margin: 0;
+margin-top: 100px;
+margin-left: 320px;
+padding: 0px 0 0px 0;
+-webkit-box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.35), inset 0px 0px 1px rgba(255, 255, 255, 0.15);
+-moz-box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.35), inset 0px 0px 1px rgba(255, 255, 255, 0.15);
+box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.35), inset 0px 0px 1px rgba(255, 255, 255, 0.15);
+background: #fff;
+-webkit-font-smoothing: subpixel-antialiased;
+font-size: 18px;
+line-height: 2em;
+}
+#document .document-separator {
+background: #000;
+width: 300px;
+height: 1px;
+margin: 50px auto;
+}
+
+.content-fragment {
+margin: 0 100px;
+}
+pre {
+padding: 2px 10px 2px 15px;
+border-left: 4px solid #BBB;
+margin: 10px 100px;
+}
+
+#TOC {
+display:block;
+-webkit-transition-property: top;
+-webkit-transition-duration: 0.6s;
+position: fixed;
+overflow-x: scroll;
+width: 395px;
+left: -75px;
+top: 100px;
+height: 360px;
+font-family: "Helvetica Neue", Arial, Helvetica, Geneva, sans-serif;
+color: #111;
+-webkit-font-smoothing: antialiased;
+font-weight: bold;
+font-size: 14px;
+}
+#TOC > ul {
+list-style-type: none;
+}
+#TOC ul > li {
+text-indent: -20px;
+margin-left: 10px;
+text-align: left;
+}
+#TOC > ul > li > ul {
+margin-left: 10px ;
+margin-right: 35px ;
+line-height: 2em;
+list-style-type: none;
+}
+#TOC > ul a {
+border: none;
+color: #939393;
+}
+#TOC > ul a:hover {
+color: #444;
+}
+#TOC > ul > li > ul a {
+border: none;
+color: #939393;
+}
+#TOC > ul > li > ul a:hover {
+color: #444;
+}
+#TOC > p {
+whitespace: nowrap;
+margin-left: 90px ;
+font-weight: bold;
+font-size: 16px;
+color: #3a3a3a;
+line-height: 40px;
+}
+#TOC .toc-section-number {
+font-weight: bold;
+margin-right: 5px;
+}
+#document .section {
+position: relative;
+margin: 10px 0;
+-webkit-transition: min-height 0.5s;
+-moz-transition: min-height 0.5s;
+}
+.section.document {
+margin: 0;
+padding-bottom: 80px;
+}
+
+p.question {
+font-size: 25px;
+line-height: 1.5em;
+margin: 0 100px 0 100px;
+padding: 10px 0;
+font-style: italic;
+}
+.section.quote > p {
+margin: 0 100px;
+padding: 10px 0;
+}
+blockquote {
+display: table;
+margin: 10px 140px 10px 140px;
+font-size: 1em;
+line-height: 1.3em;
+}
+blockquote > div {
+display: table-row;
+}
+blockquote p {
+min-width: 200px;
+display: table-cell;
+padding: 0 0 10px 0;
+font-size: 1em;
+font-style: italic;
+}
+blockquote cite.quote-author {
+display: table-cell;
+padding: 20px 0 0;
+font-size: 11px;
+text-align: right;
+}
+
+code, pre {
+font-family: Monaco, "Bitstream Vera Sans Mono", "Lucida Console", Terminal, monospace;
+font-size:12px;
+}
+pre, div.meta {
+padding: 0px 3px;
+background: #FDFEFB;
+border-radius: 4px;
+border:1px solid #D7D8C8;
+overflow: auto;
+overflow-y: hidden;
+margin-bottom: 12px;
+line-height: 1.5em;
+}
+p code, li code {
+display: inline-block;
+white-space: no-wrap;
+background: #fff;
+font-size: .9em;
+line-height: 1.5em;
+color: #555;
+-moz-border-radius: 0.4em;
+-webkit-border-radius: 0.4em;
+-o-border-radius: 0.4em;
+-ms-border-radius: 0.4em;
+-khtml-border-radius: 0.4em;
+padding: 0px 3px;
+margin: -1px 0;
+}
+.proper-code {
+font-family: Monaco, Consolas, "Lucida Console", monospace;
+font-size: 12px;
+padding: 0px 3px;
+background: white;
+border: 1px solid #DDD;
+}
+.footer{
+display: block;
+text-align:center;
+font-size:small;
+padding:.5em;
+margin-bottom:1em;
+}
+.section.level1 > p, ul, ol {
+margin: 0 100px;
+}
+.section.level2 > p, ul, ol {
+margin: 0 100px;
+}
+.section.level3 > p, ul, ol {
+margin: 0 100px;
+}
+</style>
+
+</head>
+
+<body>
+
+
+<div id="TOC" , class="TOC">
+<p>Table of Contents:</p>
+<ul>
+<li><a href="#background"><span class="toc-section-number">1</span> Background</a></li>
+<li><a href="#data"><span class="toc-section-number">2</span> Data</a></li>
+<li><a href="#analyses-and-results"><span class="toc-section-number">3</span> Analyses and Results</a><ul>
+<li><a href="#individual-level-results"><span class="toc-section-number">3.1</span> Individual Level Results</a></li>
+<li><a href="#school-level-results"><span class="toc-section-number">3.2</span> School Level Results</a></li>
+</ul></li>
+<li><a href="#summary"><span class="toc-section-number">4</span> Summary</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+<!--
+<ul>
+<li></li>
+<li><a href="#references">References</a></li>
+<li></li>
+</ul>
+-->
+</div>
+
+<div id="document">
+
+
+<div class="content-node document selected">
+
+<div class="content">
+<div class="document-title">Colorado Skip Year SGP Analyses</div>
+<div class="document-subtitle" title>A Historical Complarison of the 2019 SGP Results</div>
+<div class="authors" id="authors">Damian W. Betebenner</div>
+<div class="authors" id="authors">Adam R. VanIwaarden</div>
+<div class="authors" id="authors"><em>National Center for the Improvement</em></div>
+<div class="authors" id="authors"><em>of Educational Assessment (NCIEA)</em></div>
+<p class="published" style="text-indent: 0px;">September 2020</p>
+<div class="lead" id="document_lead"><p style="text-align:center;">DRAFT REPORT - DO NOT CITE! 
+The COVID-19 pandemic is having far reaching-effects on all facets of our lives. The impact on education included school closures in Spring 2020 and a 2020-2021 academic school year that likely will look quite different from pre-pandemic times. Colorado, like all states, is currently grappling with uncertainty regarding the summative spring assessments and accountability systems built from the results. Student academic growth is a significant component of Colorado’s accountability system and the lack of Spring 2020 results has necessitated an investigation of what alternatives there are to the annual student academic growth calculations normally conducted.
+This report summarizes findings of an investigation of using skip-year growth as a substitute for the typical annual (i.e., one-year) student growth calculation. To pursue this investigation, historical Colorado Measures of Academic Success (CMAS) data in ELA and Mathematics data was used in order to compare the SGPs derived from skip-year analyses (i.e., 2016 to 2018 and 2017 to 2019) versus one-year (non-skip year) analyses (i.e., 2017 to 2018 and 2018 to 2019). Comparisons between skip-year and one-year growth are examined at both the individual student level as well as the school level.
+At the individual student level there is, not surprisingly, a very high correlation (<span class="math inline"> ∼ 0.9</span>) between skip-year SGPs and one-year SGPs (when the student has both). A very high correlation, however, does not preclude the existence of large differences for a substantial number of students. This is the case where more than 20 percent of the students have skip-year and one year SGP differences that exceed 15 in magnitude.
+At the school level there is, again not surprisingly, a very high correlation (<span class="math inline"> ∼ 0.9</span>) between skip-year mean/median SGPs and one-year SGPs. However, the high correlation does mask approximately 10 percent of the schools whose mean/median SGP differs by 10 or more. The majority of schools demonstrating these large differences are elementary schools who have 4th grade SGPs when one-year SGPs are calculated but do not have 4th grade SGPs when skip-year SGPs are calculated because of the absence of a prior score. Thus, for those elementary schools, substantially different numbers of students are used to calculate the mean/median. As school grades are comprised of other quantities besides student growth, the overall impact on school grades is muted with only a handful of schools having their grades change using skip-year versus one-year student growth.
+As spring 2021 approaches and state summative assessments are scheduled to be given in Colorado, the historical growth analyses discussed in this report support several recommendations:</p></div>
+</div>
+
+<div class="content-node section"><!--SGPreport-->
+<!-- 
+This document was written by Damian Betebenner & Adam VanIwaarden for the State of Colorado Department of Education (CDE).
+
+    Original Draft:  September 8, 2020
+    Final Draft:     September 22, 202
+-->
+<div id="background" class="section level1">
+<h1><span class="header-section-number">1</span> Background</h1>
+<p>The COVID-19 pandemic is having far reaching-effects on all facets of our lives. The impact on education included school closures in Spring 2020 and a 2020-2021 academic school year that likely will look quite different from pre-pandemic times. Colorado, like all states, is currently grappling with uncertainty regarding the summative spring assessments and accountability systems built from the results. Student academic growth is a significant component of Colorado’s accountability system and the lack of Spring 2020 results has necessitated an investigation of what alternatives there are to the annual student academic growth calculations normally conducted.</p>
+<p>The most prominent alternative to the standard one-year student academic growth SGP utilized by Colorado is to calculate a two-year (skip-year) student academic growth SGP from 2019 to 2021. The first question to such a proposal is, “Can you do that?” The answer is easy in one sense and not so easy in another.</p>
+<ul>
+<li>In terms of performing the actual calculation, it is no more difficult to calculate skip-year growth than one-year growth. In fact, skip-year growth is often calculated in states where students skip a grade (grade 8 to 10 growth) or where students take an end-of-course test and the most immediate prior test is two years prior.</li>
+<li>Even though it is possible to calculate a skip-year growth quantity, it is not at all clear that it can be used in the manner that one-year growth is used in state accountability systems.</li>
+</ul>
+<p>Due to the many unknown aspects of school, testing, and accountability in the coming year, the best that any state can do at this point in time is to examine historical data in anticipation of different situations that might arise in 2021. This report is part of the due diligence being conducted by the Colorado Department of Education in preparation for Spring 2021.</p>
+<!-- HTML_Start -->
+<div class="breakboth">
+
+</div>
+<!-- LaTeX_Start
+\pagebreak
+LaTeX_End -->
+</div>
+<div id="data" class="section level1">
+<h1><span class="header-section-number">2</span> Data</h1>
+<p>Colorado has extensive historical state summative assessment data from the <a href="http://www.cde.state.co.us/assessment/cmas">Colorado Measures of Academic Success (CMAS)</a> in English language arts and mathematics for grades 3 to 8 to examine how skip-year growth and one-year growth are related. To do so we calculated skip-year growth for 2019 (using 2017 and 2016 as priors) and for 2018 (using 2016 and 2015 as priors). These skip-year growth quantities were then merged into files containing one-year SGPs permitting the comparison of skip-year and one-year growth at the individual level and, when aggregated by school, at the school level.</p>
+<p>Table 1 provides frequencies associated with student skip-year and one-year SGP counts by year, content area, and grade. The most important aspect of Table 1 is the fact that there are no 4<sup>th</sup> grade skip-year SGPs. This is due to the fact that there exists no prior score with which to calculate growth with since there is no grade 2 exam. The absence of 4<sup>th</sup> grade SGPs has a significant impact on comparisons done at the elementary school level. Since one-year growth summaries (mean or median) can include the 4<sup>th</sup> grade SGPs, one-year to skip-year comparisons for elementary schools are not well aligned (using all growth data) since different grades exist. We discuss this issue later and supplement analyses at the school level based upon only students having both a one-year and skip-year SGP.</p>
+<!-- HTML_Start -->
+<table class="gmisc_table breakboth" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
+<thead>
+<tr>
+<td colspan="9" style="text-align: left;">
+<strong>Table 1:</strong> No-skip and Skip-year SGP counts and percentages for 2019 by content area and grade.
+</td>
+</tr>
+<tr>
+<th colspan="3" style="font-weight: 900; border-top: 2px solid grey; text-align: center;">
+</th>
+<th style="border-top: 2px solid grey;; border-bottom: hidden;">
+ 
+</th>
+<th colspan="2" style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;">
+No Skip
+</th>
+<th style="border-top: 2px solid grey;; border-bottom: hidden;">
+ 
+</th>
+<th colspan="2" style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;">
+Skip Year
+</th>
+</tr>
+<tr>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Content Area
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Grade
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Total Students
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;" colspan="1">
+ 
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Count
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Percent
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;" colspan="1">
+ 
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Count
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Percent
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">
+ELA
+</td>
+<td style="text-align: right;">
+4
+</td>
+<td style="text-align: right;">
+60,483
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+57,016
+</td>
+<td style="text-align: right;">
+94.3
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+–
+</td>
+<td style="text-align: right;">
+–
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+5
+</td>
+<td style="text-align: right;">
+63,129
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+59,069
+</td>
+<td style="text-align: right;">
+93.6
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+55,502
+</td>
+<td style="text-align: right;">
+87.9
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+6
+</td>
+<td style="text-align: right;">
+62,000
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+58,502
+</td>
+<td style="text-align: right;">
+94.4
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+55,099
+</td>
+<td style="text-align: right;">
+88.9
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+7
+</td>
+<td style="text-align: right;">
+60,066
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+56,384
+</td>
+<td style="text-align: right;">
+93.9
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+53,457
+</td>
+<td style="text-align: right;">
+89.0
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+8
+</td>
+<td style="text-align: right;">
+56,449
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+52,607
+</td>
+<td style="text-align: right;">
+93.2
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+50,131
+</td>
+<td style="text-align: right;">
+88.8
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+Mathematics
+</td>
+<td style="text-align: right;">
+4
+</td>
+<td style="text-align: right;">
+61,519
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+58,558
+</td>
+<td style="text-align: right;">
+95.2
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+–
+</td>
+<td style="text-align: right;">
+–
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+5
+</td>
+<td style="text-align: right;">
+63,210
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+60,182
+</td>
+<td style="text-align: right;">
+95.2
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+57,148
+</td>
+<td style="text-align: right;">
+90.4
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+6
+</td>
+<td style="text-align: right;">
+62,080
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+58,623
+</td>
+<td style="text-align: right;">
+94.4
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+55,873
+</td>
+<td style="text-align: right;">
+90.0
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+7
+</td>
+<td style="text-align: right;">
+60,137
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+56,444
+</td>
+<td style="text-align: right;">
+93.9
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+53,498
+</td>
+<td style="text-align: right;">
+89.0
+</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+8
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+56,461
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;" colspan="1">
+ 
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+51,699
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+91.6
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;" colspan="1">
+ 
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+50,172
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+88.9
+</td>
+</tr>
+</tbody>
+</table>
+<!-- LaTeX_Start
+%latex.default(my_tbl, file = "", where = where, col.just = tex.align,     caption = tmp_caption, ...)%
+\begin{table}[H]
+\caption{**Table 1:** No-skip and Skip-year SGP counts and percentages for 2019 by content area and grade.\label{my}} 
+\begin{center}
+\begin{tabular}{rrrcrrcrr}
+\hline\hline
+\multicolumn{3}{c}{\bfseries }&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries No Skip}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries Skip Year}\tabularnewline
+\cline{5-6} \cline{8-9}
+\multicolumn{1}{c}{Content Area}&\multicolumn{1}{c}{Grade}&\multicolumn{1}{c}{Total Students}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Count}&\multicolumn{1}{c}{Percent}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Count}&\multicolumn{1}{c}{Percent}\tabularnewline
+\hline
+ELA&4&60,483&&57,016&94.3&&  --  & -- \tabularnewline
+&5&63,129&&59,069&93.6&&55,502&87.9\tabularnewline
+&6&62,000&&58,502&94.4&&55,099&88.9\tabularnewline
+&7&60,066&&56,384&93.9&&53,457&89.0\tabularnewline
+&8&56,449&&52,607&93.2&&50,131&88.8\tabularnewline
+Mathematics&4&61,519&&58,558&95.2&&  --  & -- \tabularnewline
+&5&63,210&&60,182&95.2&&57,148&90.4\tabularnewline
+&6&62,080&&58,623&94.4&&55,873&90.0\tabularnewline
+&7&60,137&&56,444&93.9&&53,498&89.0\tabularnewline
+&8&56,461&&51,699&91.6&&50,172&88.9\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+LaTeX_End -->
+<!-- HTML_Start -->
+<table class="gmisc_table breakboth" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
+<thead>
+<tr>
+<td colspan="7" style="text-align: left;">
+<strong>Table 2:</strong> No-skip and Skip-year SGP counts and percentages for 2019 by content area and grade. VERSION 2
+</td>
+</tr>
+<tr>
+<th colspan="3" style="font-weight: 900; border-top: 2px solid grey; text-align: center;">
+</th>
+<th style="border-top: 2px solid grey;; border-bottom: hidden;">
+ 
+</th>
+<th colspan="1" style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;">
+No Skip
+</th>
+<th style="border-top: 2px solid grey;; border-bottom: hidden;">
+ 
+</th>
+<th colspan="1" style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;">
+Skip Year
+</th>
+</tr>
+<tr>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Content Area
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Grade
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Total Students
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;" colspan="1">
+ 
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Count (Percent)
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;" colspan="1">
+ 
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; text-align: right;">
+Count (Percent)
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">
+ELA
+</td>
+<td style="text-align: right;">
+4
+</td>
+<td style="text-align: right;">
+60,483
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+57,016 (94.3)
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+– (–)
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+5
+</td>
+<td style="text-align: right;">
+63,129
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+59,069 (93.6)
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+55,502 (87.9)
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+6
+</td>
+<td style="text-align: right;">
+62,000
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+58,502 (94.4)
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+55,099 (88.9)
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+7
+</td>
+<td style="text-align: right;">
+60,066
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+56,384 (93.9)
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+53,457 (89.0)
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+8
+</td>
+<td style="text-align: right;">
+56,449
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+52,607 (93.2)
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+50,131 (88.8)
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+Mathematics
+</td>
+<td style="text-align: right;">
+4
+</td>
+<td style="text-align: right;">
+61,519
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+58,558 (95.2)
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+– (–)
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+5
+</td>
+<td style="text-align: right;">
+63,210
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+60,182 (95.2)
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+57,148 (90.4)
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+6
+</td>
+<td style="text-align: right;">
+62,080
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+58,623 (94.4)
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+55,873 (90.0)
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+7
+</td>
+<td style="text-align: right;">
+60,137
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+56,444 (93.9)
+</td>
+<td style="text-align: right;" colspan="1">
+ 
+</td>
+<td style="text-align: right;">
+53,498 (89.0)
+</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+8
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+56,461
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;" colspan="1">
+ 
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+51,699 (91.6)
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;" colspan="1">
+ 
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+50,172 (88.9)
+</td>
+</tr>
+</tbody>
+</table>
+<!-- LaTeX_Start
+%latex.default(my_tbl, file = "", where = where, col.just = tex.align,     caption = tmp_caption, ...)%
+\begin{table}[H]
+\caption{**Table 2:** No-skip and Skip-year SGP counts and percentages for 2019 by content area and grade. VERSION 2\label{my}} 
+\begin{center}
+\begin{tabular}{rrrcrcr}
+\hline\hline
+\multicolumn{3}{c}{\bfseries }&\multicolumn{1}{c}{\bfseries }&\multicolumn{1}{c}{\bfseries No Skip}&\multicolumn{1}{c}{\bfseries }&\multicolumn{1}{c}{\bfseries Skip Year}\tabularnewline
+\cline{5-5} \cline{7-7}
+\multicolumn{1}{c}{Content Area}&\multicolumn{1}{c}{Grade}&\multicolumn{1}{c}{Total Students}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Count (Percent)}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Count (Percent)}\tabularnewline
+\hline
+ELA&4&60,483&&57,016 (94.3)&&   -- (--)   \tabularnewline
+&5&63,129&&59,069 (93.6)&&55,502 (87.9)\tabularnewline
+&6&62,000&&58,502 (94.4)&&55,099 (88.9)\tabularnewline
+&7&60,066&&56,384 (93.9)&&53,457 (89.0)\tabularnewline
+&8&56,449&&52,607 (93.2)&&50,131 (88.8)\tabularnewline
+Mathematics&4&61,519&&58,558 (95.2)&&   -- (--)   \tabularnewline
+&5&63,210&&60,182 (95.2)&&57,148 (90.4)\tabularnewline
+&6&62,080&&58,623 (94.4)&&55,873 (90.0)\tabularnewline
+&7&60,137&&56,444 (93.9)&&53,498 (89.0)\tabularnewline
+&8&56,461&&51,699 (91.6)&&50,172 (88.9)\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+LaTeX_End -->
+<p>In general, there are fewer students with a skip-year SGP (prior from two years ago) than a one-year SGP. For all grades and content areas for which both skip-year and one-year SGPs can exist, 87.2% of students having both a one-year and skip-year SGP. 6.6% of students have a one-year SGP but no skip-year SGP. Only 1.9% of students have a skip-year SGP but no one-year SGP. And 4.3% of students have neither.</p>
+<p>Overall, based upon counts, there is not any systematic under-representation of students that would the representativeness of the group of students used for skip-year growth calculations. For 2021, Table 3 should have an additional column added indicating counts for students with skip-year growth. If the values differ dramatically from those in 2019 then that would undermine claims about their representativeness. In the next section we investigate the results more thoroughly to determine whether skip-year growth can be used in lieu of one-year growth.</p>
+<!-- HTML_Start -->
+<div class="breakboth">
+
+</div>
+<!-- LaTeX_Start
+\pagebreak
+LaTeX_End -->
+</div>
+<div id="analyses-and-results" class="section level1">
+<h1><span class="header-section-number">3</span> Analyses and Results</h1>
+<p>Analyses were conducted for grades 4 to 8 for one-year SGPs and in grades 5 to 8 for skip-year SGPs in both ELA and mathematics for the 2019 CMAS administration. All analyses were conducted using the <a href="http://www.r-project.org/"><code>R</code> Software Environment</a> <span class="citation">(R Core Team, 2019)</span> in conjunction with the <a href="https://github.com/CenterForAssessment/SGP"><code>SGP</code> package</a> <span class="citation">(Betebenner, VanIwaarden, Domingue, &amp; Shang, 2020)</span>. Source code associated with one-year analyses is available at <a href="https://github.com/CenterForAssessment/Colorado">this link</a> and source code associated with skip-year analyses is available at <a href="https://github.com/CenterForAssessment/SGP_Research/tree/master/Colorado/Skip_Year_Analysis">this link</a>.</p>
+<p>As mentioned previously, both sets of analyses are considered “standard” and resulted in no warnings or errors during calculation. Goodness of fit plots associated with one-year and skip-year SGP analyses are provided in the appendix. In general, both one-year and skip-year SGP analyses yielded excellent data fit. This is consistent with the excellent fit of analyses run previously in Colorado. Goodness of fit plots for one-year and skip-year analyses 2019 for ELA and mathematics are available in Appendix A. Because percentiles are uniformly distributed, mean, median and standard deviation for one-year and skip-year SGPs are practically identical. In the following we discuss further results comparing one-year and skip-year SGPs at the individual level followed by results at the school level.</p>
+<div id="individual-level-results" class="section level2">
+<h2><span class="header-section-number">3.1</span> Individual Level Results</h2>
+<p>One-year and skip-year SGPs are quantify growth for students across different time spans. For one-year SGPs, the time span is a single year. For two-year SGPs the time span is two years. In general one would not communicate that a two-year SGP is the same as a one-year SGP because they quantify something over a different time span.</p>
+<p>As Colorado data analyses shows, however, the two quantities are highly similar. Correlations between one-year SGP and skip-year SGP by year, content area, and grade ranged between 0.83 and 0.91. This indicates that though the quantities are for different time spans, those students showing high or low growth across one of the time spans often showed the same across the other time span. The results are consistent with those found in all other states examined thus far.</p>
+<p>High correlations imply that the results demonstrate a strong linear relationship but do not imply that the results are identical or interchangeable. Looking at individual differences between skip-year and one-year SGPs for students having both quantities shows that in 2019 in ELA and mathematics for all grades approximately 20 percent of students showed differences between one-year and skip-year SGPs of at least 20 (or, equivalently, 80 percent had differences of less than 20). The results are not surprising in that an examination of student achievement scores over time show a substantial number of students whose scores have wide fluctuations. Dropping the most recent score from growth calculations when it was in fact very different will lead to highly discrepant SGPs.</p>
+<p>Lastly, we examined whether there are systematic differences in terms of student achievement between the group of students with one-year SGPs but not skip-year SGPs. Recall that students without a skip-year SGP are a small minority of students comprising approximately 5 percent of students in each grade and content area. In general, those students with no skip-year SGP (i.e., they do not have a prior from two-years earlier) were lower achieving (z-score approximately -0.5 versus a z-score of 0.0 for all students). However, despite being lower achieving on average students with no-skip year SGP didn’t display any meaningful differences in terms of their academic growth (i.e., SGPs). It is unclear what based upon the data provided whether there are systematic reasons for these students to not have a skip-year SGP (e.g., highly transient).</p>
+<p>At the individual student level, the proposition of reporting skip-year (i.e., two-year) student growth in lieu of one-year student growth would unnecessarily misrepresent what skip-year growth actually quantifies (growth over two years instead of a single year). The investigations carried out with historical Colorado data suggest that there’s a close relationship between the skip-year growth and one-year growth that could be used to draw inferences about what the one-year growth would be if the student tested in 2020. In general, however, skip-year growth is the most relevant and accessible indicator available and can serve many valuable investigative purposes apart from being a proxy for one-year growth.</p>
+</div>
+<div id="school-level-results" class="section level2">
+<h2><span class="header-section-number">3.2</span> School Level Results</h2>
+<p>Of most interest to states in their investigation of skip-year growth is how well skip-year growth and one-year growth compare when aggregated to the school level. Aggregation of SGPs to the school level is usually accomplished by taking the median or mean of the SGPs for the students attending the school in the given year in each content area. One critical difference in skip-year growth and one-year growth is the absence of SGPs for 4<sup>th</sup> grade students. A school with 4<sup>th</sup> graders would have student growth for those students included with one-year growth but would not be included with skip-year growth. Elementary schools comprising grades K-5 or K-6 would have between a third and a half of their students without skip-year growth when, previously, they had one year growth.</p>
+<p>Because of disparities caused due to the fact that one-year analyses included 4<sup>th</sup> grade growth and skip-year analyses didn’t, school level results were summarized in two ways:</p>
+<ol style="list-style-type: decimal">
+<li>Aggregates were calculated using all available skip-year and one-year growth scores.</li>
+<li>Aggregates were calculated using only students with <em>both</em> a skip-year and one-year growth score.</li>
+</ol>
+<p>The first method just takes the available growth scores (either skip-year or one-year) and calculates the mean/median from those. This method would include 4<sup>th</sup> grade one-year SGPs for schools but those same schools would not have skip-year growth for those students. The second method filters students to only those with both a one-year and skip-year SGP. This method omits 4<sup>th</sup> graders since they do not have a skip-year SGP.</p>
+<p>Like with individual level results, correlations at the school level between one-year and skip-year median SGPs are very high. Table 3 reports the correlations (filtering on schools with 10 or more students) which approach 0.95 based upon approximately 1,500 Colorado schools. The results demonstrate that those schools with high median one-year SGPs predominantly have high median skip-year SGPs and vice-versa. Though not reported, similarly high correlations are observed at the district level as well as the classroom level.</p>
+<!-- HTML_Start -->
+<table class="gmisc_table breakboth" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
+<thead>
+<tr>
+<td colspan="3" style="text-align: left;">
+<strong>Table 3:</strong> School level correlations between median SGPs with unfiltered and filtered students.
+</td>
+</tr>
+<tr>
+<th style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;">
+Content Area
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;">
+All Students
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;">
+Skip Subset
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">
+ELA
+</td>
+<td style="text-align: right;">
+0.84
+</td>
+<td style="text-align: right;">
+0.89
+</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+Mathematics
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+0.83
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+0.88
+</td>
+</tr>
+</tbody>
+</table>
+<!-- LaTeX_Start
+%latex.default(my_tbl, file = "", where = where, col.just = tex.align,     caption = tmp_caption, ...)%
+\begin{table}[H]
+\caption{**Table 3:** School level correlations between median SGPs with unfiltered and filtered students.\label{my}} 
+\begin{center}
+\begin{tabular}{rrr}
+\hline\hline
+\multicolumn{1}{c}{Content Area}&\multicolumn{1}{c}{All Students}&\multicolumn{1}{c}{Skip Subset}\tabularnewline
+\hline
+ELA&0.84&0.89\tabularnewline
+Mathematics&0.83&0.88\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+LaTeX_End -->
+<p>Like at the individual level, a high correlation does not imply the quantities are identical or interchangeable. Absolute differences between median SGPs were calculated for schools to examine the average magnitude of difference between one-year median SGP and skip-year median SGP. Table 4 reports differences in school median SGP for all students and those students with both a skip-year and one-year SGP. On average the differences are small. However, as the 95th percentile shows, 5 percent of the school have report differences in median skip-year and one-year SGPs of nearly 7 in ELA and more than 9 in mathematics. From a practical standpoint, differences of more than 5 are associated with a small effect size. Moreover, a difference of 5 or more is likely to have some impact on the accountability designation that figures into the larger school rating. Overall, the differences are neither insignificant nor egregious.</p>
+<!-- HTML_Start -->
+<table class="gmisc_table breakboth" style="border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;">
+<thead>
+<tr>
+<td colspan="5" style="text-align: left;">
+<strong>Table 4:</strong> School level skip-year to one-year median and 95th percentile absolute differences.
+</td>
+</tr>
+<tr>
+<th style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;">
+Filter
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;">
+Content Area
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;">
+Median Difference
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;">
+95%ile Difference
+</th>
+<th style="font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: right;">
+N
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">
+All Students
+</td>
+<td style="text-align: right;">
+ELA
+</td>
+<td style="text-align: right;">
+2.87
+</td>
+<td style="text-align: right;">
+10.53
+</td>
+<td style="text-align: right;">
+1,448
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+</td>
+<td style="text-align: right;">
+Mathematics
+</td>
+<td style="text-align: right;">
+3.02
+</td>
+<td style="text-align: right;">
+13.08
+</td>
+<td style="text-align: right;">
+1,448
+</td>
+</tr>
+<tr>
+<td style="text-align: right;">
+Skip Subset
+</td>
+<td style="text-align: right;">
+ELA
+</td>
+<td style="text-align: right;">
+2.49
+</td>
+<td style="text-align: right;">
+8.71
+</td>
+<td style="text-align: right;">
+1,410
+</td>
+</tr>
+<tr>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+Mathematics
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+2.89
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+10.76
+</td>
+<td style="border-bottom: 2px solid grey; text-align: right;">
+1,409
+</td>
+</tr>
+</tbody>
+</table>
+<!-- LaTeX_Start
+%latex.default(my_tbl, file = "", where = where, col.just = tex.align,     caption = tmp_caption, ...)%
+\begin{table}[H]
+\caption{**Table 4:** School level skip-year to one-year median and 95th percentile absolute differences.\label{my}} 
+\begin{center}
+\begin{tabular}{rrrrr}
+\hline\hline
+\multicolumn{1}{c}{Filter}&\multicolumn{1}{c}{Content Area}&\multicolumn{1}{c}{Median Difference}&\multicolumn{1}{c}{95\%ile Difference}&\multicolumn{1}{c}{N}\tabularnewline
+\hline
+&&&&\tabularnewline
+All Students&ELA&2.87&10.53&1,448\tabularnewline
+&Mathematics&3.02&13.08&1,448\tabularnewline
+\hline
+&&&&\tabularnewline
+Skip Subset&ELA&2.49& 8.71&1,410\tabularnewline
+&Mathematics&2.89&10.76&1,409\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+LaTeX_End -->
+<p>School level differences like student level differences were, on average, minor. There were, however, numerous schools with skip-year/one-year differences that were not minor and would possibly lead to a different accountability determination. We are currently working with the Colorado Department of Education to re-run 2019 accountability calculations to determine the impact on school grades of using skip-year growth in place of one-year growth. Those results will be added to this report as soon as they become available.</p>
+<!-- HTML_Start -->
+<div class="breakboth">
+
+</div>
+<!-- LaTeX_Start
+\pagebreak
+LaTeX_End -->
+</div>
+</div>
+<div id="summary" class="section level1">
+<h1><span class="header-section-number">4</span> Summary</h1>
+<p>The analyses conducted in the report investigate whether skip-year SGPs can be used in place of the standard one-year SGPs. The report discussed three potential issues:</p>
+<ul>
+<li>Are the students with skip-year SGPs systematically different than those with one-year SGPs?</li>
+<li>Are the one-year SGPs systematically different than the skip-year SGPs at the individual level?</li>
+<li>Are the one-year SGPs systematically different than the skip-year SGPs when aggregated to the school level?</li>
+</ul>
+<p>For all the questions the answer is no. However, that is not to say that there weren’t differences worth considering for a minority of students and schools. The results produced by these analyses do not disqualify the use of skip-year growth in lieu of one-year growth. However, they also do not qualify their use as well. Moreover, because the results here are generated from historical data derived under “usual” educational circumstances, the current far from usual circumstances are likely to result in deviations that exceed what is reported here. Without confirmation in 2021 that skip-year deviations are no larger than they were historically, it seems imprudent at this point in time to confirm the use of skip-year growth for business as usual accountability.</p>
+<p>Beyond the technical characteristics of skip-year growth lie numerous practical and political considerations on the use of skip-year growth for accountability. As Colorado approaches 2021 any decisions related to student testing and accountability will require some technical considerations but much more practical and political calculation to determine the best course going forward.</p>
+<p>Assuming testing does occur in some form in 2021, it is highly recommended that growth be calculated regardless of whether it is used for accountability. There are numerous, valuable inquiries that can be addressed with skip-year SGPs available including:</p>
+<ul>
+<li>What was the overall impact on student learning in the state of Colorado due to COVID-19?</li>
+<li>What demographic subgroups fared best and which demographic subgroups fared most poorly in term of learning during the COVID-19 pandemic?</li>
+<li>Are there COVID-19 related instructional approaches that led to greater student learning than others? If so, what were they and how much more learning were they associated with?</li>
+</ul>
+<p>Critical to the investigation of COVID-19 related learning loss will be accurate data on COVID-19 related education programs that students were assigned to. Having these data available will allow the Colorado Department of Education to fully take advantage of their student growth data and enlighten stakeholders around the state as to what has occurred due to the COVID-19 pandemic.</p>
+<!-- HTML_Start -->
+<div class="breakboth">
+
+</div>
+<!-- LaTeX_Start
+\pagebreak
+LaTeX_End -->
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references">
+<div id="ref-sgp2020">
+<p>Betebenner, D. W., VanIwaarden, A., Domingue, B., &amp; Shang, Y. (2020). <em>SGP: Student growth percentiles &amp; percentile growth trajectories.</em> Retrieved from <a href="sgp.io">sgp.io</a></p>
+</div>
+<div id="ref-Rsoftware">
+<p>R Core Team. (2019). <em><span class="upright"><span class="sans-serif">R</span></span>: A language and environment for statistical computing</em>. Vienna, Austria: R Foundation for Statistical Computing. Retrieved from <a href="http://www.R-project.org">http://www.R-project.org</a></p>
+</div>
+</div>
+</div></div>
+
+</div>
+
+
+
+</body>
+</html>
