@@ -1,6 +1,6 @@
 ---
 title: "Colorado Skip Year SGP Analyses"
-subtitle: "A Historical Complarison of the 2019 SGP Results"
+subtitle: "A Historical Comparison of the 2019 SGP Results"
 author:
   - name: Damian W. Betebenner
   - name: Adam R. VanIwaarden
@@ -17,7 +17,7 @@ abstract: "\\noindent DRAFT REPORT - DO NOT CITE! \\vspace{12pt} \\par The COVID
 This document was written by Damian Betebenner & Adam VanIwaarden for the State of Colorado Department of Education (CDE).
 
 	Original Draft:  September 8, 2020
-	Final Draft:     September 22, 202
+	Final Draft:     September X, 2020
 -->
 
 
@@ -31,6 +31,7 @@ This document was written by Damian Betebenner & Adam VanIwaarden for the State 
 	require(data.table)
 	require(Gmisc)
   require(htmlTable)
+	require(ggplot2)
 
   ##  Set Table, Figure and Equation Counters
   options(table_number=0)
@@ -75,13 +76,9 @@ prior test is two years prior.
 - Even though it is possible to calculate a skip-year growth quantity, it is not at all clear that it can be used in the manner that one-year growth
 is used in state accountability systems.
 
-Due to the many unknown aspects of school, testing, and accountability in the coming year, the best that any state can do at this point in time is
+\noindent Due to the many unknown aspects of school, testing, and accountability in the coming year, the best that any state can do at this point in time is
 to examine historical data in anticipation of different situations that might arise in 2021. This report is part of the due diligence being conducted by
 the Colorado Department of Education in preparation for Spring 2021.
-
-```{r, cache=FALSE, results="asis", echo=FALSE}
-	Literasee:::pageBreak()
-```
 
 
 #  Data
@@ -102,32 +99,42 @@ at the school level based upon only students having both a one-year and skip-yea
 
 ```{r, cache=TRUE, echo=FALSE, include=FALSE}
 	all.smry <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR=='2019' & GRADE %in% 4:8, list(
-									Mean_No_Skip = round(mean(NO_SKIP_SGP, na.rm = TRUE), 2),
-									SD_No_Skip = round(sd(NO_SKIP_SGP, na.rm = TRUE), 2),
-									Mean_Skip = round(mean(SGP, na.rm = TRUE), 2),
-									SD_Skip = round(sd(SGP, na.rm = TRUE), 2),
-									SGP_Corr = round(cor(NO_SKIP_SGP, SGP, use="pairwise.complete"), 3),
+									Mean_Consecutive = round(mean(NO_SKIP_SGP, na.rm = TRUE), 1),
+									SD_Consecutive = round(sd(NO_SKIP_SGP, na.rm = TRUE), 1),
+									Mean_Skip = round(mean(SGP, na.rm = TRUE), 1),
+									SD_Skip = round(sd(SGP, na.rm = TRUE), 1),
+									SGP_Correlation = round(cor(NO_SKIP_SGP, SGP, use="pairwise.complete"), 2),
 									Total_Students = .N,
-									No_Skip_Count = sum(!is.na(NO_SKIP_SGP)),
+									Consecutive_Count = sum(!is.na(NO_SKIP_SGP)),
 									Skip_Count = sum(!is.na(SGP))), keyby = list(CONTENT_AREA, GRADE)]
-	all.smry[, Difference := Skip_Count - No_Skip_Count]
-	all.smry[, Pct_No_Skip := round((No_Skip_Count/Total_Students)*100, 1)]
+	all.smry[, Difference := Skip_Count - Consecutive_Count]
+	all.smry[, Pct_Consecutive := round((Consecutive_Count/Total_Students)*100, 1)]
 	all.smry[, Pct_Skip := round((Skip_Count/Total_Students)*100, 1)]
-	all.smry[, Difference_Pct := Pct_Skip - Pct_No_Skip]
+	all.smry[, Difference_Pct := Pct_Skip - Pct_Consecutive]
 	
 	all.counts <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR=='2019' & GRADE %in% 5:8, list( # only 5-8 -- possible to get both
 									Total_Students = .N,
-									No_Skip_Count = sum(!is.na(NO_SKIP_SGP)),
+									Consecutive_Count = sum(!is.na(NO_SKIP_SGP)),
 									Skip_Count = sum(!is.na(SGP)),
 									Both = sum(!is.na(NO_SKIP_SGP) & !is.na(SGP)),
 									Neither = sum(is.na(NO_SKIP_SGP) & is.na(SGP)),
-									No_Skip_x_Skip = sum(!is.na(NO_SKIP_SGP) & is.na(SGP)),
-									Skip_x_No_Skip = sum(!is.na(SGP) & is.na(NO_SKIP_SGP)))]
+									Consecutive_x_Skip = sum(!is.na(NO_SKIP_SGP) & is.na(SGP)),
+									Skip_x_Consecutive = sum(!is.na(SGP) & is.na(NO_SKIP_SGP)))]
 	both.pct <- round((all.counts$Both/all.counts$Total_Students)*100, 1)
 	neither.pct <- round((all.counts$Neither/all.counts$Total_Students)*100, 1)
-	no_skip.pct <- round((all.counts$No_Skip_x_Skip/all.counts$Total_Students)*100, 1)
-	skip.pct <- round((all.counts$Skip_x_No_Skip/all.counts$Total_Students)*100, 1)
-	# both.pct + neither.pct + no_skip.pct + skip.pct # shoul = ~100
+	Consecutive.pct <- round((all.counts$Consecutive_x_Skip/all.counts$Total_Students)*100, 1)
+	skip.pct <- round((all.counts$Skip_x_Consecutive/all.counts$Total_Students)*100, 1)
+	# both.pct + neither.pct + Consecutive.pct + skip.pct # should = ~100
+	
+	Colorado_Data[, SCALE_SCORE_STANDARDIZED := scale(SCALE_SCORE), by=c("CONTENT_AREA", "GRADE")]
+	missing <- Colorado_Data[is.na(SGP) & !is.na(NO_SKIP_SGP) & GRADE!="4" & CONTENT_AREA %in% c("ELA", "MATHEMATICS"), 
+													 list(SCALE_SCORE_STANDARDIZED, NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, NO_SKIP_SGP, CONTENT_AREA, GRADE)]
+	missing.smry <- missing[, list(
+													Mean_SS = mean(SCALE_SCORE_STANDARDIZED, na.rm = TRUE),
+													Mean_SS_Prior = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm = TRUE),
+													Mean_SGP = mean(NO_SKIP_SGP, na.rm = TRUE),
+													N = .N)]#, keyby = c("CONTENT_AREA", "GRADE")]
+	
 ```
 
 ```{r, results='asis', echo=FALSE, SGP_Counts}
@@ -135,7 +142,7 @@ at the school level based upon only students having both a one-year and skip-yea
 	SGP_Counts$CONTENT_AREA <- sapply(SGP_Counts$CONTENT_AREA, capwords, USE.NAMES=FALSE)
 	SGP_Counts$CONTENT_AREA[duplicated(SGP_Counts$CONTENT_AREA)] <- ""
 	SGP_Counts[, Total_Students := prettyNum(Total_Students, preserve.width = "individual", big.mark=',')]
-	SGP_Counts[, No_Skip_Count := prettyNum(No_Skip_Count, preserve.width = "individual", big.mark=',')]
+	SGP_Counts[, Consecutive_Count := prettyNum(Consecutive_Count, preserve.width = "individual", big.mark=',')]
 	SGP_Counts[, Skip_Count := prettyNum(Skip_Count, preserve.width = "individual", big.mark=',')]
 	setcolorder(SGP_Counts, c(1:4, 6, 5, 7))
 	
@@ -148,44 +155,40 @@ at the school level based upon only students having both a one-year and skip-yea
 
   cat(dualTable(SGP_Counts, 
   	align=paste(rep('r', ncol(SGP_Counts)), collapse=''),
-		n.cgroup=c(3, 2, 2), cgroup=c("", "No Skip", "Skip Year"),
+		n.cgroup=c(3, 2, 2), cgroup=c("", "Consecutive", "Skip Year"),
 		caption='No-skip and Skip-year SGP counts and percentages for 2019 by content area and grade.'))
 ```
 
 ```{r, results='asis', echo=FALSE, SGP_Counts_Alt}
-	SGP_Counts <- all.smry[GRADE %in% 4:8, c(1:2, 8:10, 12:13)] # Percentages receiving SGPs
-	SGP_Counts$CONTENT_AREA <- sapply(SGP_Counts$CONTENT_AREA, capwords, USE.NAMES=FALSE)
-	SGP_Counts$CONTENT_AREA[duplicated(SGP_Counts$CONTENT_AREA)] <- ""
-	SGP_Counts[, Total_Students := prettyNum(Total_Students, preserve.width = "individual", big.mark=',')]
-	SGP_Counts[, `Count (Percent)` := 
-						 	paste0(prettyNum(No_Skip_Count, preserve.width = "individual", big.mark=','), " (", format(Pct_No_Skip, drop0Trailing = FALSE), ")")]
-	SGP_Counts[, ` Count (Percent)` := #  Need leading space in name to keep seperate...
-						 	paste0(prettyNum(Skip_Count, preserve.width = "individual", big.mark=','), " (", format(Pct_Skip, drop0Trailing = FALSE), ")")]
-	SGP_Counts[, c("No_Skip_Count", "Skip_Count", "Pct_No_Skip", "Pct_Skip" ) := NULL]
-	row.names(SGP_Counts) <- NULL
-	setnames(SGP_Counts, sapply(names(SGP_Counts), capwords, USE.NAMES=FALSE))
-	SGP_Counts <- as.matrix(SGP_Counts)
-	SGP_Counts[which(SGP_Counts=="0 ( 0.0)")] <- '   -- (--)   '
+	# SGP_Counts <- all.smry[GRADE %in% 4:8, c(1:2, 8:10, 12:13)] # Percentages receiving SGPs
+	# SGP_Counts$CONTENT_AREA <- sapply(SGP_Counts$CONTENT_AREA, capwords, USE.NAMES=FALSE)
+	# SGP_Counts$CONTENT_AREA[duplicated(SGP_Counts$CONTENT_AREA)] <- ""
+	# SGP_Counts[, Total_Students := prettyNum(Total_Students, preserve.width = "individual", big.mark=',')]
+	# SGP_Counts[, `Count (Percent)` := 
+	# 					 	paste0(prettyNum(Consecutive_Count, preserve.width = "individual", big.mark=','), " (", format(Pct_Consecutive, drop0Trailing = FALSE), ")")]
+	# SGP_Counts[, ` Count (Percent)` := #  Need leading space in name to keep seperate...
+	# 					 	paste0(prettyNum(Skip_Count, preserve.width = "individual", big.mark=','), " (", format(Pct_Skip, drop0Trailing = FALSE), ")")]
+	# SGP_Counts[, c("Consecutive_Count", "Skip_Count", "Pct_Consecutive", "Pct_Skip" ) := NULL]
+	# row.names(SGP_Counts) <- NULL
+	# setnames(SGP_Counts, sapply(names(SGP_Counts), capwords, USE.NAMES=FALSE))
+	# SGP_Counts <- as.matrix(SGP_Counts)
+	# SGP_Counts[which(SGP_Counts=="0 ( 0.0)")] <- '   -- (--)   '
 
-  cat(dualTable(SGP_Counts, 
-  	align=paste(rep('r', ncol(SGP_Counts)), collapse=''),
-		n.cgroup=c(3, 1, 1), cgroup=c("", "No Skip", "Skip Year"),
-		caption='No-skip and Skip-year SGP counts and percentages for 2019 by content area and grade. VERSION 2'))
+  # cat(dualTable(SGP_Counts, 
+  	# align=paste(rep('r', ncol(SGP_Counts)), collapse=''),
+		# n.cgroup=c(3, 1, 1), cgroup=c("", "Consecutive", "Skip Year"),
+		# caption='No-skip and Skip-year SGP counts and percentages for 2019 by content area and grade. VERSION 2'))
 ```
 
 
 In general, there are fewer students with a skip-year SGP (prior from two years ago) than a one-year SGP. For all grades and content areas for which
-both skip-year and one-year SGPs can exist, `r both.pct`% of students having both a one-year and skip-year SGP. `r no_skip.pct`% of students have a
+both skip-year and one-year SGPs can exist, `r both.pct`% of students having both a one-year and skip-year SGP. `r Consecutive.pct`% of students have a
 one-year SGP but no skip-year SGP. Only `r skip.pct`% of students have a skip-year SGP but no one-year SGP. And `r neither.pct`% of students have neither.
 
 Overall, based upon counts, there is not any systematic under-representation of students that would the representativeness of the group of students
 used for skip-year growth calculations. For 2021, Table `r tblNum(1)` should have an additional column added indicating counts for students with
 skip-year growth. If the values differ dramatically from those in 2019 then that would undermine claims about their representativeness. In
 the next section we investigate the results more thoroughly to determine whether skip-year growth can be used in lieu of one-year growth.
-
-```{r, cache=FALSE, results="asis", echo=FALSE}
-	Literasee:::pageBreak()
-```
 
 
 #  Analyses and Results
@@ -210,8 +213,27 @@ quantify something over a different time span.
 
 As Colorado data analyses shows, however, the two quantities are highly similar. Correlations between one-year SGP and skip-year SGP by year,
 content area, and grade ranged between `r round(min(all.smry$SGP_Corr, na.rm=TRUE), 2)`  and `r round(max(all.smry$SGP_Corr, na.rm=TRUE), 2)`. 
-This indicates that though the quantities are for different time spans, those students showing high or low growth across one of the time spans 
-often showed the same across the other time span. The results are consistent with those found in all other states examined thus far.
+This indicates that though the quantities are for different time spans, those students showing high or low growth across one of the time spans often showed the same across the other time span. The mean and standard deviation of SGPs at the individual level is also similar for the analyses, 
+as shown in Table `r tblNum(1)`.  These results are consistent with those found in all other states examined thus far.
+
+```{r, results='asis', echo=FALSE, SGP_Indv_Coors}
+	SGP_Corrs <- all.smry[GRADE %in% 4:8, c(1,2, 7, 3:6)] # Means/SDs/Cors
+	SGP_Corrs$CONTENT_AREA <- sapply(SGP_Corrs$CONTENT_AREA, capwords, USE.NAMES=FALSE)
+	SGP_Corrs$CONTENT_AREA[duplicated(SGP_Corrs$CONTENT_AREA)] <- ""
+	# SGP_Corrs[, Total_Students := prettyNum(Total_Students, preserve.width = "individual", big.mark=',')]
+
+	row.names(SGP_Corrs) <- NULL
+	setnames(SGP_Corrs, sapply(gsub("_Consecutive|_Skip", "", names(SGP_Corrs)), capwords))
+
+	SGP_Corrs <- as.matrix(SGP_Corrs)
+	SGP_Corrs[which(is.na(SGP_Corrs))] <- ' --  '
+
+  cat(dualTable(SGP_Corrs, 
+  	align=paste(rep('r', ncol(SGP_Corrs)), collapse=''),
+		n.cgroup=c(3, 2, 2), cgroup=c("", "Consecutive", "Skip Year"),
+		caption='No-skip and Skip-year SGP correlation and mean/standard deviations for 2019 by content area and grade.'))
+```
+
 
 High correlations imply that the results demonstrate a strong linear relationship but do not imply that the results are identical or interchangeable.
 Looking at individual differences between skip-year and one-year SGPs for students having both quantities shows that in 2019 in ELA and mathematics
@@ -220,12 +242,13 @@ percent had differences of less than 20). The results are not surprising in that
 substantial number of students whose scores have wide fluctuations. Dropping the most recent score from growth calculations when it was in fact very
 different will lead to highly discrepant SGPs.
 
-Lastly, we examined whether there are systematic differences in terms of student achievement between the group of students with one-year SGPs but not
-skip-year SGPs. Recall that students without a skip-year SGP are a small minority of students comprising approximately 5 percent of students in each 
-grade and content area. In general, those students with no skip-year SGP (i.e., they do not have a prior from two-years earlier) were lower achieving
-(z-score approximately -0.5 versus a z-score of 0.0 for all students). However, despite being lower achieving on average students with no-skip year
-SGP didn't display any meaningful differences in terms of their academic growth (i.e., SGPs). It is unclear what based upon the data provided whether
-there are systematic reasons for these students to not have a skip-year SGP (e.g., highly transient).
+Lastly, we examined whether there are systematic differences in terms of student achievement between the group of students with one-year SGPs 
+but not skip-year SGPs. Recall that students without a skip-year SGP are a small minority of students comprising approximately 5 percent of 
+students in each grade and content area. In general, those students with no skip-year SGP (i.e., they do not have a prior from two-years earlier)
+were lower achieving (z-score approximately `r round(missing.smry$Mean_SS, 2)` versus a z-score of 0.0 for all students). However, despite being 
+lower achieving on average, these students did not display any meaningful differences in terms of their academic growth (i.e., mean SGP = 
+`r round(missing.smry$Mean_SGP, 2)`). It is unclear, based upon the data provided, whether there are systematic reasons for these students to not
+have a skip-year SGP (e.g., highly transient).
 
 At the individual student level, the proposition of reporting skip-year (i.e., two-year) student growth in lieu of one-year student growth would
 unnecessarily misrepresent what skip-year growth actually quantifies (growth over two years instead of a single year). The investigations carried
@@ -243,24 +266,19 @@ SGPs for 4<sup>th</sup> grade students. A school with 4<sup>th</sup> graders wou
 growth but would not be included with skip-year growth. Elementary schools comprising grades K-5 or K-6 would have between a third and a half of
 their students without skip-year growth when, previously, they had one year growth.
 
-Because of disparities caused due to the fact that one-year analyses included 4<sup>th</sup> grade growth and skip-year analyses didn't, school 
+Because of disparities caused due to the fact that one-year analyses included 4<sup>th</sup> grade growth and skip-year analyses did not, school 
 level results were summarized in two ways:
 
 1. Aggregates were calculated using all available skip-year and one-year growth scores.
 2. Aggregates were calculated using only students with *both* a skip-year and one-year growth score.
 
-The first method just takes the available growth scores (either skip-year or one-year) and calculates the mean/median from those. This method
-would include 4<sup>th</sup> grade one-year SGPs for schools but those same schools would not have skip-year growth for those students. The second
-method filters students to only those with both a one-year and skip-year SGP. This method omits 4<sup>th</sup> graders since they do not have a
-skip-year SGP.
+\noindent The first method just takes the available growth scores (either skip-year or one-year) and calculates the mean and standard 
+deviation from those. This method would include 4<sup>th</sup> grade one-year SGPs for schools but those same schools would not have skip-year 
+growth for those students. The second method filters students to only those with both a one-year and skip-year SGP. This method omits 4<sup>th</sup>
+graders since they do not have a skip-year SGP.
 
 
 ```{r, cache=TRUE, echo=FALSE, include=FALSE, School_Lev_Values}
-##  Calculate School Demographic percentages if not already done
-Colorado_Data[, PCT_SCHOOL_FRL := percent_demog(FREE_REDUCED_LUNCH_STATUS), by = c("YEAR", "CONTENT_AREA", "GRADE", "SCHOOL_NUMBER")]
-Colorado_Data[, PCT_SCHOOL_ELL := percent_demog(ELL_STATUS), by = c("YEAR", "CONTENT_AREA", "GRADE", "SCHOOL_NUMBER")]
-Colorado_Data[, PCT_SCHOOL_IEP := percent_demog(IEP_STATUS), by = c("YEAR", "CONTENT_AREA", "GRADE", "SCHOOL_NUMBER")]
-
 ##  Calculate Differences if not already done
 Colorado_Data[, DIFF := as.numeric(NA)]
 Colorado_Data[, DIFF := SGP - NO_SKIP_SGP]
@@ -268,103 +286,560 @@ Colorado_Data[, ABS_DIFF := as.numeric(NA)]
 Colorado_Data[, ABS_DIFF := abs(SGP - NO_SKIP_SGP)]
 
 ###   Calculate School Level Values
+sch.msgp <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na(SCHOOL_NUMBER),
+              list(
+                MEAN_NO_SKIP_SGP = mean(NO_SKIP_SGP, na.rm = TRUE),
+                MEAN_SKIP_SGP = mean(SGP, na.rm = TRUE),
+                MEAN_SCALE_SCORE_PRIOR_STANDARDIZED = mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
+                MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
+                COUNT_NO_SKIP_SGP = sum(!is.na(NO_SKIP_SGP)),
+                COUNT_SKIP_SGP = sum(!is.na(SGP)),
+                COUNT_TOTAL = .N),
+              keyby = c("CONTENT_AREA", "SCHOOL_NUMBER")][,DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP:=round(abs(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP), 2)]
+
 sch.msgp.x <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na(SCHOOL_NUMBER) & GRADE %in% 5:8,
               list(
                 MEAN_NO_SKIP_SGP = mean(NO_SKIP_SGP, na.rm = TRUE),
                 MEAN_SKIP_SGP = mean(SGP, na.rm = TRUE),
+                MEAN_SCALE_SCORE_PRIOR_STANDARDIZED = mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
+                MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
+                COUNT_NO_SKIP_SGP = sum(!is.na(NO_SKIP_SGP)),
+                COUNT_SKIP_SGP = sum(!is.na(SGP)),
                 COUNT_TOTAL = .N),
               keyby = c("CONTENT_AREA", "SCHOOL_NUMBER")][,DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP:=round(abs(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP), 2)]
 
-sch.msgp <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na(SCHOOL_NUMBER),
-              list(
-                MEAN_NO_SKIP_SGP = mean(NO_SKIP_SGP, na.rm = TRUE),
-                SD_NO_SKIP = sd(NO_SKIP_SGP, na.rm = TRUE),
-                MEAN_SKIP_SGP = mean(SGP, na.rm = TRUE),
-                SD_SKIP = sd(SGP, na.rm = TRUE),
-
-                COUNT_NO_SKIP = sum(!is.na(NO_SKIP_SGP)),
-                COUNT_SKIP = sum(!is.na(SGP)),
-                COUNT_TOTAL = .N,
-
-                MEAN_SCALE_SCORE = mean(SCALE_SCORE, na.rm=TRUE),
-                MEAN_SCALE_SCORE_PRIOR = mean(SCALE_SCORE_PRIOR, na.rm=TRUE),
-                MEAN_SCALE_SCORE_PRIOR_STANDARDIZED = mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
-                MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
-                PERCENT_FRED = PCT_SCHOOL_FRL[1],
-                PERCENT_ELL = PCT_SCHOOL_ELL[1],
-                PERCENT_IEP = PCT_SCHOOL_IEP[1]),
-              keyby = c("CONTENT_AREA", "SCHOOL_NUMBER")][,DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP:=round(abs(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP), 2)]
-
 ###   Calculate School Level Summaries
-
-sch.diff.x <- sch.msgp.x[COUNT_TOTAL > 9, list(
+sch.stat <- sch.msgp[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+    Mean_Consecutive = round(mean(MEAN_NO_SKIP_SGP, na.rm=TRUE), 1),
+    SD_Consecutive = round(sd(MEAN_NO_SKIP_SGP, na.rm=TRUE), 1),
+    Corr_Consecutive = round(cor(MEAN_NO_SKIP_SGP, MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
+    N_Consecutive = sum(!is.na(MEAN_NO_SKIP_SGP)), 
+    Mean_Skip = round(mean(MEAN_SKIP_SGP, na.rm=TRUE), 1),
+    SD_Skip = round(sd(MEAN_SKIP_SGP, na.rm=TRUE), 1),
+    Corr_Skip = round(cor(MEAN_SKIP_SGP, MEAN_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
+    N_Skip = sum(!is.na(MEAN_SKIP_SGP))), keyby = c("CONTENT_AREA")]
+sch.cor <- sch.msgp[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+    Skip_x_Consecutive = round(cor(MEAN_NO_SKIP_SGP, MEAN_SKIP_SGP, use="complete.obs"), 2), N = .N), keyby = c("CONTENT_AREA")]
+sch.diff <- sch.msgp[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
 		`Median Difference` = round(median(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP, na.rm=TRUE), 2),
 		`95%ile Difference`=round(quantile(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP, probs=0.95, na.rm=TRUE), 2), N = .N), keyby = c("CONTENT_AREA")]
 
-sch.cor.x <- sch.msgp.x[COUNT_TOTAL > 9, list(
-    Skip_x_No_Skip = round(cor(MEAN_NO_SKIP_SGP, MEAN_SKIP_SGP, use="complete.obs"), 2), N = .N), keyby = c("CONTENT_AREA")]
-
-sch.diff <- sch.msgp[COUNT_TOTAL > 9, list(
+sch.stat.x <- sch.msgp.x[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+    Mean_Consecutive = round(mean(MEAN_NO_SKIP_SGP, na.rm=TRUE), 1),
+    SD_Consecutive = round(sd(MEAN_NO_SKIP_SGP, na.rm=TRUE), 1),
+    Corr_Consecutive = round(cor(MEAN_NO_SKIP_SGP, MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
+    N_Consecutive = sum(!is.na(MEAN_NO_SKIP_SGP)), 
+    Mean_Skip = round(mean(MEAN_SKIP_SGP, na.rm=TRUE), 1),
+    SD_Skip = round(sd(MEAN_SKIP_SGP, na.rm=TRUE), 1),
+    Corr_Skip = round(cor(MEAN_SKIP_SGP, MEAN_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
+    N_Skip = sum(!is.na(MEAN_SKIP_SGP))), keyby = c("CONTENT_AREA")]
+sch.cor.x <- sch.msgp.x[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+    Skip_x_Consecutive = round(cor(MEAN_NO_SKIP_SGP, MEAN_SKIP_SGP, use="complete.obs"), 2), N = .N), keyby = c("CONTENT_AREA")]
+sch.diff.x <- sch.msgp.x[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
 		`Median Difference` = round(median(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP, na.rm=TRUE), 2),
 		`95%ile Difference`=round(quantile(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP, probs=0.95, na.rm=TRUE), 2), N = .N), keyby = c("CONTENT_AREA")]
-
-sch.cor <- sch.msgp[COUNT_TOTAL > 9, list(
-    Skip_x_No_Skip = round(cor(MEAN_NO_SKIP_SGP, MEAN_SKIP_SGP, use="complete.obs"), 2),
-    Prior_Ach_x_No_Skip = round(cor(MEAN_NO_SKIP_SGP, MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
-    Prior_Ach_x_Skip = round(cor(MEAN_SKIP_SGP, MEAN_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
-    PCT_FRL_x_No_Skip = round(cor(MEAN_NO_SKIP_SGP, PERCENT_FRED, use="complete.obs"), 2),
-    PCT_FRL_x_Skip = round(cor(MEAN_SKIP_SGP, PERCENT_FRED, use="complete.obs"), 2),
-    PCT_ELL_x_No_Skip = round(cor(MEAN_NO_SKIP_SGP, PERCENT_ELL, use="complete.obs"), 2),
-    PCT_ELL_x_Skip = round(cor(MEAN_SKIP_SGP, PERCENT_ELL, use="complete.obs"), 2),
-    PCT_SWD_x_No_Skip = round(cor(MEAN_NO_SKIP_SGP, PERCENT_IEP, use="complete.obs"), 2),
-    PCT_SWD_x_Skip = round(cor(MEAN_SKIP_SGP, PERCENT_IEP, use="complete.obs"), 2), N = .N), keyby = c("CONTENT_AREA")]
 
 n.schools <- prettyNum(roundUp(length(unique(sch.msgp$SCHOOL_NUMBER))), big.mark=',')
-
 ```
 
+Table `r tblNum(1)` shows basic descriptive statistics for school level growth and prior achievement.  Unlike when reporting SGPs at the individual level, when aggregating to the group level (e.g., school) the correlation between aggregate prior student achievement and aggregate growth is rarely zero. The correlation between prior student achievement and growth at the school level is a compelling descriptive statistic because it indicates whether students attending schools serving higher achieving students grow faster (on average) than those students attending schools serving lower achieving students. In traditional consecutive-year analyses, results from state analyses typically show a correlation between prior achievement of students associated with a current school (quantified as percent at/above proficient) and the mean SGP between 0.1 and 0.3 (although higher numbers have been observed in some states as well). That is, these results indicate that on average, students attending schools serving lower achieving students tend to demonstrate less exemplary growth than those attending schools serving higher achieving students.  Therefore, this relationship is a critical component to assessing the comparability between consecutive-year and skip-year analysis results.  
+
+Mean and standard deviations of the school mean SGPs (MSGPs) are provided for additional context and comparison.  All statistics in Table `r tblNum(1)` are restricted to schools with at least 10 students, and the measure of prior achievement used is the mean prior standardized scale score.
+
+
+```{r, results='asis', echo=FALSE, School_Lev_Stats}
+	tmp.tbl <- data.table(Filter = c("All Students", "", "Skip-Year Subset", ""), rbindlist(list(sch.stat, sch.stat.x)))
+	tmp.tbl[, N_Skip := NULL] # prettyNum(N_Skip, big.mark=',')]
+	tmp.tbl[, N_Consecutive := NULL] # prettyNum(N_Consecutive, big.mark=',')]
+	tmp.tbl[, CONTENT_AREA := sapply(CONTENT_AREA, capwords)]
+	setnames(tmp.tbl, sapply(gsub("_Consecutive|_Skip", "", names(tmp.tbl)), capwords))
+
+  cat(dualTable(as.matrix(tmp.tbl), 
+  	align=paste(rep('r', ncol(tmp.tbl)), collapse=''), n.rgroup=c(2, 2),
+  	n.cgroup=c(2, 3, 3), cgroup=c("", "Consecutive", "Skip Year"),
+		caption='School level mean and standard deviation of MSGPs, and correlation of MSGPs with mean prior achievement.'))
+```
+
+### School mean SGP correlations
 
 Like with individual level results, correlations at the school level between one-year and skip-year median SGPs are very high. Table `r tblNum(1)`
-reports the correlations (filtering on schools with 10 or more students) which approach 0.95 based upon approximately `r n.schools` Colorado schools.
+reports the correlations (restricted to schools with 10 or more students) which approach 0.9 based upon approximately `r n.schools` Colorado schools.
 The results demonstrate that those schools with high median one-year SGPs predominantly have high median skip-year SGPs and vice-versa. Though not
-reported, similarly high correlations are observed at the district level as well as the classroom level.
+reported, similarly high correlations are observed at the district level.
 
 ```{r, results='asis', echo=FALSE, School_Lev_Cors}
-	tmp.tbl <- data.table(`Content Area` = c("ELA", "Mathematics"), `All Students` = sch.cor$Skip_x_No_Skip, `Skip Subset` = sch.cor.x$Skip_x_No_Skip)
+	tmp.tbl <- data.table(`Content Area` = c("ELA", "Mathematics"), `All Students` = sch.cor$Skip_x_Consecutive, `Skip-Year Subset` = sch.cor.x$Skip_x_Consecutive)
 
   cat(dualTable(as.matrix(tmp.tbl), 
   	align=paste(rep('r', ncol(tmp.tbl)), collapse=''),
 		caption='School level correlations between median SGPs with unfiltered and filtered students.'))
 ```
 
+Figure `r getCounter("figure")+1` provides a visual representation of the school level MSGP correlations by content area and student inclusion filters. Bubble sizes are representative of school size, and the black diagonal line represents perfect correlation (i.e. no deviation).
+
+```{r, cache=TRUE, echo=FALSE, include=FALSE, Sch_Cor_Plots}
+  tmp.data <- rbindlist(list(sch.msgp[, Schools := "All Schools"], sch.msgp.x[, Schools := "Skip-Year Subset"]))
+  cor.sch <- tmp.data[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9 & !is.na(MEAN_SKIP_SGP), list(cors=round(cor(MEAN_NO_SKIP_SGP, MEAN_SKIP_SGP, use="complete.obs"), 2)), keyby=c("CONTENT_AREA", "Schools")]
+
+   p <- ggplot() + facet_grid(CONTENT_AREA ~ Schools) + coord_fixed(xlim=c(0,100), ylim=c(0, 100)) +
+		# ggtitle("Consecutive- and Skip-Year Mean SGP Relationship by Student Inclustion Filter") +
+							   	 theme(axis.title.x=element_text(size=15), axis.title.y=element_text(size=15), 
+   								 			 axis.text.x=element_text(size=12), axis.text.y=element_text(size=12))
+   
+   p <- p + geom_point(data = tmp.data[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9], 
+   										 aes(x = MEAN_SKIP_SGP, y = MEAN_NO_SKIP_SGP, size = COUNT_NO_SKIP_SGP), alpha = 0.25, colour="blue") +
+            scale_size_continuous(range = c(1,9)) # , shape=YEAR, color=YEAR
+
+   p <- p + theme(legend.position = "none") #  Needed when N size used for bubbles
+   p <- p + scale_x_continuous(name="School Mean SGP with Skip Year")
+   p <- p + scale_y_continuous(name="School Mean SGP Consecutive Year")
+   p <- p + geom_text(data=cor.sch, aes(label=paste("r = ", cors, sep="")), x = 75, y = 25, size = 4.0, colour = "red")
+   p <- p + geom_abline(slope=1, intercept = 0)
+   
+   ggsave(filename = paste("Plots/Skip_Year_SGP_Comp_SGP.pdf", sep=""), plot=p, device = "pdf", width = 7.5, height = 6, units = "in")
+```
+
+```{r, results="asis", echo=FALSE, Sch_Cor_Plot_Place}
+		placeFigure(
+			files = "./Plots/Skip_Year_SGP_Comp_SGP.pdf",
+			caption = "Consecutive- and Skip-Year Mean SGP by Content Area and Student Filter.") # , pdf.width = 0.925
+```
+
+
+### School mean SGP differences
+
 Like at the individual level, a high correlation does not imply the quantities are identical or interchangeable. Absolute differences between
 median SGPs were calculated for schools to examine the average magnitude of difference between one-year median SGP and skip-year median SGP. 
 Table `r tblNum(1)` reports differences in school median SGP for all students and those students with both a skip-year and one-year SGP. 
-On average the differences are small. However, as the 95th percentile shows, 5 percent of the school have report differences in median skip-year 
-and one-year SGPs of nearly 7 in ELA and more than 9 in mathematics. From a practical standpoint, differences of more than 5 are associated with 
-a small effect size. Moreover, a difference of 5 or more is likely to have some impact on the accountability designation that figures into the 
-larger school rating. Overall, the differences are neither insignificant nor egregious.
+On average the differences are small. However, as the 95<sup>th</sup> percentile shows, 5 percent of the school report differences in median
+skip-year and one-year SGPs of nearly 10 in ELA and more than 12 in mathematics. From a practical standpoint, differences of more than 5 are 
+associated with a small effect size. Moreover, a difference of 5 or more is likely to have some impact on the accountability designation that 
+figures into the larger school rating. Overall, the differences are neither insignificant nor egregious.
 
 ```{r, results='asis', echo=FALSE, School_Lev_Diffs}
-	tmp.tbl <- data.table(Filter = c("All Students", "", "Skip Subset", ""), rbindlist(list(sch.diff, sch.diff.x)))
-	tmp.tbl[, N := prettyNum(N, big.mark=',')]
+	tmp.tbl <- data.table(Filter = c("All Students", "", "Skip-Year Subset", ""), rbindlist(list(sch.diff, sch.diff.x)))
+	tmp.tbl[, N := NULL] # prettyNum(N, big.mark=',')]
 	tmp.tbl[, CONTENT_AREA := sapply(CONTENT_AREA, capwords)]
 	setnames(tmp.tbl, "CONTENT_AREA", "Content Area")
 
   cat(dualTable(as.matrix(tmp.tbl), 
-  	align=paste(rep('r', ncol(tmp.tbl)), collapse=''), n.rgroup=c(2, 2),
+  	align="rrcc", n.rgroup=c(2, 2), # align=paste(rep('r', ncol(tmp.tbl)), collapse='')
 		caption='School level skip-year to one-year median and 95th percentile absolute differences.'))
 ```
 
-School level differences like student level differences were, on average, minor. There were, however, numerous schools with skip-year/one-year
+School size is one significant driver of the differences in one- and skip-year mean SGPs.  Figure `r getCounter("figure")+1` provides a visual representation of the school level MSGP observed (*not absolute*) differences by content area and student inclusion filters.  In this plot, MSGP differences are defined as **skip-year MSGP *minus* one-year MSGP**, and therefore can be interpreted as positive numbers showing an increase in schools' MSGP when using skip-year calculations, and vice-versa. 
+
+```{r, cache=TRUE, echo=FALSE, include=FALSE, Sch_Diff_Plot}
+  # tmp.data[, Mean_Size := (COUNT_NO_SKIP_SGP + COUNT_SKIP_SGP)/2]
+  tmp.data[, Mean_Difference := round(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP, 2)] # NOT absolute
+
+  p <- ggplot() + facet_grid(CONTENT_AREA ~ Schools) + # coord_fixed(xlim=c(0,100), ylim=c(0, 100)) +
+   								 theme(axis.title.x=element_text(size=15), axis.title.y=element_text(size=15),
+   								 			 axis.text.x=element_text(size=12), axis.text.y=element_text(size=12)) # plot.title = element_text(size=18, face="bold.italic"), 
+
+  p <- p + geom_point(data = tmp.data[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9], aes(x = COUNT_NO_SKIP_SGP, y = Mean_Difference), size=3, alpha = 0.25, colour="blue")
+  p <- p + geom_hline(data = tmp.data[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9], aes(yintercept=0), colour="black", linetype="dashed")
+
+  # p <- p + theme(legend.position = "none")
+  p <- p + scale_x_continuous(name="School Size")
+  p <- p + scale_y_continuous(name="School Mean SGP Differences")
+   
+  ggsave(filename = "Plots/Skip_Year_SGP_Comp_Diff_x_N.pdf", plot=p, device = "pdf", width = 7, height = 5.5, units = "in")
+```
+
+```{r, results="asis", echo=FALSE, Sch_Diff_Plot_Place}
+		placeFigure(
+			files = "./Plots/Skip_Year_SGP_Comp_Diff_x_N.pdf",
+			caption = "Mean SGP Differences by Content Area and Student Inclusion Filter.") # , pdf.width = 0.925
+```
+
+School level differences like student level differences were, on average, minor. There were, however, numerous schools with one-year/skip-year
 differences that were not minor and would possibly lead to a different accountability determination. We are currently working with the Colorado
 Department of Education to re-run 2019 accountability calculations to determine the impact on school grades of using skip-year growth
 in place of one-year growth. Those results will be added to this report as soon as they become available.
 
+
+##  Demographic Subgroup Results
+
+
+```{r, cache=TRUE, echo=FALSE, include=FALSE, Demog_School_Values}
+##  Make ELL_STATUS more uniform
+# table(Colorado_Data[, YEAR, ELL_STATUS], exclude=NULL)
+Colorado_Data[ELL_STATUS %in% c("ELL: LEP", "ELL: NEP"), ELL_STATUS := "ELL: Yes"]
+Colorado_Data[ELL_STATUS != "ELL: Yes", ELL_STATUS := "ELL: No"]
+
+##  Calculate School Demographic percentages if not already done
+	Colorado_Data[, PCT_SCHOOL_FRL := percent_demog(FREE_REDUCED_LUNCH_STATUS), by = c("YEAR", "CONTENT_AREA", "GRADE", "SCHOOL_NUMBER")]
+	Colorado_Data[, PCT_SCHOOL_ELL := percent_demog(ELL_STATUS), by = c("YEAR", "CONTENT_AREA", "GRADE", "SCHOOL_NUMBER")]
+	Colorado_Data[, PCT_SCHOOL_IEP := percent_demog(IEP_STATUS), by = c("YEAR", "CONTENT_AREA", "GRADE", "SCHOOL_NUMBER")]
+
+# sch.frl.msgp <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na(SCHOOL_NUMBER) & FREE_REDUCED_LUNCH_STATUS != "Missing",
+#                   list(
+#                     MEAN_NO_SKIP_SGP = mean(NO_SKIP_SGP, na.rm = TRUE),
+#                     MEAN_SKIP_SGP = mean(SGP, na.rm = TRUE),
+#                     PERCENT_FRED = PCT_SCHOOL_FRL[1],
+#                     COUNT_NO_SKIP_SGP = sum(!is.na(NO_SKIP_SGP)),
+#                     COUNT_SKIP_SGP = sum(!is.na(SGP)),
+#                     MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED = round(mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE), 2),
+#                     MEAN_SCALE_SCORE_PRIOR_STANDARDIZED = round(mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE), 2)),
+#                   keyby = c("CONTENT_AREA", "FREE_REDUCED_LUNCH_STATUS", "SCHOOL_NUMBER")]
+# 
+# sch.frl.cor <- sch.frl.msgp[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+#     Skip_x_Consecutive = round(cor(MEAN_NO_SKIP_SGP, MEAN_SKIP_SGP, use="complete.obs"), 2),
+#     Corr_Consecutive = round(cor(MEAN_NO_SKIP_SGP, MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
+#     Corr_Skip = round(cor(MEAN_SKIP_SGP, MEAN_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
+#     PCT_FRL_x_Consecutive = round(cor(MEAN_NO_SKIP_SGP, PERCENT_FRED, use="complete.obs"), 2),
+#     PCT_FRL_x_Skip_Year = round(cor(MEAN_SKIP_SGP, PERCENT_FRED, use="complete.obs"), 2), N = .N), keyby = c("CONTENT_AREA", "FREE_REDUCED_LUNCH_STATUS")]
+
+###   Calculate School Level Values
+sch.demog.msgp <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na(SCHOOL_NUMBER),
+              list(
+                MEAN_NO_SKIP_SGP = mean(NO_SKIP_SGP, na.rm = TRUE),
+                MEAN_SKIP_SGP = mean(SGP, na.rm = TRUE),
+                MEAN_SCALE_SCORE_PRIOR_STANDARDIZED = mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
+                MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
+                COUNT_NO_SKIP_SGP = sum(!is.na(NO_SKIP_SGP)),
+                COUNT_SKIP_SGP = sum(!is.na(SGP)),
+                COUNT_TOTAL = .N,
+                PERCENT_FRED = PCT_SCHOOL_FRL[1],
+                PERCENT_ELL = PCT_SCHOOL_ELL[1],
+                PERCENT_IEP = PCT_SCHOOL_IEP[1]),
+              keyby = c("CONTENT_AREA", "SCHOOL_NUMBER")]#[,DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP:=round(abs(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP), 2)]
+
+sch.demog.msgp.x <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na(SCHOOL_NUMBER) & GRADE %in% 5:8,
+              list(
+                MEAN_NO_SKIP_SGP = mean(NO_SKIP_SGP, na.rm = TRUE),
+                MEAN_SKIP_SGP = mean(SGP, na.rm = TRUE),
+                MEAN_SCALE_SCORE_PRIOR_STANDARDIZED = mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
+                MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
+                COUNT_NO_SKIP_SGP = sum(!is.na(NO_SKIP_SGP)),
+                COUNT_SKIP_SGP = sum(!is.na(SGP)),
+                COUNT_TOTAL = .N,
+                PERCENT_FRED =PCT_SCHOOL_FRL[1],
+                PERCENT_ELL = PCT_SCHOOL_ELL[1],
+                PERCENT_IEP = PCT_SCHOOL_IEP[1]),
+              keyby = c("CONTENT_AREA", "SCHOOL_NUMBER")]#[,DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP:=round(abs(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP), 2)]
+
+###   Calculate School Level Summaries
+
+	sch.frl.cor <- sch.demog.msgp[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+  	  PCT_FRL_x_Consecutive = round(cor(MEAN_NO_SKIP_SGP, PERCENT_FRED, use="complete.obs"), 2),
+    	PCT_FRL_x_Skip_Year = round(cor(MEAN_SKIP_SGP, PERCENT_FRED, use="complete.obs"), 2)), keyby = c("CONTENT_AREA")]
+	sch.frl.cor.x <- sch.demog.msgp.x[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+  	  PCT_FRL_x_Consecutive = round(cor(MEAN_NO_SKIP_SGP, PERCENT_FRED, use="complete.obs"), 2),
+    	PCT_FRL_x_Skip_Year = round(cor(MEAN_SKIP_SGP, PERCENT_FRED, use="complete.obs"), 2)), keyby = c("CONTENT_AREA")]
+
+	sch.ell.cor <- sch.demog.msgp[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+  	  PCT_ELL_x_Consecutive = round(cor(MEAN_NO_SKIP_SGP, PERCENT_ELL, use="complete.obs"), 2),
+    	PCT_ELL_x_Skip_Year = round(cor(MEAN_SKIP_SGP, PERCENT_ELL, use="complete.obs"), 2)), keyby = c("CONTENT_AREA")]
+	sch.ell.cor.x <- sch.demog.msgp.x[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+  	  PCT_ELL_x_Consecutive = round(cor(MEAN_NO_SKIP_SGP, PERCENT_ELL, use="complete.obs"), 2),
+    	PCT_ELL_x_Skip_Year = round(cor(MEAN_SKIP_SGP, PERCENT_ELL, use="complete.obs"), 2)), keyby = c("CONTENT_AREA")]
+
+	sch.swd.cor <- sch.demog.msgp[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+  	  PCT_SWD_x_Consecutive = round(cor(MEAN_NO_SKIP_SGP, PERCENT_IEP, use="complete.obs"), 2),
+    	PCT_SWD_x_Skip_Year = round(cor(MEAN_SKIP_SGP, PERCENT_IEP, use="complete.obs"), 2)), keyby = c("CONTENT_AREA")]
+	sch.swd.cor.x <- sch.demog.msgp.x[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+  	  PCT_SWD_x_Consecutive = round(cor(MEAN_NO_SKIP_SGP, PERCENT_IEP, use="complete.obs"), 2),
+    	PCT_SWD_x_Skip_Year = round(cor(MEAN_SKIP_SGP, PERCENT_IEP, use="complete.obs"), 2)), keyby = c("CONTENT_AREA")]
+	
+###   Create data set for plots
+	plot.data <- rbindlist(list(sch.demog.msgp[, Schools := "All Schools"], sch.demog.msgp.x[, Schools := "Skip-Year Subset"]))
+  plot.data[, Mean_Difference := round(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP, 2)] # NOT absolute
+  cor.demog <- plot.data[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9 & !is.na(MEAN_SKIP_SGP), list(
+  										cors_frl=round(cor(Mean_Difference, PERCENT_FRED, use="complete.obs"), 2),
+  										cors_ell=round(cor(Mean_Difference, PERCENT_ELL, use="complete.obs"), 2),
+  										cors_swd=round(cor(Mean_Difference, PERCENT_IEP, use="complete.obs"), 2)), keyby=c("CONTENT_AREA", "Schools")]
+```
+
+
+### Free/Reduced Lunch Status
+
+```{r, cache=TRUE, echo=FALSE, include=FALSE, FRL_Indv_Values}
+###   Calculate Indiv/Group level values
+	frl.smry <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR=='2019' & GRADE %in% 5:8 & FREE_REDUCED_LUNCH_STATUS != "Missing", list(
+									Mean_Consecutive = round(mean(NO_SKIP_SGP, na.rm = TRUE), 1),
+									SD_Consecutive = round(sd(NO_SKIP_SGP, na.rm = TRUE), 1),
+									Mean_Skip = round(mean(SGP, na.rm = TRUE), 1),
+									SD_Skip = round(sd(SGP, na.rm = TRUE), 1),
+									SGP_Correlation = round(cor(NO_SKIP_SGP, SGP, use="pairwise.complete"), 2),
+									Total_Students = .N,
+									Consecutive_Count = sum(!is.na(NO_SKIP_SGP)),
+									Skip_Count = sum(!is.na(SGP))), keyby = list(CONTENT_AREA, FREE_REDUCED_LUNCH_STATUS)]
+	frl.smry[, Difference := Skip_Count - Consecutive_Count]
+	frl.smry[, Pct_Consecutive := round((Consecutive_Count/Total_Students)*100, 1)]
+	frl.smry[, Pct_Skip := round((Skip_Count/Total_Students)*100, 1)]
+	frl.smry[, Difference_Pct := Pct_Skip - Pct_Consecutive]
+```
+
+```{r, results='asis', echo=FALSE, FRL_Counts}
+	FRL_Counts <- frl.smry[, c(1:2, 8:10, 12:13)] # Percentages receiving SGPs
+	FRL_Counts$CONTENT_AREA <- sapply(FRL_Counts$CONTENT_AREA, capwords, USE.NAMES=FALSE)
+	FRL_Counts$CONTENT_AREA[duplicated(FRL_Counts$CONTENT_AREA)] <- ""
+	FRL_Counts[, Total_Students := prettyNum(Total_Students, preserve.width = "individual", big.mark=',')]
+	FRL_Counts[, Consecutive_Count := prettyNum(Consecutive_Count, preserve.width = "individual", big.mark=',')]
+	FRL_Counts[, Skip_Count := prettyNum(Skip_Count, preserve.width = "individual", big.mark=',')]
+	FRL_Counts[, FREE_REDUCED_LUNCH_STATUS := gsub("Free Reduced Lunch: ", "", FREE_REDUCED_LUNCH_STATUS)]
+
+	setcolorder(FRL_Counts, c(1:4, 6, 5, 7))
+	
+	row.names(FRL_Counts) <- NULL
+	setnames(FRL_Counts, c("Content Area", "FRL Status", "Total Students", "Count", "Percent", "Count", "Percent"))
+
+  cat(dualTable(as.matrix(FRL_Counts), 
+  	align=paste(rep('r', ncol(FRL_Counts)), collapse=''),
+		n.cgroup=c(3, 2, 2), cgroup=c("", "Consecutive", "Skip Year"),
+		caption='No-skip and Skip-year SGP counts and percentages for 2019 by content area and FRL Status'))
+```
+
+NOTE:  This excludes grade 4 - only counts/pct for those who *could* have received a skip-year SGP...
+
+```{r, results='asis', echo=FALSE, FRL_Indv_Coors}
+	FRL_Corrs <- frl.smry[, c(1,2, 7, 3:6)] # Means/SDs/Cors
+	FRL_Corrs$CONTENT_AREA <- sapply(FRL_Corrs$CONTENT_AREA, capwords, USE.NAMES=FALSE)
+	FRL_Corrs$CONTENT_AREA[duplicated(FRL_Corrs$CONTENT_AREA)] <- ""
+	FRL_Corrs[, FREE_REDUCED_LUNCH_STATUS := gsub("Free Reduced Lunch: ", "", FREE_REDUCED_LUNCH_STATUS)]
+
+	row.names(FRL_Corrs) <- NULL
+	setnames(FRL_Corrs, "FREE_REDUCED_LUNCH_STATUS", "FRL_STATUS")
+	setnames(FRL_Corrs, sapply(gsub("_Consecutive|_Skip", "", names(FRL_Corrs)), capwords, special.words=c("FRL", "SGP", "SD")))
+
+  cat(dualTable(as.matrix(FRL_Corrs), 
+  	align=paste(rep('r', ncol(FRL_Corrs)), collapse=''),
+		n.cgroup=c(3, 2, 2), cgroup=c("", "Consecutive", "Skip Year"),
+		caption='No-skip and Skip-year SGP correlation and mean/standard deviations for 2019 by content area and FRL Status'))
+```
+
+```{r, results='asis', echo=FALSE, Sch_Lev_FRL_Cors}
+	tmp.tbl <- data.table(Filter = c("All Students", "", "Skip-Year Subset", ""), rbindlist(list(sch.frl.cor, sch.frl.cor.x)))
+	tmp.tbl[, CONTENT_AREA := sapply(CONTENT_AREA, capwords)]
+	setnames(tmp.tbl, sapply(gsub("PCT_FRL_x_", "", names(tmp.tbl)), capwords))
+
+  cat(dualTable(as.matrix(tmp.tbl), 
+  	align=paste(rep('r', ncol(tmp.tbl)), collapse=''),
+		caption='School level correlations between median SGPs and percent FRL by student inclusion filter.'))
+```
+
+Figure `r getCounter("figure")+1` provides a visual representation of the school level MSGP differences as a function of school by content area and student inclusion filters. MSGP differences are defined as **skip-year MSGP *minus* one-year MSGP**, and therefore can be interpreted as positive numbers showing an increase in schools' MSGP when using skip-year calculations, and vice-versa. Bubble sizes are representative of school size, and the black line is a LOESS smoothing curve that depicts the moving average in the point distributions.
+
+```{r, cache=TRUE, echo=FALSE, include=FALSE, FRL_Cor_Plots}
+   p <- ggplot() + facet_grid(CONTENT_AREA ~ Schools) + # coord_fixed(xlim=c(0,100), ylim=c(0, 100)) +
+							   	 theme(axis.title.x=element_text(size=15), axis.title.y=element_text(size=15), 
+   								 			 axis.text.x=element_text(size=12), axis.text.y=element_text(size=12))
+   
+   p <- p + geom_point(data = plot.data[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9], 
+   										aes(x = PERCENT_FRED, y = Mean_Difference, size = COUNT_NO_SKIP_SGP), alpha = 0.25, colour="blue") +
+            scale_size_continuous(range = c(1, 9)) # , shape=YEAR, color=YEAR
+   p <- p + geom_smooth(data = plot.data[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9], 
+   										 aes(x = PERCENT_FRED, y = Mean_Difference), method = "loess", se=FALSE, colour="black")
+   p <- p + geom_text(data=cor.demog, aes(label=paste("r = ", cors_frl, sep="")), x = 12, y = -15.5, size = 4.0, colour = "red")
+
+   p <- p + theme(legend.position = "none") #  Needed when N size used for bubbles
+   p <- p + scale_x_continuous(name="School Percent FRL Eligible")
+   p <- p + scale_y_continuous(name="School Mean SGP Differences")
+
+	ggsave(filename = paste("Plots/Skip_Year_SGP_Comp_SGP_x_FRL.pdf", sep=""), plot=p, device = "pdf", width = 7.5, height = 6, units = "in")
+```
+
+```{r, results="asis", echo=FALSE, FRL_Diff_Plot_Place}
+		placeFigure(
+			files = "./Plots/Skip_Year_SGP_Comp_SGP_x_FRL.pdf",
+			caption = "Mean SGP Difference by Percent FRL by Content Area and Student Inclusion Filter.") # , pdf.width = 0.925
+```
+
+
+### English Language Learner Status
+
+```{r, cache=TRUE, echo=FALSE, include=FALSE, ELL_Indv_Values}
+###   Calculate Indiv/Group level values
+	ell.smry <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR=='2019' & GRADE %in% 5:8, list(
+									Mean_Consecutive = round(mean(NO_SKIP_SGP, na.rm = TRUE), 1),
+									SD_Consecutive = round(sd(NO_SKIP_SGP, na.rm = TRUE), 1),
+									Mean_Skip = round(mean(SGP, na.rm = TRUE), 1),
+									SD_Skip = round(sd(SGP, na.rm = TRUE), 1),
+									SGP_Correlation = round(cor(NO_SKIP_SGP, SGP, use="pairwise.complete"), 2),
+									Total_Students = .N,
+									Consecutive_Count = sum(!is.na(NO_SKIP_SGP)),
+									Skip_Count = sum(!is.na(SGP))), keyby = list(CONTENT_AREA, ELL_STATUS)] # GRADE, ELL has some interesting stuff going on in grade 5/6 ELA - 10 - 15% difference in # tested, but small # of kids overall (~750 - <1000)
+	ell.smry[, Difference := Skip_Count - Consecutive_Count]
+	ell.smry[, Pct_Consecutive := round((Consecutive_Count/Total_Students)*100, 1)]
+	ell.smry[, Pct_Skip := round((Skip_Count/Total_Students)*100, 1)]
+	ell.smry[, Difference_Pct := Pct_Skip - Pct_Consecutive]
+```
+
+```{r, results='asis', echo=FALSE, ELL_Counts}
+	ELL_Counts <- ell.smry[, c(1:2, 8:10, 12:13)] # Percentages receiving SGPs
+	ELL_Counts$CONTENT_AREA <- sapply(ELL_Counts$CONTENT_AREA, capwords, USE.NAMES=FALSE)
+	ELL_Counts$CONTENT_AREA[duplicated(ELL_Counts$CONTENT_AREA)] <- ""
+	ELL_Counts[, Total_Students := prettyNum(Total_Students, preserve.width = "individual", big.mark=',')]
+	ELL_Counts[, Consecutive_Count := prettyNum(Consecutive_Count, preserve.width = "individual", big.mark=',')]
+	ELL_Counts[, Skip_Count := prettyNum(Skip_Count, preserve.width = "individual", big.mark=',')]
+	ELL_Counts[, ELL_STATUS := gsub("ELL: ", "", ELL_STATUS)]
+
+	setcolorder(ELL_Counts, c(1:4, 6, 5, 7))
+	
+	row.names(ELL_Counts) <- NULL
+	setnames(ELL_Counts, c("Content Area", "ELL Status", "Total Students", "Count", "Percent", "Count", "Percent"))
+
+  cat(dualTable(as.matrix(ELL_Counts), 
+  	align=paste(rep('r', ncol(ELL_Counts)), collapse=''),
+		n.cgroup=c(3, 2, 2), cgroup=c("", "Consecutive", "Skip Year"),
+		caption='No-skip and Skip-year SGP counts and percentages for 2019 by content area and ELL Status'))
+```
+
+NOTE:  This excludes grade 4 - only counts/pct for those who *could* have received a skip-year SGP...
+
+ELL has some interesting stuff going on in grade 5/6 ELA - 10 - 15% difference in # tested, but small # of kids overall (~750 - <1000)
+
+```{r, results='asis', echo=FALSE, ELL_Indv_Coors}
+	ELL_Corrs <- ell.smry[, c(1,2, 7, 3:6)] # Means/SDs/Cors
+	ELL_Corrs$CONTENT_AREA <- sapply(ELL_Corrs$CONTENT_AREA, capwords, USE.NAMES=FALSE)
+	ELL_Corrs$CONTENT_AREA[duplicated(ELL_Corrs$CONTENT_AREA)] <- ""
+	ELL_Corrs[, ELL_STATUS := gsub("ELL: ", "", ELL_STATUS)]
+
+	row.names(ELL_Corrs) <- NULL
+	setnames(ELL_Corrs, sapply(gsub("_Consecutive|_Skip", "", names(ELL_Corrs)), capwords, special.words=c("ELL", "SGP", "SD")))
+
+  cat(dualTable(as.matrix(ELL_Corrs), 
+  	align=paste(rep('r', ncol(ELL_Corrs)), collapse=''),
+		n.cgroup=c(3, 2, 2), cgroup=c("", "Consecutive", "Skip Year"),
+		caption='No-skip and Skip-year SGP correlation and mean/standard deviations for 2019 by content area and ELL Status'))
+```
+
+```{r, results='asis', echo=FALSE, Sch_Lev_ELL_Cors}
+	tmp.tbl <- data.table(Filter = c("All Students", "", "Skip-Year Subset", ""), rbindlist(list(sch.ell.cor, sch.ell.cor.x)))
+	tmp.tbl[, CONTENT_AREA := sapply(CONTENT_AREA, capwords)]
+	setnames(tmp.tbl, sapply(gsub("PCT_ELL_x_", "", names(tmp.tbl)), capwords))
+
+  cat(dualTable(as.matrix(tmp.tbl), 
+  	align=paste(rep('r', ncol(tmp.tbl)), collapse=''),
+		caption='School level correlations between median SGPs and percent ELL by student inclusion filter.'))
+```
+
+Figure `r getCounter("figure")+1` provides a visual representation of the school level MSGP differences as a function of school by content area and student inclusion filters. MSGP differences are defined as **skip-year MSGP *minus* one-year MSGP**, and therefore can be interpreted as positive numbers showing an increase in schools' MSGP when using skip-year calculations, and vice-versa. Bubble sizes are representative of school size, and the black line is a LOESS smoothing curve that depicts the moving average in the point distributions.
+
+```{r, cache=TRUE, echo=FALSE, include=FALSE, ELL_Cor_Plots}
+   p <- ggplot() + facet_grid(CONTENT_AREA ~ Schools) + # coord_fixed(xlim=c(0,100), ylim=c(0, 100)) +
+							   	 theme(axis.title.x=element_text(size=15), axis.title.y=element_text(size=15), 
+   								 			 axis.text.x=element_text(size=12), axis.text.y=element_text(size=12))
+   
+   p <- p + geom_point(data = plot.data[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9], 
+   										aes(x = PERCENT_ELL, y = Mean_Difference, size = COUNT_NO_SKIP_SGP), alpha = 0.25, colour="blue") +
+            scale_size_continuous(range = c(1, 9)) # , shape=YEAR, color=YEAR
+   p <- p + geom_smooth(data = plot.data[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9], 
+   										 aes(x = PERCENT_ELL, y = Mean_Difference), method = "loess", se=FALSE, colour="black")
+   p <- p + geom_text(data=cor.demog, aes(label=paste("r = ", cors_ell, sep="")), x = 12, y = -15.5, size = 4.0, colour = "red")
+
+   p <- p + theme(legend.position = "none") #  Needed when N size used for bubbles
+   p <- p + scale_x_continuous(name="School Percent English Learners")
+   p <- p + scale_y_continuous(name="School Mean SGP Differences")
+
+	ggsave(filename = paste("Plots/Skip_Year_SGP_Comp_SGP_x_ELL.pdf", sep=""), plot=p, device = "pdf", width = 7.5, height = 6, units = "in")
+```
+
+```{r, results="asis", echo=FALSE, ELL_Diff_Plot_Place}
+		placeFigure(
+			files = "./Plots/Skip_Year_SGP_Comp_SGP_x_ELL.pdf",
+			caption = "Mean SGP Difference by Percent ELL by Content Area and Student Inclusion Filter.") # , pdf.width = 0.925
+```
+
+
+### Students with Disabilities
+
+```{r, cache=TRUE, echo=FALSE, include=FALSE, SWD_Indv_Values}
+###   Calculate Indiv/Group level values
+	swd.smry <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR=='2019' & GRADE %in% 5:8, list(
+									Mean_Consecutive = round(mean(NO_SKIP_SGP, na.rm = TRUE), 1),
+									SD_Consecutive = round(sd(NO_SKIP_SGP, na.rm = TRUE), 1),
+									Mean_Skip = round(mean(SGP, na.rm = TRUE), 1),
+									SD_Skip = round(sd(SGP, na.rm = TRUE), 1),
+									SGP_Correlation = round(cor(NO_SKIP_SGP, SGP, use="pairwise.complete"), 2),
+									Total_Students = .N,
+									Consecutive_Count = sum(!is.na(NO_SKIP_SGP)),
+									Skip_Count = sum(!is.na(SGP))), keyby = list(CONTENT_AREA, IEP_STATUS)]
+	swd.smry[, Difference := Skip_Count - Consecutive_Count]
+	swd.smry[, Pct_Consecutive := round((Consecutive_Count/Total_Students)*100, 1)]
+	swd.smry[, Pct_Skip := round((Skip_Count/Total_Students)*100, 1)]
+	swd.smry[, Difference_Pct := Pct_Skip - Pct_Consecutive]
+```
+
+```{r, results='asis', echo=FALSE, SWD_Counts}
+	SWD_Counts <- swd.smry[, c(1:2, 8:10, 12:13)] # Percentages receiving SGPs
+	SWD_Counts$CONTENT_AREA <- sapply(SWD_Counts$CONTENT_AREA, capwords, USE.NAMES=FALSE)
+	SWD_Counts$CONTENT_AREA[duplicated(SWD_Counts$CONTENT_AREA)] <- ""
+	SWD_Counts[, Total_Students := prettyNum(Total_Students, preserve.width = "individual", big.mark=',')]
+	SWD_Counts[, Consecutive_Count := prettyNum(Consecutive_Count, preserve.width = "individual", big.mark=',')]
+	SWD_Counts[, Skip_Count := prettyNum(Skip_Count, preserve.width = "individual", big.mark=',')]
+	SWD_Counts[, IEP_STATUS := gsub("IEP: ", "", IEP_STATUS)]
+
+	setcolorder(SWD_Counts, c(1:4, 6, 5, 7))
+	
+	row.names(SWD_Counts) <- NULL
+	setnames(SWD_Counts, c("Content Area", "SWD Status", "Total Students", "Count", "Percent", "Count", "Percent"))
+
+  cat(dualTable(as.matrix(SWD_Counts), 
+  	align=paste(rep('r', ncol(SWD_Counts)), collapse=''),
+		n.cgroup=c(3, 2, 2), cgroup=c("", "Consecutive", "Skip Year"),
+		caption='No-skip and Skip-year SGP counts and percentages for 2019 by content area and IEP Status'))
+```
+
+```{r, results='asis', echo=FALSE, SWD_Indv_Coors}
+	SWD_Corrs <- swd.smry[, c(1,2, 7, 3:6)] # Means/SDs/Cors
+	SWD_Corrs$CONTENT_AREA <- sapply(SWD_Corrs$CONTENT_AREA, capwords, USE.NAMES=FALSE)
+	SWD_Corrs$CONTENT_AREA[duplicated(SWD_Corrs$CONTENT_AREA)] <- ""
+	SWD_Corrs[, IEP_STATUS := gsub("IEP: ", "", IEP_STATUS)]
+
+	row.names(SWD_Corrs) <- NULL
+	setnames(SWD_Corrs, sapply(gsub("_Consecutive|_Skip", "", names(SWD_Corrs)), capwords, special.words=c("SWD", "SGP", "SD")))
+
+  cat(dualTable(as.matrix(SWD_Corrs), 
+  	align=paste(rep('r', ncol(SWD_Corrs)), collapse=''),
+		n.cgroup=c(3, 2, 2), cgroup=c("", "Consecutive", "Skip Year"),
+		caption='No-skip and Skip-year SGP correlation and mean/standard deviations for 2019 by content area and IEP Status'))
+```
+
+```{r, results='asis', echo=FALSE, Sch_Lev_SWD_Cors}
+	tmp.tbl <- data.table(Filter = c("All Students", "", "Skip-Year Subset", ""), rbindlist(list(sch.swd.cor, sch.swd.cor.x)))
+	tmp.tbl[, CONTENT_AREA := sapply(CONTENT_AREA, capwords)]
+	setnames(tmp.tbl, sapply(gsub("PCT_SWD_x_", "", names(tmp.tbl)), capwords))
+
+  cat(dualTable(as.matrix(tmp.tbl), 
+  	align=paste(rep('r', ncol(tmp.tbl)), collapse=''),
+		caption='School level correlations between median SGPs and percent SWD by student inclusion filter.'))
+```
+
+Figure `r getCounter("figure")+1` provides a visual representation of the school level MSGP differences as a function of school by content area and student inclusion filters. MSGP differences are defined as **skip-year MSGP *minus* one-year MSGP**, and therefore can be interpreted as positive numbers showing an increase in schools' MSGP when using skip-year calculations, and vice-versa. Bubble sizes are representative of school size, and the black line is a LOESS smoothing curve that depicts the moving average in the point distributions.
+
+```{r, cache=TRUE, echo=FALSE, include=FALSE, SWD_Cor_Plots}
+   p <- ggplot() + facet_grid(CONTENT_AREA ~ Schools) + # coord_fixed(xlim=c(0,100), ylim=c(0, 100)) +
+							   	 theme(axis.title.x=element_text(size=15), axis.title.y=element_text(size=15), 
+   								 			 axis.text.x=element_text(size=12), axis.text.y=element_text(size=12))
+   
+   p <- p + geom_point(data = plot.data[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9], 
+   										aes(x = PERCENT_IEP, y = Mean_Difference, size = COUNT_NO_SKIP_SGP), alpha = 0.25, colour="blue") +
+            scale_size_continuous(range = c(1, 9)) # , shape=YEAR, color=YEAR
+   p <- p + geom_smooth(data = plot.data[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9], 
+   										 aes(x = PERCENT_IEP, y = Mean_Difference), method = "loess", se=FALSE, colour="black")
+   p <- p + geom_text(data=cor.demog, aes(label=paste("r = ", cors_swd, sep="")), x = 12, y = -15.5, size = 4.0, colour = "red")
+
+   p <- p + theme(legend.position = "none") #  Needed when N size used for bubbles
+   p <- p + scale_x_continuous(name="School Percent Students with Disabilities")
+   p <- p + scale_y_continuous(name="School Mean SGP Differences")
+
+	ggsave(filename = paste("Plots/Skip_Year_SGP_Comp_SGP_x_SWD.pdf", sep=""), plot=p, device = "pdf", width = 7.5, height = 6, units = "in")
+```
+
+```{r, results="asis", echo=FALSE, SWD_Diff_Plot_Place}
+		placeFigure(
+			files = "./Plots/Skip_Year_SGP_Comp_SGP_x_SWD.pdf",
+			caption = "Mean SGP Difference by Percent Students with Disabilities by Content Area and Student Inclusion Filter.") # , pdf.width = 0.925
+```
+
+
+
 ```{r, cache=FALSE, results="asis", echo=FALSE}
 	Literasee:::pageBreak()
 ```
-
 #  Summary
 
 The analyses conducted in the report investigate whether skip-year SGPs can be used in place of the standard one-year SGPs. The report discussed
@@ -393,7 +868,7 @@ accountability.  There are numerous, valuable inquiries that can be addressed wi
 - Are there COVID-19 related instructional approaches that led to greater student learning than others? If so, what were they and how much more
 learning were they associated with?
 
-Critical to the investigation of COVID-19 related learning loss will be accurate data on COVID-19 related education programs that students
+\noindent Critical to the investigation of COVID-19 related learning loss will be accurate data on COVID-19 related education programs that students
 were assigned to. Having these data available will allow the Colorado Department of Education to fully take advantage of their student growth data
 and enlighten stakeholders around the state as to what has occurred due to the COVID-19 pandemic.
 
