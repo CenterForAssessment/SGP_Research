@@ -44,7 +44,7 @@ Colorado_SGP <- updateSGP(
 		sgp.projections.baseline = FALSE,
 		sgp.projections.lagged.baseline = FALSE,
 		parallel.config = list(
-			BACKEND="PARALLEL", WORKERS=list(PERCENTILES = 8)))
+			BACKEND="PARALLEL", WORKERS=list(TAUS = 11)))
 
 
 ### Save results
