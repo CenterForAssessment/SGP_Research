@@ -9,7 +9,7 @@
 require(SGP)
 require(data.table)
 
-###  Set working directory to top level directory (./Illinois/Skip_Year)
+###  Set working directory to top level directory (./Illinois/Skip_Year_Analysis)
 my.dir <- getwd()
 
 ####   Read in ZIP files
