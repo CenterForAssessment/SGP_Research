@@ -1,0 +1,75 @@
+
+Table `r tblNum(1)` provides frequencies and proportions associated with student skip-year and one-year SGP counts by year, content area, and grade. An important aspect of Table `r tblNum(1)` is that there are no 4<sup>th</sup> grade skip-year SGPs because no prior score exists with which to calculate growth since there is no grade 2 exam. The absence of 4<sup>th</sup> grade SGPs has a significant impact on comparisons done at the elementary school level. Since one-year growth summaries (mean or median) usually include the 4<sup>th</sup> grade SGPs, one-year to skip-year comparisons for elementary schools are not well aligned (using all growth data) since different grades are included. We discuss this issue later and provide supplemental analyses at the school level that include only grades and content areas that could have both one-year and skip-year SGPs calculated.
+
+
+```{r, cache=TRUE, echo=FALSE, include=FALSE}
+	indiv_smry <- Report_Data[VALID_CASE=='VALID_CASE' & GRADE %in% params$seq.grades, list(
+                  SGP_Corr = round(cor(NO_SKIP_SGP, SGP, use="pairwise.complete"), 2),
+									Mean_Sequential = round(mean(NO_SKIP_SGP, na.rm = TRUE), 1),
+									SD_Sequential = round(sd(NO_SKIP_SGP, na.rm = TRUE), 1),
+                  Score_Corr_Sequential = round(cor(SCALE_SCORE, NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, use="pairwise.complete"), 2),
+									Mean_Skip = round(mean(SGP, na.rm = TRUE), 1),
+									SD_Skip = round(sd(SGP, na.rm = TRUE), 1),
+                  Score_Corr_Skip = round(cor(SCALE_SCORE, SCALE_SCORE_PRIOR_STANDARDIZED, use="pairwise.complete"), 2),
+									Total_Students = .N,
+									Sequential_Count = sum(!is.na(NO_SKIP_SGP)),
+									Skip_Count = sum(!is.na(SGP))), keyby = list(CONTENT_AREA, GRADE)]
+	indiv_smry[, Difference := Skip_Count - Sequential_Count]
+	indiv_smry[, Pct_Sequential := round((Sequential_Count/Total_Students)*100, 1)]
+	indiv_smry[, Pct_Skip := round((Skip_Count/Total_Students)*100, 1)]
+	indiv_smry[, Difference_Pct := Pct_Skip - Pct_Sequential]
+
+	indiv_counts <- Report_Data[VALID_CASE=='VALID_CASE' & GRADE %in% params$skip.grades, list( # only 5-8 -- possible to get both
+									Total_Students = .N,
+									Sequential_Count = sum(!is.na(NO_SKIP_SGP)),
+									Skip_Count = sum(!is.na(SGP)),
+									Both = sum(!is.na(NO_SKIP_SGP) & !is.na(SGP)),
+									Neither = sum(is.na(NO_SKIP_SGP) & is.na(SGP)),
+									Sequential_NO_Skip = sum(!is.na(NO_SKIP_SGP) & is.na(SGP)),
+									Skip_NO_Sequential = sum(!is.na(SGP) & is.na(NO_SKIP_SGP)))]
+	both.pct <- round((indiv_counts$Both/indiv_counts$Total_Students)*100, 1)
+	neither.pct <- round((indiv_counts$Neither/indiv_counts$Total_Students)*100, 1)
+	sequential.pct <- round((indiv_counts$Sequential_NO_Skip/indiv_counts$Total_Students)*100, 1)
+	skip.pct <- round((indiv_counts$Skip_NO_Sequential/indiv_counts$Total_Students)*100, 1)
+	# both.pct + neither.pct + sequential.pct + skip.pct # should = ~100
+
+	Report_Data[, SCALE_SCORE_STANDARDIZED := scale(SCALE_SCORE), by=c("CONTENT_AREA", "GRADE")]
+	missing <- Report_Data[is.na(SGP) & !is.na(NO_SKIP_SGP) & GRADE %in% params$skip.grades & CONTENT_AREA %in% params$subject_order,
+													 list(SCALE_SCORE_STANDARDIZED, NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, NO_SKIP_SGP, CONTENT_AREA, GRADE)]
+	missing_smry <- missing[, list(
+													Mean_SS = mean(SCALE_SCORE_STANDARDIZED, na.rm = TRUE),
+													Mean_SS_Prior = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm = TRUE),
+													Mean_SGP = mean(NO_SKIP_SGP, na.rm = TRUE),
+													N = .N)]#, keyby = c("CONTENT_AREA", "GRADE")]
+
+	##  Executive Summary figures/stats
+		# This is the case where more than X percent of the students have skip-year and one-year SGP differences that exceed X in magnitude.
+		exec.indiv.quantiles <- Report_Data[VALID_CASE=='VALID_CASE' & GRADE %in% params$skip.grades, as.list(
+																						quantile(abs(SGP - NO_SKIP_SGP), probs=(1:19)/20, na.rm=TRUE)), keyby=c("CONTENT_AREA")]
+		# At the individual student level there is, not surprisingly, a very high correlation...
+		exec.indiv.correlate <- Report_Data[VALID_CASE=='VALID_CASE' & GRADE %in% params$skip.grades, list(
+																						cor(SGP, NO_SKIP_SGP, use="complete.obs")), keyby=c("CONTENT_AREA")]
+		indiv.q80 <- as.numeric(Report_Data[VALID_CASE=='VALID_CASE' & GRADE %in% params$skip.grades, as.list(quantile(abs(SGP - NO_SKIP_SGP), probs=0.8, na.rm=TRUE))])
+```
+
+```{r, results='asis', echo=FALSE, SGP_Counts}
+	SGP_Counts <- indiv_smry[GRADE %in% params$seq.grades, c(1:2, 10:12, 14:15)] # Percentages receiving SGPs
+	SGP_Counts$CONTENT_AREA <- sapply(SGP_Counts$CONTENT_AREA, capwords, USE.NAMES=FALSE)
+	SGP_Counts$CONTENT_AREA[duplicated(SGP_Counts$CONTENT_AREA)] <- ""
+	SGP_Counts[, Total_Students := prettyNum(Total_Students, preserve.width = "individual", big.mark=',')]
+	SGP_Counts[, Sequential_Count := prettyNum(Sequential_Count, preserve.width = "individual", big.mark=',')]
+	SGP_Counts[, Skip_Count := prettyNum(Skip_Count, preserve.width = "individual", big.mark=',')]
+	setcolorder(SGP_Counts, c(1:4, 6, 5, 7))
+
+	row.names(SGP_Counts) <- NULL
+	setnames(SGP_Counts, c("Content Area", "Grade", "Total Students", "Count", "Percent", "Count", "Percent"))
+	# setnames(SGP_Counts, sapply(names(SGP_Counts), capwords, USE.NAMES=FALSE))
+	SGP_Counts <- as.matrix(SGP_Counts)
+	SGP_Counts[which(SGP_Counts==0)] <- '  --  '
+	SGP_Counts[which(SGP_Counts==" 0.0")] <- ' -- '
+
+  cat(dualTable(SGP_Counts,
+  	align=paste(rep('r', ncol(SGP_Counts)), collapse=''),
+		n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
+		caption='Sequential and skip-year SGP counts and percentages for 2019 by content area and grade'))
+```

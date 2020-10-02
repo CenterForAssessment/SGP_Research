@@ -1,0 +1,3 @@
+#  Data
+
+`r params$state.name` has extensive historical state summative assessment data from the [`r params$test.name` (`r params$test.abv`)](http://www.cde.state.co.us/assessment/cmas) in `r params$GL_text_long` for grades `r min(as.numeric(params$seq.grades))-1` to `r max(as.numeric(params$seq.grades))` to examine how skip-year growth and one-year growth are related. To do so we calculated skip-year growth for 2019 (using 2017 and 2016 as priors). These skip-year growth quantities were then compared to one-year growth at the individual level and, when aggregated by school, at the school level.
