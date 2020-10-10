@@ -1,0 +1,44 @@
+
+```{r, cache=FALSE, results="asis", echo=FALSE}
+	seq.skip.grd <- intersect(params$seq.grades, params$skip.grades)
+
+	for (ca in params$GL_subjects) {
+		seq.plot.list <- NULL
+		skip.plot.list <- NULL
+
+		seq.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.seq[[1]], paste0(ca, ".2019")))))
+		seq.plots <- seq.plots[order(seq.plots)][seq.plots != "Decile_Tables"]
+		# weed out norm group nesting
+		nest.test <- sapply(seq(seq.plots), function(f) grepl(seq.plots[f], seq.plots[-f]))
+		if(any(nest.test)) seq.plots <- seq.plots[-which(nest.test, arr.ind = TRUE)[,2]]
+		seq.prg <- sapply(seq.plots, function(f) strsplit(f, ";")[[1]])
+		seq.grd <- sapply(seq.prg, function(f) gsub(paste0("2019_", sub("MATHEMATICS", "MATH", ca), "_"), "", f[1]))
+		seq.plots <- seq.plots[seq.grd %in% seq.skip.grd]
+		seq.plot.list <- c(seq.plot.list, file.path(params$gof.path.seq[[1]], paste0(ca, ".2019"), paste0(seq.plots, ".pdf")))
+
+		skip.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.skip[[1]], paste0(ca, ".2019")))))
+		skip.plots <- skip.plots[order(skip.plots)][skip.plots != "Decile_Tables"]
+		# weed out norm group nesting
+		nest.test <- sapply(seq(skip.plots), function(f) grepl(skip.plots[f], skip.plots[-f]))
+		if(any(nest.test)) skip.plots <- skip.plots[-which(nest.test, arr.ind = TRUE)[,2]]
+		skip.prg <- sapply(skip.plots, function(f) strsplit(f, ";")[[1]])
+		skip.grd <- sapply(skip.prg, function(f) gsub(paste0("2019_", sub("MATHEMATICS", "MATH", ca), "_"), "", f[1]))
+		skip.plots <- skip.plots[skip.grd %in% seq.skip.grd]
+		skip.plot.list <- c(skip.plot.list, file.path(params$gof.path.skip[[1]], paste0(ca, ".2019"), paste0(skip.plots, ".pdf")))
+
+		plot.chunks <- split(seq_along(seq.skip.grd), cut_interval(seq_along(seq.skip.grd), length=2))
+
+		cat("
+
+## ", capwords(ca), "
+
+		")
+		for (k in seq(plot.chunks)){
+			placeFigure(
+					files = c(rbind(seq.plot.list[plot.chunks[[k]]], skip.plot.list[plot.chunks[[k]]])),
+					rows = length(plot.chunks[[k]]), columns = 2, pdf.width = 0.5,
+					caption = paste0("Sequential (left) and skip-year (right) fit plots for ", capwords(sub("MATHEMATICS", "MATH", ca)),
+													" (grades ", paste(seq.skip.grd[plot.chunks[[k]]], collapse = " - "),")"))
+		}
+	}
+```
