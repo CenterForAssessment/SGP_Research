@@ -41,6 +41,11 @@ Colorado_Data[YEAR == "2019", as.list(summary(RAND_SCH_SIZE2, na.rm = TRUE)), by
 
 Colorado_Data[YEAR == "2019", list(round(cor(SCHOOL_SIZE, RAND_SCH_SIZE1), 3)), by = c("CONTENT_AREA", "GRADE")]
 
+###   Make ELL_STATUS more uniform
+table(Colorado_Data[, YEAR, ELL_STATUS], exclude=NULL)
+Colorado_Data[ELL_STATUS %in% c("ELL: LEP", "ELL: NEP"), ELL_STATUS := "ELL: Yes"]
+Colorado_Data[ELL_STATUS != "ELL: Yes", ELL_STATUS := "ELL: No"]
+
 
 #####
 ###   Quick descriptives
@@ -65,7 +70,7 @@ all.smry[, Difference_Pct := Pct_Skip - Pct_No_Skip]
 all.smry[GRADE %in% 4:8, c(1:8)] # Means/SDs/Cors
 all.smry[GRADE %in% 4:8, c(1:2, 8:14)] # Percentages receiving SGPs
 
-frl.smry <- Colorado_Data[VALID_CASE=='VALID_CASE'][YEAR=='2019' & !is.na(FREE_REDUCED_LUNCH_STATUS), list(
+frl.smry <- Colorado_Data[VALID_CASE=='VALID_CASE'][YEAR=='2019' & FREE_REDUCED_LUNCH_STATUS != "Missing", list(
   Mean_No_Skip = round(mean(NO_SKIP_SGP, na.rm = TRUE), 2),
   SD_No_Skip = round(sd(NO_SKIP_SGP, na.rm = TRUE), 2),
   Mean_Skip = round(mean(SGP, na.rm = TRUE), 2),
@@ -219,7 +224,7 @@ sch.grd.cor <- sch.grd.msgp[!is.na(MEAN_SKIP) & COUNT_TOTAL > 9, list(
     PCT_SWD_x_Skip = round(cor(MEAN_SKIP, PERCENT_IEP, use="complete.obs"), 2), N = .N), keyby = c("CONTENT_AREA", "GRADE")] # , N2 = sum(!is.na(MEAN_SKIP))
 
 
-sch.frl.msgp <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na(SCHOOL_NUMBER) & !is.na(FREE_REDUCED_LUNCH_STATUS),
+sch.frl.msgp <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na(SCHOOL_NUMBER) & FREE_REDUCED_LUNCH_STATUS != "Missing",
                   list(
                     MEAN_NO_SKIP = mean(NO_SKIP_SGP, na.rm = TRUE),
                     SD_NO_SKIP = sd(NO_SKIP_SGP, na.rm = TRUE),
@@ -227,15 +232,15 @@ sch.frl.msgp <- Colorado_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na
                     SD_SKIP = sd(SGP, na.rm = TRUE),
                     MEAN_SCALE_SCORE_PRIOR_STANDARDIZED = round(mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE), 2),
                     MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED = round(mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE), 2)),
-                  keyby = c("CONTENT_AREA", "GRADE", "FREE_REDUCED_LUNCH_STATUS", "SCHOOL_NUMBER")]
+                  keyby = c("CONTENT_AREA", "FREE_REDUCED_LUNCH_STATUS", "SCHOOL_NUMBER")] # "GRADE", 
 
-sch.frl.cor <- sch.frl.msgp[GRADE %in% 5:10 & !is.na(MEAN_SKIP), list( # need !is.na(MEAN_SKIP) for 5th grade SCIENCE
+sch.frl.cor <- sch.frl.msgp[, list(
     Mean_MSGP_No_Skip = round(mean(MEAN_NO_SKIP, na.rm=TRUE), 2),
     SD_MSGP_No_Skip = round(sd(MEAN_NO_SKIP, na.rm=TRUE), 2),
     Mean_MSGP_Skip = round(mean(MEAN_SKIP, na.rm=TRUE), 2),
     SD_MSGP_Skip = round(sd(MEAN_SKIP, na.rm=TRUE), 2),
     Prior_Ach_x_No_Skip = round(cor(MEAN_NO_SKIP, MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
-    Prior_Ach_x_Skip = round(cor(MEAN_SKIP, MEAN_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2), N = .N), keyby = c("CONTENT_AREA", "GRADE", "FREE_REDUCED_LUNCH_STATUS")]
+    Prior_Ach_x_Skip = round(cor(MEAN_SKIP, MEAN_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2), N = .N), keyby = c("CONTENT_AREA", "FREE_REDUCED_LUNCH_STATUS")] # , "GRADE"
 
 
 #####
@@ -272,7 +277,7 @@ cor.diff  <- diff.grd.sch[N > 9 & !is.na(Mean_Difference), list(
 
 #     Mean SGP By Skip Year or No-Skip
 
-for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
+for (content.area in c("ELA", "MATHEMATICS")) {
   tmp.data <- diff.grd.sch[CONTENT_AREA == content.area, list(GRADE, Mean_No_Skip, Mean__Skip___Year, N)] # YEAR,
 	if (content.area=="MATHEMATICS") ca.name <- "Math" else ca.name <- capwords(content.area)
 
@@ -302,7 +307,7 @@ for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
 
 #     Mean Difference By Prior Achievement
 
-for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
+for (content.area in c("ELA", "MATHEMATICS")) {
   tmp.data <- diff.grd.sch[CONTENT_AREA == content.area, list(GRADE, Mean_Prior_Achievement, Mean_Difference, N)] # YEAR,
 	if (content.area=="MATHEMATICS") ca.name <- "Math" else ca.name <- capwords(content.area)
 
@@ -330,7 +335,7 @@ for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
 }
 
 #     Difference by School/Grade Size
-for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
+for (content.area in c("ELA", "MATHEMATICS")) {
   tmp.data <- diff.grd.sch[CONTENT_AREA == content.area, list(GRADE, Mean_Difference, N)] # YEAR,
 	if (content.area=="MATHEMATICS") ca.name <- "Math" else ca.name <- capwords(content.area)
 
@@ -356,7 +361,7 @@ for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
 }
 
 #     Mean Difference By FREE_REDUCED_LUNCH_STATUS
-for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
+for (content.area in c("ELA", "MATHEMATICS")) {
   tmp.data <- diff.grd.sch[CONTENT_AREA == content.area, list(GRADE, PERCENT_FRED, Mean_Difference, N)] # YEAR,
 	if (content.area=="MATHEMATICS") ca.name <- "Math" else ca.name <- capwords(content.area)
 
@@ -384,7 +389,7 @@ for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
 }
 
 #     Mean Difference By ELL_STATUS
-for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
+for (content.area in c("ELA", "MATHEMATICS")) {
   tmp.data <- diff.grd.sch[CONTENT_AREA == content.area, list(GRADE, PERCENT_ELL, Mean_Difference, N)] # YEAR,
 	if (content.area=="MATHEMATICS") ca.name <- "Math" else ca.name <- capwords(content.area)
 
@@ -412,7 +417,7 @@ for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
 }
 
 #     Mean Difference By IEP_STATUS
-for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
+for (content.area in c("ELA", "MATHEMATICS")) {
   tmp.data <- diff.grd.sch[CONTENT_AREA == content.area, list(GRADE, PERCENT_IEP, Mean_Difference, N)] # YEAR,
 	if (content.area=="MATHEMATICS") ca.name <- "Math" else ca.name <- capwords(content.area)
 
