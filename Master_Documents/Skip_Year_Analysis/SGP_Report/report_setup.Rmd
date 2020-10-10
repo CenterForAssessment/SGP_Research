@@ -1,7 +1,7 @@
 
 ```{r, echo=FALSE, include=FALSE}
-  tmp_env <- environment()
-  if(bindingIsLocked("params", env = tmp_env)) unlockBinding("params", env = tmp_env)
+  tmp_envs <- environment()
+  try(if(bindingIsLocked("params", env = tmp_envs)) unlockBinding("params", env = tmp_envs))  #  required if params is sent in through YAML
 
   ###
 	###   Lists of state specific variables included in the report.
@@ -13,6 +13,9 @@
       params$working.directory <- knitr::opts_knit$get("output.dir")
     } else params$working.directory <- getwd()
   }
+
+  ###   Set report type - non-NULL for renderMultiDocument(..., report_format = 'RMD')
+  if (is.null(params$report_type)) params$report_type <- as.character(NA)
 
   ###   Draft
   # draft.text <- "\\vspace{16pt} \\noindent  \\textbf{FOR INTERNAL USE ONLY - DO NOT CIRCULATE!} \\vspace{20pt}"
@@ -58,15 +61,16 @@
   params$GL_text <- paste(paste(head(params$GL_camel, -1), collapse=", "), tail(params$GL_camel, 1), sep=" and ") # sub("ela", "ELA", tolower(params$GL_text))
   params$GL_text_long <- sub("ELA", "English language arts (ELA)", params$GL_text) # "English language arts (ELA) and mathematics"
 
-  if (is.null(params$EOC_subjects)) {
-    params$EOC_subjects <- unique(Report_Data[!is.na(SGP) & GRADE == "EOCT", CONTENT_AREA])
-  }
-  if (length(params$EOC_subjects > 0)) {
-    params$eoct.tf <- FALSE
-    params$EOC_subjects <- NULL
-  } else  params$eoct.tf <- TRUE
+  # if (is.null(params$EOC_subjects)) {
+  #   params$EOC_subjects <- unique(Report_Data[!is.na(SGP) & GRADE == "EOCT", CONTENT_AREA])
+  # }
+  # if (length(params$EOC_subjects > 0)) {
+  #   params$eoct.tf <- FALSE
+  #   params$EOC_subjects <- NULL
+  # } else  params$eoct.tf <- TRUE
 
-  params$subject_order <- c(params$GL_subjects, params$EOC_subjects)
+  params$subject_order <- params$GL_subjects
+  # params$subject_order <- c(params$GL_subjects, params$EOC_subjects)
 
   ###   Grades
   if (is.null(params$seq.grades)) {
@@ -77,11 +81,11 @@
   }
 
   ###   Normalize Child and GoFit plot paths
-  if (!is.null(params$child.directory)|!is.null(params$gof.path.seq)|!is.null(params$gof.path.skip)) {
+  if (!is.null(params$child.file.path)|!is.null(params$gof.path.seq)|!is.null(params$gof.path.skip)) {
     tmp.wd <- getwd()
     setwd(params$working.directory)
-    if (!is.null(params$child.directory)) {
-      params$child.directory <- normalizePath(params$child.directory[[1]]) # need the '[[1]]' to knit to .Rmd for testing/editing
+    if (!is.null(params$child.file.path)) {
+      params$child.file.path <- normalizePath(params$child.file.path[[1]]) # need the '[[1]]' to knit to .Rmd for testing/editing
     }
     if (!is.null(params$gof.path.seq)) {
       params$gof.path.seq <- normalizePath(params$gof.path.seq[[1]])
@@ -99,8 +103,6 @@
   ## set a universal Cache path
   knitr::opts_chunk$set(cache.path = "assets/_cache/Skip_Year_Report")
 
-  knitted_hooks_2 <- knitr::knit_hooks$get(c('source', 'output', 'document'))
-  save(knitted_hooks_2, file=file.path(params$working.directory, "knitted_hooks_2.rdb"))
   # multdoc.call <- match.call()
   # argg <- c(as.list(environment()), list(...))
   # save(list=c('matched.call', 'argg'), file=file.path(params$working.directory, "Call_Matches_Knitted.rdb"))
@@ -128,9 +130,9 @@
     dir.create(file.path(params$working.directory, "assets", "img"), showWarnings = FALSE, recursive = TRUE)
   }
 
-  if (!dir.exists(file.path(params$working.directory, "assets", "tables"))) {
-    dir.create(file.path(params$working.directory, "assets", "tables"), showWarnings = FALSE, recursive = TRUE)
-  }
+  # if (!dir.exists(file.path(params$working.directory, "assets", "tables"))) {
+  #   dir.create(file.path(params$working.directory, "assets", "tables"), showWarnings = FALSE, recursive = TRUE)
+  # }
 
   ### Utility function - Assumes first two "levels" are the main dichotomy
   percent_demog <- function(demog) {

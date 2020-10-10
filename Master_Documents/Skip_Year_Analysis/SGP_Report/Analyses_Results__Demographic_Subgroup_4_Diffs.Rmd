@@ -20,11 +20,11 @@ Figure `r getCounter("figure")+1` is a visual representation of school level MSG
    p <- p + scale_x_continuous(name=paste("School Percent", demog.group$label))
    p <- p + scale_y_continuous(name="School Mean SGP Differences")
 
-	ggsave(filename = file.path(params$working.directory, "assets", "img", paste0("Skip_Year_SGP_Comp_SGP_x_", demog.group$label, ".pdf")), plot=p, device = "pdf", width = 7.5, height = 6, units = "in")
+   plot.file <- file.path(params$working.directory, "assets", "img", paste0("Skip_Year_SGP_Comp_SGP_x_", demog.group$label, ".pdf"))
+	 ggsave(filename = plot.file, plot=p, device = "pdf", width = 7.5, height = 6, units = "in")
 ```
 
 ```{r, results="asis", echo=FALSE}
-	placeFigure(
-			files = paste0("./assets/img/Skip_Year_SGP_Comp_SGP_x_", demog.group$label, ".pdf"),
-			caption = paste("Mean SGP difference by percent", demog.group$label, "by content area and student inclusion filter"))
+	placeFigure(files = plot.file,
+			        caption = paste("Mean SGP difference by percent", demog.group$label, "by content area and student inclusion filter"))
 ```

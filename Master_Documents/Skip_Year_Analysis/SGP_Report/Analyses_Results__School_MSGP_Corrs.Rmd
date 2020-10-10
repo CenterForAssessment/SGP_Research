@@ -35,7 +35,7 @@ Figure `r getCounter("figure")+1` visualizes the relationship between school lev
 
 ```{r, results="asis", echo=FALSE, Sch_Cor_Plot_Place}
 	placeFigure(
-			files = "./assets/img/Skip_Year_SGP_Comp_SGP.pdf",
+			files = file.path(params$working.directory, "assets", "img", "Skip_Year_SGP_Comp_SGP.pdf"),
 			caption = "Sequential- and skip-year mean SGP by content area and student filter")
 
 	pageBreak()

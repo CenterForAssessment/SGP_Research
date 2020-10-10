@@ -39,33 +39,5 @@ Table `r tblNum(1)` provides the frequencies and proportions of students that ha
 	cat(dualTable(as.matrix(demog_counts),
   	align=paste(rep("r", ncol(demog_counts)), collapse=""),
 		n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
-		caption= paste("Sequential and skip-year SGP counts and percentages by content area and",  demog.group$label, "status")))
-
-#   dualTable(as.matrix(demog_counts),
-#   	align=paste(rep("r", ncol(demog_counts)), collapse=""),
-# 		n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
-# 		caption= paste("Sequential and skip-year SGP counts and percentages by content area and",  demog.group$label, "status"),
-# 		file=file.path(params$working.directory, "assets", "tables", paste0("Table_", tblNum(), ".txt")))
-#
-# 	cat.text <- paste("```{r, results='asis', echo=FALSE}\ncat(rmarkdown:::read_utf8(file.path('assets', 'tables', ", paste0("'Table_", tblNum(), ".txt'"), ")), sep = '\\n')\n```")
-#   cat(
-# cat.text)
-
-
-	# cat(c("\n\n", readLines(file.path(params$working.directory, "assets", "tables", paste0("Table_", tblNum(), ".txt")))), sep = "\n")
-
-	# cat.text <- paste("```{r AR_1, child = file.path(params$working.directory,", "'assets', 'tables',", paste0("'Table_", tblNum(), ".txt'),"), "eval=TRUE}\n```")
-#   cat(
-# cat.text)
-
-	# cat(c('\n\n', readLines(file.path(params$working.directory, 'assets', 'tables',  'Table_0.txt' ))), sep = '\n')
-	# cat(rmarkdown:::read_utf8(file.path('assets', 'tables',  'Table_0.txt' )), sep = '\n')
-
-# 	cat("
-#
-# ```{r, results='asis', echo=FALSE}
-# 	cat(c('\\n\\n', readLines(file.path(params$working.directory, 'assets', 'tables', paste0('Table_', tblNum(), '.txt')))), sep = '\\n')
-# ```
-#
-# 	")
+		caption= paste("Sequential and skip-year SGP counts and percentages by content area and",  demog.group$label, "status"))) # , files = tbl.file
 ```

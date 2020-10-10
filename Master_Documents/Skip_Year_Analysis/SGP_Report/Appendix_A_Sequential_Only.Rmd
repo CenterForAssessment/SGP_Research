@@ -1,6 +1,6 @@
 ##  Sequential Analyses Only
 
-```{r, cache=FALSE, results="asis", echo=FALSE, Seq_Only_GOF}
+```{r, cache=FALSE, results="asis", echo=FALSE}
 	seq.only.grd <- setdiff(params$seq.grades, params$skip.grades)
 	seq.only.plots <- NULL
 
