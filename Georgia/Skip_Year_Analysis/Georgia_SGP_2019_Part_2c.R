@@ -149,18 +149,32 @@ Georgia_SGP <- abcSGP(
 save(Georgia_SGP, file="Data/Georgia_SGP-2019_PART_2c.Rdata")
 
 
+#####
+###   Rename variables as 'NO_SKIP_SGP' (Official data reported by GDOE)
+#####
+
+Georgia_SGP@Data[[68]] <- NULL # Duplicate "NO_SKIP" variable that's blank?
+
+original.names <- grep("NO_SKIP", names(Georgia_SGP@Data), value=TRUE)
+new.names <- gsub("NO_SKIP", "NO_SKIP_SGP", original.names)
+new.names[grep("_NO_SKIP", original.names)] <- paste0("NO_SKIP_SGP_", gsub("_NO_SKIP", "", grep("_NO_SKIP", original.names, value=TRUE)))
+setnames(Georgia_SGP@Data, original.names, new.names)
+
+outputSGP(Georgia_SGP, output.type=c("LONG_Data", "LONG_FINAL_YEAR_Data"))
+save(Georgia_SGP, file="Data/Georgia_SGP-2019_PART_2c.Rdata")
+
 
 #####
 ###   Quick descriptives
 #####
 
 Georgia_SGP@Data$DIFF<- as.numeric(NA)
-Georgia_SGP@Data[, DIFF := SGP - NO_SKIP]
+Georgia_SGP@Data[, DIFF := SGP - NO_SKIP_SGP]
 
-Georgia_SGP@Data[!is.na(SGP) & VALID_CASE=='VALID_CASE'][, list(
+Georgia_SGP@Data[YEAR == '2019' & !is.na(SGP) & VALID_CASE=='VALID_CASE'][, list(
   Test_Scores = round(cor(SCALE_SCORE, SCALE_SCORE_PRIOR_STANDARDIZED, use='pairwise.complete'), 2),
   Skip = format(round(cor(SGP, SCALE_SCORE_PRIOR_STANDARDIZED, use='pairwise.complete'), 2), nsmall = 2),
-  No_Skip = format(round(cor(NO_SKIP, SCALE_SCORE_NO_SKIP_PRIOR_STANDARDIZED, use='pairwise.complete'), 2), nsmall = 2),
-  SGP_Corr = format(round(cor(NO_SKIP, SGP, use='pairwise.complete'), 2), nsmall = 2),
+  No_Skip = format(round(cor(NO_SKIP_SGP, NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, use='pairwise.complete'), 2), nsmall = 2),
+  SGP_Corr = format(round(cor(NO_SKIP_SGP, SGP, use='pairwise.complete'), 2), nsmall = 2),
   Diff_Corr = format(round(cor(DIFF, SCALE_SCORE_PRIOR_STANDARDIZED, use='pairwise.complete'), 2), nsmall = 2),
-  N_Size = sum(!is.na(SGP))), keyby = list(CONTENT_AREA, GRADE)]
+  Corr_N = sum(!is.na(SGP) & !is.na(NO_SKIP_SGP))), keyby = list(CONTENT_AREA, GRADE)]

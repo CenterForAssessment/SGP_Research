@@ -25,21 +25,9 @@ Georgia_Data_LONG_NO_SKIP[, SGP_FROM_2015 := NULL]
 original.names <- c(grep("^SGP", names(Georgia_Data_LONG_NO_SKIP), value=TRUE),
                     grep("STATUS_3_YEAR", names(Georgia_Data_LONG_NO_SKIP), value=TRUE),
                     grep("PRIOR", names(Georgia_Data_LONG_NO_SKIP), value=TRUE))
-new.names <- paste0("NO_SKIP_SGP_", gsub("^SGP_", "", original.names))
+new.names <- gsub('(_SGP)+','_SGP', paste0("NO_SKIP_SGP_", gsub("^SGP_", "", original.names)))
 setnames(Georgia_Data_LONG_NO_SKIP, original.names, new.names)
 
-
-###   Rename SGP variables as 'NO_SKIP_SGP'
-grep("SGP", names(Georgia_Data_LONG_NO_SKIP), value=TRUE, perl=TRUE)
-setnames(Georgia_Data_LONG_NO_SKIP, gsub("SGP", "NO_SKIP", names(Georgia_Data_LONG_NO_SKIP)))
-
-###   Rename 'CUKU' variables as 'NO_SKIP'
-grep("STATUS_3_YEAR", names(Georgia_Data_LONG_NO_SKIP), value=TRUE, perl=TRUE)
-setnames(Georgia_Data_LONG_NO_SKIP, gsub("STATUS_3_YEAR", "STATUS_NO_SKIP", names(Georgia_Data_LONG_NO_SKIP)))
-
-###   Rename 'PRIOR' variables as 'NO_SKIP'
-grep("PRIOR", names(Georgia_Data_LONG_NO_SKIP), value=TRUE, perl=TRUE)
-setnames(Georgia_Data_LONG_NO_SKIP, gsub("PRIOR", "NO_SKIP_PRIOR", names(Georgia_Data_LONG_NO_SKIP)))
 
 ###  Clean up ACHIEVEMENT_LEVEL
 Georgia_Data_LONG_NO_SKIP[PERFORMANCE_LEVEL == "", PERFORMANCE_LEVEL := as.character(NA)]

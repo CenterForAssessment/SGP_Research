@@ -111,7 +111,7 @@ print(Utah.school.correlations)
 
 Utah.school.absolute.difference <- Utah.school.summaries[COUNT_NO_SKIP_SGP>=10 & COUNT_SKIP_SGP>=10,
                         list(MEDIAN_DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP=median(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP),
-                            NINETY_FIFTH_PERCENTILE_DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP=mean(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP),
+                            MEAN_DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP=mean(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP),
                             NINETY_FIFTH_PERCENTILE_DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP=quantile(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP, probs=0.95, na.rm=TRUE),
                             MEDIAN_COUNT_NO_SKIP_SGP=median(COUNT_NO_SKIP_SGP),
                             MEDIAN_COUNT_SKIP_SGP=median(COUNT_SKIP_SGP)),
@@ -123,8 +123,7 @@ print(Utah.school.absolute.difference)
 Utah.school.Prior.Achievement.correlations <- Utah.school.summaries[COUNT_NO_SKIP_SGP>=10 & COUNT_SKIP_SGP>=10,
                         list(
                             COR_SKIP_SGP_PRIOR_ACHIEVEMENT=cor(MEAN_SKIP_SGP, MEAN_SKIP_PRIOR_STANDARDIZED, use="pairwise.complete"),
-                            COR_NO_SKIP_SGP_PRIOR_ACHIEVEMENT=cor(MEAN_NO_SKIP_SGP, MEAN_NO_SKIP_PRIOR_STANDARDIZED, use="pairwise.complete")
-                        ),
+                            COR_NO_SKIP_SGP_PRIOR_ACHIEVEMENT=cor(MEAN_NO_SKIP_SGP, MEAN_NO_SKIP_PRIOR_STANDARDIZED, use="pairwise.complete")),
                         keyby=c("EMH_LEVEL", "CONTENT_AREA")]
 print(Utah.school.Prior.Achievement.correlations)
 
@@ -133,7 +132,6 @@ print(Utah.school.Prior.Achievement.correlations)
 Utah.school.percent.free.reduced.lunch.correlations <- Utah.school.summaries[COUNT_NO_SKIP_SGP>=10 & COUNT_SKIP_SGP>=10,
                         list(
                             COR_SKIP_SGP_FREE_REDUCED_LUNCH=cor(MEAN_SKIP_SGP, PERCENT_FREE_REDUCED_LUNCH, use="pairwise.complete"),
-                            COR_NO_SKIP_SGP_FREE_REDUCED_LUNCH=cor(MEAN_NO_SKIP_SGP, PERCENT_FREE_REDUCED_LUNCH, use="pairwise.complete")
-                        ),
+                            COR_NO_SKIP_SGP_FREE_REDUCED_LUNCH=cor(MEAN_NO_SKIP_SGP, PERCENT_FREE_REDUCED_LUNCH, use="pairwise.complete")),
                         keyby=c("EMH_LEVEL", "CONTENT_AREA")]
 print(Utah.school.percent.free.reduced.lunch.correlations)

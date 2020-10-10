@@ -185,6 +185,8 @@ sch.cor <- sch.msgp[COUNT_TOTAL > 9, list(
     PCT_SWD_x_Skip = round(cor(MEAN_SKIP, PERCENT_IEP, use="complete.obs"), 2), N = .N), keyby = c("CONTENT_AREA")]
 
 ###   By grade within school
+Utah_Data[, SCALE_SCORE_STANDARDIZED := scale(SCALE_SCORE), by=c("CONTENT_AREA", "GRADE")]
+
 sch.grd.msgp <- Utah_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na(school_id),
               list(
                 MEAN_NO_SKIP = mean(NO_SKIP_SGP, na.rm = TRUE),
@@ -197,18 +199,24 @@ sch.grd.msgp <- Utah_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na(sch
                 COUNT_TOTAL = .N,
 
                 MEAN_SCALE_SCORE = mean(SCALE_SCORE, na.rm=TRUE),
+                MEAN_SCALE_SCORE_STANDARDIZED = mean(SCALE_SCORE_STANDARDIZED, na.rm=TRUE),
                 MEAN_SCALE_SCORE_PRIOR = mean(SCALE_SCORE_PRIOR, na.rm=TRUE),
                 MEAN_SCALE_SCORE_PRIOR_STANDARDIZED = mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
                 MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
                 PERCENT_FRED = PCT_SCHOOL_FRL[1],
                 PERCENT_ELL = PCT_SCHOOL_ELL[1],
                 PERCENT_IEP = PCT_SCHOOL_IEP[1]),
-              keyby = c("CONTENT_AREA", "GRADE", "school_id")] # "YEAR", school_id RAND_SCH_NUM_1, RAND_SCH_NUM_2
+              keyby = c("CONTENT_AREA", "GRADE", "school_id")][,DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP:=round((MEAN_SKIP-MEAN_NO_SKIP), 2)] # no abs(DIFF)
 
 sch.grd.cor <- sch.grd.msgp[!is.na(MEAN_SKIP) & COUNT_TOTAL > 9, list(
     Skip_x_No_Skip = round(cor(MEAN_NO_SKIP, MEAN_SKIP, use="complete.obs"), 2),
     Prior_Ach_x_No_Skip = round(cor(MEAN_NO_SKIP, MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
     Prior_Ach_x_Skip = round(cor(MEAN_SKIP, MEAN_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
+    Prior_Ach_1_x_Diff = round(cor(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP, MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2), #  Added for Leslie convo 9/15/2020
+    Prior_Ach_2_x_Diff = round(cor(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP, MEAN_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
+    Prior_Ach_Diff_x_MSGP_Diff = round(cor(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP, (MEAN_SCALE_SCORE_PRIOR_STANDARDIZED-MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED), use="complete.obs"), 2),
+    # Current_SS_x_MSGP_Diff = round(cor(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP, MEAN_SCALE_SCORE, use="complete.obs"), 2), # Identical to using standardized when done by GRADE
+    Current_Ach_x_MSGP_Diff = round(cor(DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP, MEAN_SCALE_SCORE_STANDARDIZED, use="complete.obs"), 2),
     PCT_FRL_x_No_Skip = round(cor(MEAN_NO_SKIP, PERCENT_FRED, use="complete.obs"), 2),
     PCT_FRL_x_Skip = round(cor(MEAN_SKIP, PERCENT_FRED, use="complete.obs"), 2),
     PCT_ELL_x_No_Skip = round(cor(MEAN_NO_SKIP, PERCENT_ELL, use="complete.obs"), 2),
@@ -246,7 +254,9 @@ dir.create("Plots")
 diff.grd.sch <- Utah_Data[!is.na(NO_SKIP_SGP) & GRADE %in% c(5:10) & YEAR == '2019' & !is.na(school_id), # %in% c('2018', '2019'),
 list(Mean_No_Skip = round(mean(NO_SKIP_SGP, na.rm=T), 1), Median_No_Skip = median(as.numeric(NO_SKIP_SGP), na.rm=T),
      Mean__Skip___Year = round(mean(SGP, na.rm=T), 1), Median__Skip___Year = median(as.numeric(SGP), na.rm=T),
+     Mean_Current_Achievement = mean(SCALE_SCORE_STANDARDIZED, na.rm=TRUE),
      Mean_Prior_Achievement = mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
+     Mean_Ignored_Achievement = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
      PERCENT_FRED = PCT_SCHOOL_FRL[1],
      PERCENT_ELL = PCT_SCHOOL_ELL[1],
      PERCENT_IEP = PCT_SCHOOL_IEP[1], N=.N), # NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED
@@ -254,12 +264,18 @@ list(Mean_No_Skip = round(mean(NO_SKIP_SGP, na.rm=T), 1), Median_No_Skip = media
 
 diff.grd.sch[, Mean_Difference := Mean__Skip___Year - Mean_No_Skip]
 diff.grd.sch[, Median_Difference := Median__Skip___Year - Median_No_Skip]
+diff.grd.sch[, Ach_Difference := Mean_Prior_Achievement - Mean_Ignored_Achievement]
 diff.grd.sch[, GRADE := as.numeric(GRADE)]
 setkey(diff.grd.sch, GRADE)
+
 
 cor.grd.sch <- diff.grd.sch[N > 9 & !is.na(Mean__Skip___Year), list(cors=round(cor(Mean_No_Skip, Mean__Skip___Year, use="complete.obs"), 2)), keyby=c("CONTENT_AREA", "GRADE")]
 cor.diff  <- diff.grd.sch[N > 9 & !is.na(Mean_Difference), list(
                           cors=round(cor(Mean_Difference, Mean_Prior_Achievement, use="complete.obs"), 2),
+                          cors.ign=round(cor(Mean_Difference, Mean_Ignored_Achievement, use="complete.obs"), 2),
+                          cors.cur=round(cor(Mean_Difference, Mean_Current_Achievement, use="complete.obs"), 2),
+                          cors.achdiff=round(cor(Mean_Difference, Ach_Difference, use="complete.obs"), 2),
+
                           cors.frl=round(cor(Mean_Difference, PERCENT_FRED, use="complete.obs"), 2),
                           cors.ell=round(cor(Mean_Difference, PERCENT_ELL, use="complete.obs"), 2),
                           cors.swd=round(cor(Mean_Difference, PERCENT_IEP, use="complete.obs"), 2)), keyby=c("CONTENT_AREA", "GRADE")]
@@ -434,5 +450,104 @@ for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
     p <- p + scale_y_continuous(name="School Mean SGP Differences")
 
 		ggsave(filename = paste("Plots/Skip_Year_SGP_Comp_", ca.name, "_SGP_x_IEP.pdf", sep=""), plot=p, device = "pdf", width = 7, height = 6.5, units = "in")
+  }
+}
+
+
+#####
+#####
+#####
+
+Mean_Current_Achievement = mean(SCALE_SCORE_STANDARDIZED, na.rm=TRUE),
+Mean_Prior_Achievement = mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
+Mean_Ignored_Achievement = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
+diff.grd.sch[, Ach_Difference := Mean_Prior_Achievement - Mean_Ignored_Achievement]
+
+
+#     Mean Difference By Current Achievement
+
+for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
+  tmp.data <- diff.grd.sch[CONTENT_AREA == content.area, list(GRADE, Mean_Current_Achievement, Mean_Difference, N)] # YEAR,
+	if (content.area=="MATHEMATICS") ca.name <- "Math" else ca.name <- capwords(content.area)
+
+  if (nrow(tmp.data[!is.na(Mean_Current_Achievement),]) > 10) { # YEAR %in% c("2018", "2019") &
+    ###   School-Level Mean SGP Distributions - Original vs Skip Year -- Content Area x Grade (facet)
+
+    p <- ggplot() +
+			# scale_color_manual(values = my.colors) +
+			ggtitle(paste("Mean SGP Difference by Current Achievement:", ca.name)) +
+			theme(plot.title = element_text(size=18, face="bold.italic"), axis.title.x=element_text(size=15), axis.title.y=element_text(size=15), axis.text.x=element_text(size=14), axis.text.y=element_text(size=14))
+    p <- p + facet_wrap( ~ GRADE, ncol=2) # + coord_fixed(xlim=c(-2, 2), ylim=c(-30, 30))
+
+    p <- p + geom_point(data = tmp.data[N > 9], aes(x = Mean_Current_Achievement, y = Mean_Difference, size = N), alpha = 0.5, colour="blue") +
+             scale_size_continuous(range = c(1, 7)) # , shape=YEAR, color=YEAR
+    p <- p + geom_smooth(data = tmp.data[N > 9], aes(x = Mean_Current_Achievement, y = Mean_Difference), se=FALSE, colour="black")
+    p <- p + geom_text(data=cor.diff[CONTENT_AREA == content.area], aes(label=paste("r = ", cors.cur, sep="")), x = 0.9, y = -15.5, size = 4.0, colour = "red") # x = 1.25, y = -15 # x = 0.65, y = -7
+
+    p <- p + theme(legend.position = "none") #  Needed when N size used for bubbles
+    # p <- p + guides(color = guide_legend(override.aes = list(shape=16:17), title = "School\nYear", title.theme = element_text(size = 16), label.theme = element_text(size = 15)), shape="none")
+    p <- p + scale_x_continuous(name="Mean Prior (Standardized) Scores")
+    p <- p + scale_y_continuous(name="School Mean SGP Differences")
+
+		ggsave(filename = paste("Plots/Skip_Year_SGP_Comp_", ca.name, "_SGP_x_Current_Ach.pdf", sep=""), plot=p, device = "pdf", width = 7, height = 6.5, units = "in")
+  }
+}
+
+
+#     Mean Difference By Prior (Ignored/Skipped) Achievement
+
+for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
+  tmp.data <- diff.grd.sch[CONTENT_AREA == content.area, list(GRADE, Mean_Ignored_Achievement, Mean_Difference, N)] # YEAR,
+	if (content.area=="MATHEMATICS") ca.name <- "Math" else ca.name <- capwords(content.area)
+
+  if (nrow(tmp.data[!is.na(Mean_Ignored_Achievement),]) > 10) { # YEAR %in% c("2018", "2019") &
+    ###   School-Level Mean SGP Distributions - Original vs Skip Year -- Content Area x Grade (facet)
+
+    p <- ggplot() +
+			# scale_color_manual(values = my.colors) +
+			ggtitle(paste("Mean SGP Difference by Prior (2018) Achievement:", ca.name)) +
+			theme(plot.title = element_text(size=18, face="bold.italic"), axis.title.x=element_text(size=15), axis.title.y=element_text(size=15), axis.text.x=element_text(size=14), axis.text.y=element_text(size=14))
+    p <- p + facet_wrap( ~ GRADE, ncol=2) # + coord_fixed(xlim=c(-2, 2), ylim=c(-30, 30))
+
+    p <- p + geom_point(data = tmp.data[N > 9], aes(x = Mean_Ignored_Achievement, y = Mean_Difference, size = N), alpha = 0.5, colour="blue") +
+             scale_size_continuous(range = c(1, 7)) # , shape=YEAR, color=YEAR
+    p <- p + geom_smooth(data = tmp.data[N > 9], aes(x = Mean_Ignored_Achievement, y = Mean_Difference), se=FALSE, colour="black")
+    p <- p + geom_text(data=cor.diff[CONTENT_AREA == content.area], aes(label=paste("r = ", cors.ign, sep="")), x = 0.9, y = -15.5, size = 4.0, colour = "red") # x = 1.25, y = -15 # x = 0.65, y = -7
+
+    p <- p + theme(legend.position = "none") #  Needed when N size used for bubbles
+    # p <- p + guides(color = guide_legend(override.aes = list(shape=16:17), title = "School\nYear", title.theme = element_text(size = 16), label.theme = element_text(size = 15)), shape="none")
+    p <- p + scale_x_continuous(name="Mean Prior (Standardized) Scores")
+    p <- p + scale_y_continuous(name="School Mean SGP Differences")
+
+		ggsave(filename = paste("Plots/Skip_Year_SGP_Comp_", ca.name, "_SGP_x_SS_Ign.pdf", sep=""), plot=p, device = "pdf", width = 7, height = 6.5, units = "in")
+  }
+}
+
+#     Mean Difference By Difference in Prior Achievement
+
+for (content.area in c("ELA", "MATHEMATICS", "SCIENCE")) {
+  tmp.data <- diff.grd.sch[CONTENT_AREA == content.area, list(GRADE, Ach_Difference, Mean_Difference, N)] # YEAR,
+	if (content.area=="MATHEMATICS") ca.name <- "Math" else ca.name <- capwords(content.area)
+
+  if (nrow(tmp.data[!is.na(Ach_Difference),]) > 10) { # YEAR %in% c("2018", "2019") &
+    ###   School-Level Mean SGP Distributions - Original vs Skip Year -- Content Area x Grade (facet)
+
+    p <- ggplot() +
+			# scale_color_manual(values = my.colors) +
+			ggtitle(paste("Mean SGP Difference by Prior Achievement Difference:", ca.name)) +
+			theme(plot.title = element_text(size=18, face="bold.italic"), axis.title.x=element_text(size=15), axis.title.y=element_text(size=15), axis.text.x=element_text(size=14), axis.text.y=element_text(size=14))
+    p <- p + facet_wrap( ~ GRADE, ncol=2) # + coord_fixed(xlim=c(-2, 2), ylim=c(-25, 25))
+
+    p <- p + geom_point(data = tmp.data[N > 9], aes(x = Ach_Difference, y = Mean_Difference, size = N), alpha = 0.5, colour="blue") +
+             scale_size_continuous(range = c(1, 7)) # , shape=YEAR, color=YEAR
+    p <- p + geom_smooth(data = tmp.data[N > 9], aes(x = Ach_Difference, y = Mean_Difference), se=FALSE, colour="black")
+    p <- p + geom_text(data=cor.diff[CONTENT_AREA == content.area], aes(label=paste("r = ", cors.achdiff, sep="")), x = 0, y = -15.5, size = 4.0, colour = "red") # x = 1.25, y = -15 # x = 0.65, y = -7
+
+    p <- p + theme(legend.position = "none") #  Needed when N size used for bubbles
+    # p <- p + guides(color = guide_legend(override.aes = list(shape=16:17), title = "School\nYear", title.theme = element_text(size = 16), label.theme = element_text(size = 15)), shape="none")
+    p <- p + scale_x_continuous(name="Mean Prior (Standardized) Scores")
+    p <- p + scale_y_continuous(name="School Mean SGP Differences")
+
+		ggsave(filename = paste("Plots/Skip_Year_SGP_Comp_", ca.name, "_SGP_x_Ach_Diff.pdf", sep=""), plot=p, device = "pdf", width = 7, height = 6.5, units = "in")
   }
 }
