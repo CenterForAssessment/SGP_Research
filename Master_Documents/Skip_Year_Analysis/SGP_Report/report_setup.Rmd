@@ -69,8 +69,9 @@
   #   params$EOC_subjects <- NULL
   # } else  params$eoct.tf <- TRUE
 
-  params$subject_order <- params$GL_subjects
-  # params$subject_order <- c(params$GL_subjects, params$EOC_subjects)
+  if (is.null(params$EOC_subjects)) {
+    params$subject_order <- params$GL_subjects
+  } else params$subject_order <- c(params$GL_subjects, params$EOC_subjects)
 
   ###   Grades
   if (is.null(params$seq.grades)) {
@@ -79,6 +80,12 @@
   if (is.null(params$skip.grades)) {
     params$skip.grades <- unique(Report_Data[!is.na(SGP), GRADE])
   }
+
+  ###   Minimum School Size
+  if (is.null(params$min.school.size)) {
+    params$min.school.size <- 10
+  }
+
 
   ###   Normalize Child and GoFit plot paths
   if (!is.null(params$child.file.path)|!is.null(params$gof.path.seq)|!is.null(params$gof.path.skip)) {
