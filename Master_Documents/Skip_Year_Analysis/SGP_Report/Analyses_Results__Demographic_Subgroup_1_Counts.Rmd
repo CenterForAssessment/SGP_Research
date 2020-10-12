@@ -23,7 +23,7 @@ Table `r tblNum(1)` provides the frequencies and proportions of students that ha
 ```
 
 ```{r, results='asis', echo=FALSE}
-	demog_counts <- demog_smry[, c(1:2, 8:10, 12:13)] # Percentages receiving SGPs
+	demog_counts <- demog_smry[, c(1:2, 8:10, 12:13)][order(match(CONTENT_AREA, params$subject_order))] # Percentages receiving SGPs
 	demog_counts$CONTENT_AREA <- sapply(demog_counts$CONTENT_AREA, capwords, USE.NAMES=FALSE)
 	demog_counts$CONTENT_AREA[duplicated(demog_counts$CONTENT_AREA)] <- ""
 	demog_counts[, Total_Students := prettyNum(Total_Students, preserve.width = "individual", big.mark=",")]

@@ -1,6 +1,6 @@
 
 ```{r, results='asis', echo=FALSE, Exec_Summary}
-  exec.sum.text <- readLines("../../../master/Skip_Year_Analysis/SGP_Report/Executive_Summary_Text.Rmd")
+  exec.sum.text <- readLines(file.path(params$child.file.path, "Executive_Summary_Text.Rmd"))
   text.to.replace <- unique(do.call(rbind, str_match_all(exec.sum.text, "XXX__\\s*(.*?)\\s*__XXX")))
 
   for (i in seq(nrow(text.to.replace))) exec.sum.text <- gsub(text.to.replace[i,1], eval(parse(text=paste0("params[['", text.to.replace[i,2], "']][[1]]"))), exec.sum.text, fixed=TRUE)

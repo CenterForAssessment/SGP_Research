@@ -3,14 +3,14 @@ Table `r tblNum(1)` provides the correlations between school level sequential an
 
 ```{r, results='asis', echo=FALSE}
 ###   Calculate School Level Demographic Group Summaries
-	sch_demog_cor <- sch_demog_msgp[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+	sch_demog_cor <- sch_demog_msgp[COUNT_NO_SKIP_SGP >= params$min.school.size & COUNT_SKIP_SGP >= params$min.school.size, list(
   	  PCT_Demog_x_Sequential = round(cor(MEAN_NO_SKIP_SGP, eval(parse(text = demog.group$school.variable)), use="complete.obs"), 2),
     	PCT_Demog_x_Skip_Year = round(cor(MEAN_SKIP_SGP, eval(parse(text = demog.group$school.variable)), use="complete.obs"), 2)), keyby = c("CONTENT_AREA")]
-	sch_demog_cor_x <- sch_demog_msgp_x[COUNT_NO_SKIP_SGP > 9 & COUNT_SKIP_SGP > 9, list(
+	sch_demog_cor_x <- sch_demog_msgp_x[COUNT_NO_SKIP_SGP >= params$min.school.size & COUNT_SKIP_SGP >= params$min.school.size, list(
   	  PCT_Demog_x_Sequential = round(cor(MEAN_NO_SKIP_SGP, eval(parse(text = demog.group$school.variable)), use="complete.obs"), 2),
     	PCT_Demog_x_Skip_Year = round(cor(MEAN_SKIP_SGP, eval(parse(text = demog.group$school.variable)), use="complete.obs"), 2)), keyby = c("CONTENT_AREA")]
 
-	cor_tbl_demog <- data.table(Filter = c("All Students", "", "Skip-Year Subset", ""), rbindlist(list(sch_demog_cor, sch_demog_cor_x)))
+	cor_tbl_demog <- data.table(Filter = c("All Students", "", "Skip-Year Subset", ""), rbindlist(list(sch_demog_cor[CONTENT_AREA %in% GL_subjects], sch_demog_cor_x[CONTENT_AREA %in% GL_subjects])))
 	cor_tbl_demog[, CONTENT_AREA := sapply(CONTENT_AREA, capwords)]
 	setnames(cor_tbl_demog, sapply(gsub("PCT_Demog_x_", "", names(cor_tbl_demog)), capwords))
 
