@@ -7,14 +7,14 @@ Table `r tblNum(1)` provides the frequencies and proportions of students that ha
 ```{r, echo=FALSE, include=FALSE}
 ###   Calculate Indiv/Group level values
 	demog_smry <- Report_Data[VALID_CASE=="VALID_CASE" & GRADE %in% params$skip.grades & !is.na(eval(parse(text = demog.group$variable))), list(
-                  SGP_Correlation = round(cor(NO_SKIP_SGP, SGP, use="pairwise.complete"), 2),
-									Mean_Sequential = round(mean(NO_SKIP_SGP, na.rm = TRUE), 1),
-									SD_Sequential = round(sd(NO_SKIP_SGP, na.rm = TRUE), 1),
-									Mean_Skip = round(mean(SGP, na.rm = TRUE), 1),
-									SD_Skip = round(sd(SGP, na.rm = TRUE), 1),
+                  SGP_Correlation = round(cor(eval(parse(text = params$seq.sgp)), eval(parse(text = params$skip.sgp)), use="pairwise.complete"), 2),
+									Mean_Sequential = round(mean(eval(parse(text = params$seq.sgp)), na.rm = TRUE), 1),
+									SD_Sequential = round(sd(eval(parse(text = params$seq.sgp)), na.rm = TRUE), 1),
+									Mean_Skip = round(mean(eval(parse(text = params$skip.sgp)), na.rm = TRUE), 1),
+									SD_Skip = round(sd(eval(parse(text = params$skip.sgp)), na.rm = TRUE), 1),
 									Total_Students = .N,
-									Sequential_Count = sum(!is.na(NO_SKIP_SGP)),
-									Skip_Count = sum(!is.na(SGP))), keyby = c("CONTENT_AREA", demog.group$variable)]
+									Sequential_Count = sum(!is.na(eval(parse(text = params$seq.sgp)))),
+									Skip_Count = sum(!is.na(eval(parse(text = params$skip.sgp))))), keyby = c("CONTENT_AREA", demog.group$variable)]
 	demog_smry[, Difference := Skip_Count - Sequential_Count]
 	demog_smry[, Pct_Sequential := round((Sequential_Count/Total_Students)*100, 1)]
 	demog_smry[, Pct_Skip := round((Skip_Count/Total_Students)*100, 1)]
@@ -24,8 +24,8 @@ Table `r tblNum(1)` provides the frequencies and proportions of students that ha
 
 ```{r, results='asis', echo=FALSE}
 	demog_counts <- demog_smry[, c(1:2, 8:10, 12:13)][order(match(CONTENT_AREA, params$subject_order))] # Percentages receiving SGPs
-	demog_counts$CONTENT_AREA <- sapply(demog_counts$CONTENT_AREA, capwords, USE.NAMES=FALSE)
-	demog_counts$CONTENT_AREA[duplicated(demog_counts$CONTENT_AREA)] <- ""
+	demog_counts[, CONTENT_AREA := sapply(CONTENT_AREA, capwords, USE.NAMES=FALSE)]
+	demog_counts[duplicated(CONTENT_AREA), CONTENT_AREA := ""]
 	demog_counts[, Total_Students := prettyNum(Total_Students, preserve.width = "individual", big.mark=",")]
 	demog_counts[, Sequential_Count := prettyNum(Sequential_Count, preserve.width = "individual", big.mark=",")]
 	demog_counts[, Skip_Count := prettyNum(Skip_Count, preserve.width = "individual", big.mark=",")]
@@ -38,6 +38,6 @@ Table `r tblNum(1)` provides the frequencies and proportions of students that ha
 
 	cat(dualTable(as.matrix(demog_counts),
   	align=paste(rep("r", ncol(demog_counts)), collapse=""),
-		n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
+		n.rgroup = rep(2, nrow(demog_counts)/2), n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
 		caption= paste("Sequential and skip-year SGP counts and percentages by content area and",  demog.group$label, "status"))) # , files = tbl.file
 ```

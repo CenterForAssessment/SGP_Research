@@ -2,8 +2,8 @@ Table `r tblNum(1)` provides the correlations between sequential and skip-year S
 
 ```{r, results='asis', echo=FALSE}
 	demog_corrs <- demog_smry[, 1:7][order(match(CONTENT_AREA, params$subject_order))] # Means/SDs/Cors
-	demog_corrs$CONTENT_AREA <- sapply(demog_corrs$CONTENT_AREA, capwords, USE.NAMES=FALSE)
-	demog_corrs$CONTENT_AREA[duplicated(demog_corrs$CONTENT_AREA)] <- ""
+	demog_corrs[, CONTENT_AREA := sapply(CONTENT_AREA, capwords, USE.NAMES=FALSE)]
+	demog_corrs[duplicated(CONTENT_AREA), CONTENT_AREA := ""]
 	demog_corrs[, demog.group$variable := gsub(".*: ", "", eval(parse(text = demog.group$variable)))]
 
 	row.names(demog_corrs) <- NULL
@@ -11,6 +11,6 @@ Table `r tblNum(1)` provides the correlations between sequential and skip-year S
 	setnames(demog_corrs, sapply(gsub("_Sequential|_Skip", "", names(demog_corrs)), capwords, special.words=c(demog.group$label, "SGP", "SD", "SWD", "FRL", "ED", "EL", "ELL")))
 
   cat(dualTable(as.matrix(demog_corrs),
-  	align="rrccccc", n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
+  	align="rrccccc", n.rgroup = rep(2, nrow(demog_corrs)/2), n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
 		caption=paste("Sequential and skip-year SGP correlation and mean/standard deviation by content area and",  demog.group$label, "status")))
 ```

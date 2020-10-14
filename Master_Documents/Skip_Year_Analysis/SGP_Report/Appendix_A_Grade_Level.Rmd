@@ -1,6 +1,7 @@
 
 ```{r, cache=FALSE, results="asis", echo=FALSE}
 	seq.skip.grd <- intersect(params$seq.grades, params$skip.grades)
+	seq.skip.grd <- seq.skip.grd[seq.skip.grd != "EOCT"]
 
 	for (ca in params$GL_subjects) {
 		seq.plot.list <- NULL

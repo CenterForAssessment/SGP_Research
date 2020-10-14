@@ -14,9 +14,6 @@
     } else params$working.directory <- getwd()
   }
 
-  ###   Set report type - non-NULL for renderMultiDocument(..., report_format = 'RMD')
-  if (is.null(params$report_type)) params$report_type <- as.character(NA)
-
   ###   Draft
   # draft.text <- "\\vspace{16pt} \\noindent  \\textbf{FOR INTERNAL USE ONLY - DO NOT CIRCULATE!} \\vspace{20pt}"
   if (is.null(params$draft.text)) {
@@ -39,7 +36,6 @@
   } else tmp.state.name <- params$state.name[[1]]
 
   if (is.null(params$state.org)) {
-    # unlockBinding("params", env = .GlobalEnv)
     params$state.org <- SGPstateData[[tmp.state.abv]][["Assessment_Program_Information"]][["Organization"]][["Name"]]
   }
   if (is.null(params$state.org.abv)) {
@@ -52,6 +48,15 @@
   if (is.null(params$test.abv)) {
     params$test.abv <- SGPstateData[[tmp.state.abv]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
   }
+
+  ###   SGP version to use (SIMEX, BASELINE, UNCORRECTED, etc.)
+  if (is.null(params$seq.sgp)) {
+    params$seq.sgp <- "NO_SKIP_SGP"
+  }
+  if (is.null(params$skip.sgp)) {
+    params$seq.sgp <- "SGP"
+  }
+
 
   ###   Content areas
   if (is.null(params$GL_subjects)) {
@@ -102,21 +107,12 @@
     }
     setwd(tmp.wd)
   }
-
 ```
 
 
 ```{r, echo=FALSE, include=FALSE}
   ## set a universal Cache path
   knitr::opts_chunk$set(cache.path = "assets/_cache/Skip_Year_Report")
-
-  # multdoc.call <- match.call()
-  # argg <- c(as.list(environment()), list(...))
-  # save(list=c('matched.call', 'argg'), file=file.path(params$working.directory, "Call_Matches_Knitted.rdb"))
-  # rmarkdown.pandoc.to.multdoc <- knitr::opts_knit$get('rmarkdown.pandoc.to')
-  # html.tf1 <- knitr::is_html_output()
-  # html.tf2 <- knitr::is_html_output(excludes = "markdown")
-  # save(list=c('rmarkdown.pandoc.to.multdoc', 'html.tf1', 'html.tf2'), file="rmarkdown_pandoc_to_multdoc.rdb")
 
   ##  Load some R packages and functions required for HTML table creation silently.
   ##  Load SGP and other packages here to avoid messages.
@@ -137,10 +133,6 @@
     dir.create(file.path(params$working.directory, "assets", "img"), showWarnings = FALSE, recursive = TRUE)
   }
 
-  # if (!dir.exists(file.path(params$working.directory, "assets", "tables"))) {
-  #   dir.create(file.path(params$working.directory, "assets", "tables"), showWarnings = FALSE, recursive = TRUE)
-  # }
-
   ### Utility function - Assumes first two "levels" are the main dichotomy
   percent_demog <- function(demog) {
   	return(100*as.numeric(table(demog)[2])/as.numeric(sum(table(demog)[1:2])))
@@ -151,5 +143,4 @@
   if (!packageVersion("Literasee") > '0.0.4.96')  {
     source("https://gist.githubusercontent.com/hack-r/22104543e2151519c41a8f0ce042b31c/raw/01731f3176b4ee471785639533d38eda4790ab77/numbers2words.r")
   }
-
 ```

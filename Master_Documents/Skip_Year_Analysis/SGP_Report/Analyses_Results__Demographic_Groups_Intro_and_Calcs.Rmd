@@ -13,13 +13,13 @@ Investigations of (differential) impact on student achievement and growth for al
 	}
 
 	smry_eval_expression <- c(
-		"MEAN_NO_SKIP_SGP = mean(NO_SKIP_SGP, na.rm=TRUE)",
-		"MEAN_SKIP_SGP = mean(SGP, na.rm=TRUE)",
-		"MEAN_SCALE_SCORE_PRIOR_STANDARDIZED = mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE)",
-		"MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE)",
-		"COUNT_NO_SKIP_SGP = sum(!is.na(NO_SKIP_SGP))",
-		"COUNT_SKIP_SGP = sum(!is.na(SGP))",
-		"COUNT_TOTAL = .N", smry_eval_expression)
+		paste0("MEAN_NO_SKIP_SGP = mean(", params$seq.sgp, ", na.rm=TRUE)"),
+		paste0("MEAN_SKIP_SGP = mean(", params$skip.sgp, ", na.rm=TRUE)"),
+		       "MEAN_SCALE_SCORE_PRIOR_STANDARDIZED = mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE)",
+		       "MEAN_NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED = mean(NO_SKIP_SGP_SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE)",
+		paste0("COUNT_NO_SKIP_SGP = sum(!is.na(", params$seq.sgp, "))"),
+		paste0("COUNT_SKIP_SGP = sum(!is.na(", params$skip.sgp, "))"),
+		       "COUNT_TOTAL = .N", smry_eval_expression)
 
 	smry_eval_expression <- setNames(smry_eval_expression, sub('^(.*) = .*', '\\1', smry_eval_expression))
 
@@ -40,11 +40,11 @@ Investigations of (differential) impact on student achievement and growth for al
   demog_plot_data_gl[, Mean_Difference := round(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP, 2)] # NOT absolute
 
 	vars.to.get <- grep("PERCENT_", names(demog_plot_data_gl), value=TRUE)
-	smry_eval_expression <- paste0("cors_", tolower(sub("PERCENT_", "", vars.to.get)), " = round(cor(Mean_Difference, ", vars.to.get, ", use='complete.obs'), 2)")
-	smry_eval_expression <- setNames(smry_eval_expression, sub('^(.*) = .*', '\\1', smry_eval_expression))
+	corrs_eval_expression <- paste0("cors_", tolower(sub("PERCENT_", "", vars.to.get)), " = round(cor(Mean_Difference, ", vars.to.get, ", use='complete.obs'), 2)")
+	corrs_eval_expression <- setNames(corrs_eval_expression, sub('^(.*) = .*', '\\1', corrs_eval_expression))
 
   cor_demog <- demog_plot_data_gl[COUNT_NO_SKIP_SGP >= params$min.school.size & COUNT_SKIP_SGP >= params$min.school.size & !is.na(MEAN_SKIP_SGP),
-  																	lapply(smry_eval_expression, function(f) eval(parse(text=f))), keyby=c("CONTENT_AREA", "Schools")]
+  																	lapply(corrs_eval_expression, function(f) eval(parse(text=f))), keyby=c("CONTENT_AREA", "Schools")]
 
 	##  EOC Subjects
 	if (!is.null(params$EOC_subjects)) {
@@ -52,6 +52,6 @@ Investigations of (differential) impact on student achievement and growth for al
 	  demog_plot_data_eoc[, Mean_Difference := round(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP, 2)] # NOT absolute
 	  demog_plot_data_eoc[, CONTENT_AREA := factor(CONTENT_AREA, levels = params$EOC_subjects, labels = sapply(params$EOC_subjects, capwords))]
 	  cor_demog_eoc <- demog_plot_data_eoc[COUNT_NO_SKIP_SGP >= params$min.school.size & COUNT_SKIP_SGP >= params$min.school.size & !is.na(MEAN_SKIP_SGP),
-	  																	lapply(smry_eval_expression, function(f) eval(parse(text=f))), keyby="CONTENT_AREA"]
+	  																	lapply(corrs_eval_expression, function(f) eval(parse(text=f))), keyby="CONTENT_AREA"]
 	}
 ```
