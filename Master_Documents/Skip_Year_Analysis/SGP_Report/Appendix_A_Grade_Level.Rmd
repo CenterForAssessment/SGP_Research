@@ -1,33 +1,46 @@
 
 ```{r, cache=FALSE, results="asis", echo=FALSE}
-	seq.skip.grd <- intersect(params$seq.grades, params$skip.grades)
-	seq.skip.grd <- seq.skip.grd[seq.skip.grd != "EOCT"]
+	gof.type <- NULL
+	if (grepl("BASELINE", params$seq.sgp)) gof.type <- ".BASELINE"
+	if (grepl("SIMEX$", params$seq.sgp)) gof.type <- paste0(gof.type, ".SIMEX")
+	if (grepl("SIMEX_RANKED", params$seq.sgp)) gof.type <- paste0(gof.type, ".RANKED_SIMEX")
+
+	seq.skip.grd <- list()
+	if (is.null(params$skip.grades.list)) {
+		for (ca in params$GL_subjects) seq.skip.grd[[ca]] <- intersect(params$seq.grades, params$skip.grades)
+	} else {
+		for (ca in params$GL_subjects) seq.skip.grd[[ca]] <- intersect(params$seq.grades.list[[ca]] %w/o% "EOCT", params$skip.grades.list[[ca]] %w/o% "EOCT")
+	}
+	seq.skip.grd <- sapply(sapply(seq.skip.grd, as.numeric), sort)  #  make numeric for re-order when grades >= 10 present
 
 	for (ca in params$GL_subjects) {
 		seq.plot.list <- NULL
 		skip.plot.list <- NULL
 
-		seq.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.seq[[1]], paste0(ca, ".2019")))))
+		seq.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.seq[[1]], paste0(ca, ".2019", gof.type)))))
 		seq.plots <- seq.plots[order(seq.plots)][seq.plots != "Decile_Tables"]
 		# weed out norm group nesting
 		nest.test <- sapply(seq(seq.plots), function(f) grepl(seq.plots[f], seq.plots[-f]))
 		if(any(nest.test)) seq.plots <- seq.plots[-which(nest.test, arr.ind = TRUE)[,2]]
 		seq.prg <- sapply(seq.plots, function(f) strsplit(f, ";")[[1]])
 		seq.grd <- sapply(seq.prg, function(f) gsub(paste0("2019_", sub("MATHEMATICS", "MATH", ca), "_"), "", f[1]))
-		seq.plots <- seq.plots[seq.grd %in% seq.skip.grd]
-		seq.plot.list <- c(seq.plot.list, file.path(params$gof.path.seq[[1]], paste0(ca, ".2019"), paste0(seq.plots, ".pdf")))
+		# seq.grd <- seq.grd[!duplicated(seq.grd)]
+		seq.plots <- seq.plots[!duplicated(seq.grd) & seq.grd %in% seq.skip.grd[[ca]]]  #  additional removal of dups needed for Utah
+		seq.plots <- seq.plots[order(unlist(sapply(seq.grd[!duplicated(seq.grd)], as.numeric)))] # re-order for grades >= 10
+		seq.plot.list <- c(seq.plot.list, file.path(params$gof.path.seq[[1]], paste0(ca, ".2019", gof.type), paste0(seq.plots[!is.na(seq.plots)], ".pdf")))
 
-		skip.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.skip[[1]], paste0(ca, ".2019")))))
+		skip.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.skip[[1]], paste0(ca, ".2019", gof.type)))))
 		skip.plots <- skip.plots[order(skip.plots)][skip.plots != "Decile_Tables"]
 		# weed out norm group nesting
 		nest.test <- sapply(seq(skip.plots), function(f) grepl(skip.plots[f], skip.plots[-f]))
 		if(any(nest.test)) skip.plots <- skip.plots[-which(nest.test, arr.ind = TRUE)[,2]]
 		skip.prg <- sapply(skip.plots, function(f) strsplit(f, ";")[[1]])
 		skip.grd <- sapply(skip.prg, function(f) gsub(paste0("2019_", sub("MATHEMATICS", "MATH", ca), "_"), "", f[1]))
-		skip.plots <- skip.plots[skip.grd %in% seq.skip.grd]
-		skip.plot.list <- c(skip.plot.list, file.path(params$gof.path.skip[[1]], paste0(ca, ".2019"), paste0(skip.plots, ".pdf")))
+		skip.plots <- skip.plots[!duplicated(skip.grd) & skip.grd %in% seq.skip.grd[[ca]]]
+		skip.plots <- skip.plots[order(unlist(sapply(skip.grd[!duplicated(skip.grd)], as.numeric)))] # re-order for grades >= 10
+		skip.plot.list <- c(skip.plot.list, file.path(params$gof.path.skip[[1]], paste0(ca, ".2019", gof.type), paste0(skip.plots[!is.na(skip.plots)], ".pdf")))
 
-		plot.chunks <- split(seq_along(seq.skip.grd), cut_interval(seq_along(seq.skip.grd), length=2))
+		plot.chunks <- split(seq_along(seq.skip.grd[[ca]]), ggplot2::cut_interval(seq_along(seq.skip.grd[[ca]]), length=2))
 
 		cat("
 
@@ -39,7 +52,7 @@
 					files = c(rbind(seq.plot.list[plot.chunks[[k]]], skip.plot.list[plot.chunks[[k]]])),
 					rows = length(plot.chunks[[k]]), columns = 2, pdf.width = 0.5,
 					caption = paste0("Sequential (left) and skip-year (right) fit plots for ", capwords(sub("MATHEMATICS", "MATH", ca)),
-													" (grades ", paste(seq.skip.grd[plot.chunks[[k]]], collapse = " - "),")"))
+													" (grades ", paste(seq.skip.grd[[ca]][plot.chunks[[k]]], collapse = " - "),")"))
 		}
 	}
 ```

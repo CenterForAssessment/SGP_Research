@@ -1,12 +1,12 @@
 
 ### `r demog.group$name`
 
-Table `r tblNum(1)` provides the frequencies and proportions of students that had a sequential and/or skip-year SGP calculated in 2019, disaggregated by those identified as `r sub("english", "English", tolower(demog.group$name))` (`r if( !is.null(demog.group$description) ) demog.group$description else demog.group$label`), or not, and content area.  `r if(!is.null(demog.group$count.comment)) {demog.group$count.comment} `
+Table `r tblNum(1)` provides the frequencies and proportions of students that had a sequential and/or skip-year SGP calculated in 2019, disaggregated by those identified as `r sub("english", "English", tolower(demog.group$name))` (`r if( !is.null(demog.group$description) ) demog.group$description else demog.group$label`), or not, and content area. `r if(!is.null(demog.group$count.comment)) {demog.group$count.comment} `
 
 
 ```{r, echo=FALSE, include=FALSE}
 ###   Calculate Indiv/Group level values
-	demog_smry <- Report_Data[VALID_CASE=="VALID_CASE" & GRADE %in% params$skip.grades & !is.na(eval(parse(text = demog.group$variable))), list(
+	demog_smry <- Report_Data[VALID_CASE=="VALID_CASE" & eval(parse(text = params$skip.subset)) & !is.na(eval(parse(text = demog.group$variable))), list(
                   SGP_Correlation = round(cor(eval(parse(text = params$seq.sgp)), eval(parse(text = params$skip.sgp)), use="pairwise.complete"), 2),
 									Mean_Sequential = round(mean(eval(parse(text = params$seq.sgp)), na.rm = TRUE), 1),
 									SD_Sequential = round(sd(eval(parse(text = params$seq.sgp)), na.rm = TRUE), 1),

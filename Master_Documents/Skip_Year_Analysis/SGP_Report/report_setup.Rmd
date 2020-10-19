@@ -15,7 +15,7 @@
   }
 
   ###   Draft
-  # draft.text <- "\\vspace{16pt} \\noindent  \\textbf{FOR INTERNAL USE ONLY - DO NOT CIRCULATE!} \\vspace{20pt}"
+  # Example draft.text <- "\\vspace{16pt} \\noindent  \\textbf{FOR INTERNAL USE ONLY - DO NOT CIRCULATE!} \\vspace{20pt}"
   if (is.null(params$draft.text)) {
     params$draft.text <- ""
   }
@@ -48,15 +48,33 @@
   if (is.null(params$test.abv)) {
     params$test.abv <- SGPstateData[[tmp.state.abv]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
   }
+  if (is.null(params$test.url)) {
+    params$test.url <- SGPstateData[[tmp.state.abv]][["Assessment_Program_Information"]][["URL"]]
+  }
+  if (is.null(params$test.trans.year)) {
+    params$test.trans.year <- SGPstateData[[tmp.state.abv]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]
+    if (!is.null(params$test.trans.year)) {
+      if (grepl("2019", params$test.trans.year)) {
+        params$test.trans.name <- SGPstateData[[tmp.state.abv]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Assessment_Abbreviation"]]
+      } else params$test.trans.year <- NULL
+    }
+  }
 
   ###   SGP version to use (SIMEX, BASELINE, UNCORRECTED, etc.)
   if (is.null(params$seq.sgp)) {
     params$seq.sgp <- "NO_SKIP_SGP"
   }
   if (is.null(params$skip.sgp)) {
-    params$seq.sgp <- "SGP"
+    params$skip.sgp <- "SGP"
   }
 
+  if (is.null(params$sgp.max.order)) {
+    # if (any(grepl("^SGP_ORDER_", names(Report_Data)))){
+    #   params$sgp.max.order <- suppressWarnings(max(as.numeric(unlist(strsplit(grep("^SGP_ORDER_", names(Report_Data), value=TRUE), "_"))), na.rm=TRUE))
+    # } else {
+      params$sgp.max.order <- max(sapply(strsplit(unique(Report_Data[, as.character(SGP_NORM_GROUP)]), ";"), length))-1
+    # }
+  }
 
   ###   Content areas
   if (is.null(params$GL_subjects)) {
@@ -85,12 +103,55 @@
   if (is.null(params$skip.grades)) {
     params$skip.grades <- unique(Report_Data[!is.na(SGP), GRADE])
   }
+  Seq_Grades <- unique(Report_Data[!is.na(NO_SKIP_SGP) & GRADE != "EOCT", GRADE, CONTENT_AREA])
+  Seq_Grades_Count <- Seq_Grades[, .(Count = length(unique(GRADE))), by = CONTENT_AREA]
+  if (!all(diff(Seq_Grades_Count$Count)==0)) {
+    params$seq.grades.list <- list()
+    for (ca in params$subject_order){
+      params$seq.grades.list[[ca]] <- Seq_Grades[CONTENT_AREA == ca, GRADE]
+    }  
+    ###  Sequential Subset Restriction :: e.g. ((CONTENT_AREA %in% c('ELA', 'MATHEMATICS') & GRADE %in% 4:10)|(CONTENT_AREA == 'SCIENCE' & GRADE %in% 5:10))
+    seq.grds <- sapply(params$seq.grades.list, as.numeric)
+    tmp.subset <- "("
+    while(length(seq.grds) > 0) {
+      common.grds <- names(seq.grds[duplicated(seq.grds)])
+      if (length(common.grds) > 0) {
+        tmp.subset <- paste0(tmp.subset, "(CONTENT_AREA %in% c('", paste(names(seq.grds)[1], common.grds, sep="', '"), "') & GRADE %in% ", paste0(range(seq.grds[[1]]), collapse=":"), ")")
+      } else tmp.subset <- paste0(tmp.subset, "(CONTENT_AREA == '", names(seq.grds)[1], "') & GRADE %in% ", paste0(range(seq.grds[[1]]), collapse=":"), ")")
+      seq.grds <- seq.grds[!duplicated(seq.grds)][-1]
+      if (length(seq.grds) > 0) tmp.subset <- paste0(tmp.subset, "|")
+    }
+    params$seq.subset <- tmp.subset
+  } else {
+    params$seq.subset <- paste0("GRADE %in% c('", paste(params$seq.grades, collapse="','"), "')")
+  }
+  Skip_Grades <- unique(Report_Data[!is.na(SGP) & GRADE != "EOCT", GRADE, CONTENT_AREA])
+  Skip_Grades_Count <- Skip_Grades[, .(Count = length(unique(GRADE))), by = CONTENT_AREA]
+  if (!all(diff(Skip_Grades_Count$Count)==0)) {
+    params$skip.grades.list <- list()
+    for (ca in params$subject_order){
+      params$skip.grades.list[[ca]] <- Skip_Grades[CONTENT_AREA == ca, GRADE]
+    }
+    ###  Skip Year Subset Restriction :: e.g. ((CONTENT_AREA %in% c('ELA', 'MATHEMATICS') & GRADE %in% 5:10)|(CONTENT_AREA == 'SCIENCE' & GRADE %in% 6:10))
+    skp.grds <- sapply(params$skip.grades.list, as.numeric)
+    tmp.subset <- "("
+    while(length(skp.grds) > 0) {
+      common.grds <- names(skp.grds[duplicated(skp.grds)])
+      if (length(common.grds) > 0) {
+        tmp.subset <- paste0(tmp.subset, "(CONTENT_AREA %in% c('", paste(names(skp.grds)[1], common.grds, sep="', '"), "') & GRADE %in% ", paste0(range(skp.grds[[1]]), collapse=":"), ")")
+      } else tmp.subset <- paste0(tmp.subset, "(CONTENT_AREA == '", names(skp.grds)[1], "') & GRADE %in% ", paste0(range(skp.grds[[1]]), collapse=":"), ")")
+      skp.grds <- skp.grds[!duplicated(skp.grds)][-1]
+      if (length(skp.grds) > 0) tmp.subset <- paste0(tmp.subset, "|")
+    }
+    params$skip.subset <- tmp.subset
+  } else {
+    params$skip.subset <- paste0("GRADE %in% c('", paste(params$skip.grades, collapse="','"), "')")
+  }
 
   ###   Minimum School Size
   if (is.null(params$min.school.size)) {
     params$min.school.size <- 10
   }
-
 
   ###   Normalize Child and GoFit plot paths
   if (!is.null(params$child.file.path)|!is.null(params$gof.path.seq)|!is.null(params$gof.path.skip)) {
@@ -116,12 +177,12 @@
 
   ##  Load some R packages and functions required for HTML table creation silently.
   ##  Load SGP and other packages here to avoid messages.
-  require(SGP)
 	require(data.table)
-  require(stringr)
+  require(ggplot2)
 	require(Gmisc)
   require(htmlTable)
-	require(ggplot2)
+  require(SGP)
+  require(stringr)
 
   ##  Set Table, Figure and Equation Counters
   setCounters()
@@ -139,6 +200,13 @@
   }
 
   roundUp <- function(x, to=50) to*(x%/%to + as.logical(x%%to))
+
+  ord <- function(x) { # <sup>th</sup>
+    o <- toOrdinal::toOrdinal(x)
+    return(paste0(x, "<sup>", substr(o, nchar(o)-1, nchar(o)),"</sup>"))
+  }
+
+  "%w/o%" <- function(x,y) x[!x %in% y]
 
   if (!packageVersion("Literasee") > '0.0.4.96')  {
     source("https://gist.githubusercontent.com/hack-r/22104543e2151519c41a8f0ce042b31c/raw/01731f3176b4ee471785639533d38eda4790ab77/numbers2words.r")

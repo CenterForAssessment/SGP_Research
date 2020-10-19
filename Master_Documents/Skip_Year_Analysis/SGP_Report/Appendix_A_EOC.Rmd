@@ -3,7 +3,7 @@
 
 Each end of course (EOC) test subject is analyzed using more than one sequence of prior subjects, grades and years to account for variation in student test-taking histories. Of these various progressions, there is one designated as the "canonical" progression that identifies the most typical course path. These canonical progressions are used in other facets of the Student Growth Percentile methodology, such as making adequate growth determinations and growth-to-standard projections.
 
-For brevity, only the canonical progressions are displayed in this appendix. The full canonical projection is used for the sequential analyses.  For the skip-year analyses, the most recent prior is not used but an additional year is added when available in a students test score history.  A table is provided for each EOC subject subsection listing the canonical and additional (non-canonical) progressions that were calculated for both sequential and skip-year analyses.
+For brevity, only the canonical progressions are displayed in this appendix. The full canonical projection is used for the sequential analyses. For the skip-year analyses, the most recent prior is not used but an additional year is added when available in a students test score history. A table is provided for each EOC subject subsection listing the canonical and additional (non-canonical) progressions that were calculated for both sequential and skip-year analyses.
 
 ```{r, cache=FALSE, results="asis", echo=FALSE}
 	pageBreak()

@@ -8,7 +8,7 @@ Table `r tblNum(1)` provides the correlations between sequential and skip-year S
 
 	row.names(demog_corrs) <- NULL
 	setnames(demog_corrs, demog.group$variable, paste0(demog.group$label, "_STATUS"))
-	setnames(demog_corrs, sapply(gsub("_Sequential|_Skip", "", names(demog_corrs)), capwords, special.words=c(demog.group$label, "SGP", "SD", "SWD", "FRL", "ED", "EL", "ELL")))
+	setnames(demog_corrs, sapply(gsub("_Sequential|_Skip", "", names(demog_corrs)), capwords, special.words=c(demog.group$label, "ED", "EL", "ELL", "FRL", "IEP", "SD", "SGP", "SWD")))
 
   cat(dualTable(as.matrix(demog_corrs),
   	align="rrccccc", n.rgroup = rep(2, nrow(demog_corrs)/2), n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
