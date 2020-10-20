@@ -154,7 +154,7 @@
   }
 
   if (github.download.tf) {
-    params$child.file.path <- file.path("assets", "github_children")
+    params$child.file.path <- file.path(params$working.directory), "assets", "github_children")
 
     options("renderMultiDocument_Message" = paste0(
                 "\tChild .Rmd files have been downloaded from Github and 'child.file.path' parameter temporarily set to '", file.path(".", "assets", "github_children"), "'!!!\n\t",
