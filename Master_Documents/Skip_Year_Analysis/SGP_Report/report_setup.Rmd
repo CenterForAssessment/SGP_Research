@@ -153,6 +153,15 @@
     params$min.school.size <- 10
   }
 
+  if (github.download.tf) {
+    params$child.file.path <- file.path("assets", "github_children")
+
+    options("renderMultiDocument_Message" = paste0(
+                "\tChild .Rmd files have been downloaded from Github and 'child.file.path' parameter temporarily set to '", file.path(".", "assets", "github_children"), "'!!!\n\t",
+                "These files may be inspected and edited as needed before re-rendering. In order to keep files for future use/re-rendering, set    \n\t",
+                "'child.file.path' to '", file.path(".", "assets", "github_children"), "' in 'report_params' list or 'params' YAML to avoid file re-download/overwrite.     "))
+  }
+
   ###   Normalize Child and GoFit plot paths
   if (!is.null(params$child.file.path)|!is.null(params$gof.path.seq)|!is.null(params$gof.path.skip)) {
     tmp.wd <- getwd()
