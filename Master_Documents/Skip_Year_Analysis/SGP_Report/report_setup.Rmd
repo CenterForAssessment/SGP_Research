@@ -153,9 +153,8 @@
     params$min.school.size <- 10
   }
 
-  if (github.download.tf) {
+  if (ifelse(!exists("github.download.tf"), FALSE, github.download.tf)) {
     params$child.file.path <- file.path(params$working.directory, "assets", "github_children")
-
     options("renderMultiDocument_Message" = paste0(
                 "\tChild .Rmd files have been downloaded from Github and 'child.file.path' parameter temporarily set to '", file.path(".", "assets", "github_children"), "'!!!\n\t",
                 "These files may be inspected and edited as needed before re-rendering. In order to keep files for future use/re-rendering, set    \n\t",

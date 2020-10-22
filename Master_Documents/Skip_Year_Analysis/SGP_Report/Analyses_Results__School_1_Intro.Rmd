@@ -2,19 +2,19 @@
 
 ```{r, echo=FALSE, include=FALSE}
 ###  Conditional text for next section
-	if (!is.null(params$seq.grades.list)) {
+	if (!is.null(params$seq.grades.list)) {  #  text_1
 		text_1 <- sapply(names(params$seq.grades.list)[which(sapply(sapply(params$seq.grades.list, as.numeric), min) %in% min(as.numeric(params$seq.grades)))], capwords)
 		if (length(head(text_1, -1)) > 0) text_1 <- paste(paste(head(text_1, -1), collapse=", "), tail(text_1, 1), sep=" and ")
 		text_1 <- paste("in", text_1)
 	} else text_1 <- ""
-	if (!is.null(params$skip.grades.list)) {
+	if (!is.null(params$skip.grades.list)) {  #  text_2
 		if (any(no.elem <- sapply(sapply(params$skip.grades.list, as.numeric), min) > 5)) {
 			text_2 <- sapply(names(params$skip.grades.list)[no.elem], capwords)
 			if (length(head(text_2, -1)) > 0) text_2 <- paste(paste(head(text_2, -1), collapse=", "), tail(text_2, 1), sep=" and ")
 			text_2 <- paste("Growth for", text_2, "would be missing entirely for most (traditional) elementary schools. ")
 		}
-	}
-	if (!is.null(params$skip.grades.list)) {
+	} else text_2 <- ""
+	if (!is.null(params$skip.grades.list)) {  #  k5.skip, k6.skip, excluded.grade.text & skip.excluded.graders
 		k5.skip <- roundUp((sum(unlist(sapply(sapply(params$skip.grades.list, as.numeric), `<=`, 5)))/sum(unlist(sapply(sapply(params$seq.grades.list, as.numeric), `<=`, 5))))*100, 5)
 		k6.skip <- roundUp((sum(unlist(sapply(sapply(params$skip.grades.list, as.numeric), `<=`, 6)))/sum(unlist(sapply(sapply(params$seq.grades.list, as.numeric), `<=`, 6))))*100, 5)
 		excluded.grade.text <- "certain grade level and content area"
@@ -29,7 +29,7 @@
 	# roundUp((sum(5:8 <= 6)/sum(4:8 <= 6))*100, 5)	# ~ a third
 ```
 
-Of most interest to states for reporting and accountability purposes is how well skip-year growth and one-year growth compare when aggregated to the school level. Aggregating SGPs is usually accomplished by taking the median or mean of the SGPs for the students attending a school for a given year and content area. One critical difference of skip-year growth from one-year growth is the absence of SGPs for `r skip.excluded.grade` students. `r if (min(as.numeric(params$skip.grades)) <= 5) {paste("A school serving",  ord(min(as.numeric(params$seq.grades))), "graders would have growth", text_1, "for those students when using one-year growth but not with skip-year growth.")}` `r text_2` Elementary schools comprising grades K-5 or K-6 would have only `r k5.skip`-`r k6.skip`% of the total student growth measures that they would have had with one-year growth when using skip-year growth.
+Of most interest to states for reporting and accountability purposes is how well skip-year growth and one-year growth compare when aggregated to the school level. Aggregating SGPs is usually accomplished by taking the median or mean of the SGPs for the students attending a school for a given year and content area. One critical difference of skip-year growth from one-year growth is the absence of SGPs for `r skip.excluded.grade` students. `r if (min(as.numeric(params$skip.grades)) <= 5) {paste("A school serving",  ord(min(as.numeric(params$seq.grades))), "graders would have growth", text_1, "for those students when using one-year growth but not with skip-year growth.")}` `r text_2` Elementary schools comprising grades K-5 or K-6 would have less than `r k5.skip`-`r k6.skip`% of the total student growth measures that they would have had with one-year growth when using skip-year growth.
 
 Although the *total* impact on school growth is important in determining the best path forward for the state's accountability decisions, including `r excluded.grade.text` growth in *only* one-year analyses leads to additional school level disparities beyond those resulting from the use of different analytic methods. The results are thus summarized in two ways:
 
