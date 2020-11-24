@@ -5,7 +5,7 @@ The COVID-19 pandemic is having far-reaching effects on all facets of our lives.
 
 The most prominent alternative to the standard one-year (sequential) student academic growth SGP utilized by `r params$state.name` is to calculate a two-year (skip-year) student academic growth SGP from 2019 to 2021. The first question to such a proposal is, "Can you do that?" The answer is easy in one sense and not so easy in another.
 
-- In terms of performing the actual calculation, it is no more difficult to calculate skip-year growth than one-year growth. In fact, skip-year growth is often calculated in states where there is a gap in grade level testing (e.g. grade 8 to 10 growth when there is no grade 9 test) or where students take an end-of-course test and the most recent previous score is from two years prior.
+- In terms of performing the actual calculation, it is no more difficult to calculate skip-year growth than one-year growth. In fact, skip-year growth is often calculated in states where there is a gap in grade level testing (e.g., grade 8 to 10 growth when there is no grade 9 test) or where students take an end-of-course test and the most recent previous score is from two years prior.
 - Even though it is possible to calculate skip-year growth, it is not clear that it can be used in lieu of one-year growth for
 state accountability reporting.
 

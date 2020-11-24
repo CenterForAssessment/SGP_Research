@@ -37,8 +37,8 @@ Investigations of (differential) impact on student achievement and growth for al
 
 ###   Create data set for plots
 	demog_plot_data_gl <- rbindlist(list(
-		sch_demog_msgp[, Schools := "All Schools"],
-    sch_demog_msgp_x[, Schools := "Skip-Year Subset"]))
+		sch_demog_msgp[CONTENT_AREA %in% params$GL_subjects][, Schools := "All Schools"],
+    sch_demog_msgp_x[CONTENT_AREA %in% params$GL_subjects][, Schools := "Skip-Year Subset"]))
   demog_plot_data_gl[, Mean_Difference := round(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP, 2)] # NOT absolute
 
 	vars.to.get <- grep("PERCENT_", names(demog_plot_data_gl), value=TRUE)

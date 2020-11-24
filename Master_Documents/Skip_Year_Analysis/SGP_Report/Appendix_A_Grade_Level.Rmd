@@ -11,7 +11,7 @@
 	} else {
 		for (ca in params$GL_subjects) seq.skip.grd[[ca]] <- intersect(params$seq.grades.list[[ca]] %w/o% "EOCT", params$skip.grades.list[[ca]] %w/o% "EOCT")
 	}
-	seq.skip.grd <- lapply(lapply(seq.skip.grd, as.numeric), sort)  #  make numeric for re-order when grades >= 10 present
+	seq.skip.grd <- suppressWarnings(lapply(lapply(seq.skip.grd, as.numeric), sort))  #  make numeric for re-order when grades >= 10 present
 
 	for (ca in params$GL_subjects) {
 		seq.plot.list <- NULL

@@ -24,5 +24,5 @@ The mean and standard deviation of SGPs at the individual level is similar for b
 
   cat(dualTable(SGP_Corrs,
   	align="rrccccccc", n.cgroup=c(3, 3, 3), cgroup=c("", "Sequential", "Skip Year"),
-		caption='Sequential and Skip-year SGP correlation, and SGP mean/standard deviation and test score correlations by content area and grade.'))
+		caption='Sequential and skip-year SGP correlation, and SGP mean/standard deviation and test score correlations by content area and grade.'))
 ```
