@@ -113,7 +113,7 @@ AMERICAN_LIT_2019.config <- list(
     sgp.grade.sequences=list(c('EOCT', 'EOCT')),
     sgp.panel.years.within=c('LAST_OBSERVATION', 'FIRST_OBSERVATION'),
     sgp.exclude.sequences = data.table(VALID_CASE = 'VALID_CASE', CONTENT_AREA=c('GRADE_9_LIT', 'AMERICAN_LIT'),
-                                       YEAR=c('2017', '2017'), GRADE=c('EOCT', 'EOCT')),
+                                       YEAR=c('2017', '2017'), GRADE=c('EOCT', 'EOCT')),  # , '2018', '2018' not needed (wouldn't know, in theory, if existed)
     sgp.projection.grade.sequences="NO_PROJECTIONS",
     sgp.norm.group.preference=7),
 
@@ -149,7 +149,7 @@ AMERICAN_LIT_2019.config <- list(
     sgp.grade.sequences=list(c(7, 8, 'EOCT')),
     sgp.panel.years.within=c('LAST_OBSERVATION', 'LAST_OBSERVATION', 'FIRST_OBSERVATION'),
     sgp.exclude.sequences = data.table(VALID_CASE = 'VALID_CASE', CONTENT_AREA=c('GRADE_9_LIT', 'AMERICAN_LIT'),
-                                       YEAR=c('2017', '2017'), GRADE=c('EOCT', 'EOCT')),
+                                       YEAR=c('2017', '2017'), GRADE=c('EOCT', 'EOCT')), # , '2018', '2018' not needed (wouldn't know, in theory, if existed)
     sgp.projection.grade.sequences="NO_PROJECTIONS",
     sgp.norm.group.preference=3),
 

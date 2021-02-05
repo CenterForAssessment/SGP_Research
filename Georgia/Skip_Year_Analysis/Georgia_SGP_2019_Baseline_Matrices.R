@@ -9,10 +9,15 @@
 require(SGP)
 require(data.table)
 
+options(error=recover)
+
 ###   Load data
 load("./Data/Georgia_Data_LONG_NO_SKIP.Rdata") # From Skip_Year_Analysis/Georgia_Data_LONG.R
-Georgia_Data_LONG <- Georgia_Data_LONG_NO_SKIP[SCHOOL_YEAR != "2019",
+Georgia_Data_LONG <- Georgia_Data_LONG_NO_SKIP[, # SCHOOL_YEAR != "2019" for skip year analysis baseline matrices.
 												list(VALID_CASE, GTID, SCHOOL_YEAR, SUBJECT_CODE, YEAR_WITHIN, GRADE, SCALE_SCORE, CONDSEM, PERFORMANCE_LEVEL)]
+
+##  CHECK! table(Georgia_Data_LONG[, SCHOOL_YEAR, is.na(CONDSEM)])
+##  table(Georgia_Data_LONG[is.na(CONDSEM), SCHOOL_YEAR, VALID_CASE])  #  All INVALID_CASE
 
 ###   Read in Baseline SGP Configuration Scripts and Combine
 source("/SGP_CONFIG/BASELINE/ELA.R")
@@ -38,7 +43,6 @@ Georgia_SGP <- prepareSGP(Georgia_Data_LONG, create.additional.variables=FALSE)
 
 Georgia_SGP@Data[, VC_COMPLETE := VALID_CASE]
 
-
 setkeyv(Georgia_SGP@Data, SGP:::getKey(Georgia_SGP@Data))
 setkey(Georgia_SGP@Data, VALID_CASE, CONTENT_AREA, ID, GRADE, YEAR_WITHIN)
 dups <- data.table(Georgia_SGP@Data[unique(c(which(duplicated(Georgia_SGP@Data, by=key(Georgia_SGP@Data)))-1, which(duplicated(Georgia_SGP@Data, by=key(Georgia_SGP@Data))))), ], key=key(Georgia_SGP@Data))
@@ -51,24 +55,30 @@ Georgia_SGP@Data[which(duplicated(Georgia_SGP@Data, by=key(Georgia_SGP@Data)))-1
 ###   Might need to re-think YEAR_WITHIN in the context of baselineSGPs...  Baseline on first/last observation?  Do repeaters manually outside baselineSGP?
 ###   Add in a prepareSGP call in baselineSGP to re-work FIRST/LAST_OBSERVATION? Run without this next invalidation chunk to get error/data stack...
 ###   Repeaters with 3 (or more records)
+
+###   For now just run as single year (2019) cohort
+
 setkeyv(Georgia_SGP@Data, SGP:::getKey(Georgia_SGP@Data))
 setkey(Georgia_SGP@Data, VALID_CASE, CONTENT_AREA, ID, GRADE)
 dups <- data.table(Georgia_SGP@Data[unique(c(which(duplicated(Georgia_SGP@Data, by=key(Georgia_SGP@Data)))-1, which(duplicated(Georgia_SGP@Data, by=key(Georgia_SGP@Data))))), ], key=key(Georgia_SGP@Data))
-table(dups$VALID_CASE) # 3111 duplicates within GRADE are already INVALID_CASEs - 181012 still VALID_CASEs
+table(dups$VALID_CASE)
 table(dups[VALID_CASE=="VALID_CASE", YEAR, CONTENT_AREA])
-Georgia_SGP@Data[which(duplicated(Georgia_SGP@Data, by=key(Georgia_SGP@Data)))-1, VALID_CASE := "INVALID_CASE"]
+# Georgia_SGP@Data[which(duplicated(Georgia_SGP@Data, by=key(Georgia_SGP@Data)))-1, VALID_CASE := "INVALID_CASE"]
+Georgia_SGP@Data[setdiff(which(duplicated(Georgia_SGP@Data, by=key(Georgia_SGP@Data)))-1, which(Georgia_SGP@Data[,YEAR]=='2019')), VALID_CASE := "INVALID_CASE"]
+
+Georgia_SGP@Data[, FIRST_OBSERVATION := NULL]
+Georgia_SGP@Data[, LAST_OBSERVATION := NULL]
 
 Georgia_SGP <- prepareSGP(Georgia_SGP, create.additional.variables=FALSE) # to re-do FIRST/LAST_OBSERVATION if necessary
 
 table(Georgia_SGP@Data[, VALID_CASE, VC_COMPLETE])
 
-
-GA_Skip_Year_Baseline_Matrices <- baselineSGP(
+GA_Baseline_Matrices <- baselineSGP(
 	Georgia_SGP,
 	sgp.baseline.config=GA.Baseline.config,
 	return.matrices.only=TRUE,
 	calculate.baseline.sgps=FALSE,
-	calculate.simex.baseline=list(csem.data.vnames="SCALE_SCORE_CSEM", lambda=seq(0,2,0.5), simulation.iterations=75, # 25,
+	calculate.simex.baseline=list(csem.data.vnames="SCALE_SCORE_CSEM", lambda=seq(0,2,0.5), simulation.iterations=75, simex.use.my.coefficient.matrices = FALSE,
 																simex.sample.size=10000, extrapolation="linear", save.matrices=TRUE, use.cohort.for.ranking=TRUE), # simex.sample.size=2000
 	###
 	# sgp.test.cohort.size = 10000, # comment out for full run
@@ -78,3 +88,5 @@ GA_Skip_Year_Baseline_Matrices <- baselineSGP(
 	parallel.config=list(BACKEND="PARALLEL", WORKERS=list(TAUS=25, SIMEX=25)))
 
 save(GA_Skip_Year_Baseline_Matrices, file="Data/GA_Skip_Year_Baseline_Matrices.Rdata")
+#  save(GA_Baseline_Matrices, file="GA_Baseline_Matrices-SuperCohort.Rdata")
+#  save(GA_Baseline_Matrices, file="GA_Baseline_Matrices-SingleCohort.Rdata")
