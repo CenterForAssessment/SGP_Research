@@ -14,12 +14,12 @@ detail below.
 
 ### Step 1: SGP analysis in pre-COVID pandemic years (2017-2019)
 
-The R script [Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/Step_1_Pre_COVID/Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R)
+The R script [Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis_Analysis/Step_1_Pre_COVID/Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R)
 provides the source code associated with SGP/AGP calculation in 'normal', pre-COVID
 years, which begins with the second year of the testing data (2017) and ends with
 the year before the pandemic-shortened academic year (2019). The analysis configurations
-for [ELA](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/SGP_CONFIG/STEP_1/ELA.R)
-and [MATHEMATICS](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/SGP_CONFIG/STEP_1/MATHEMATICS.R)
+for [ELA](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_1/ELA.R)
+and [MATHEMATICS](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_1/MATHEMATICS.R)
 are explicitly defined and read into the call to `abcSGP`.  Note that these analyses
 are restricted to use (at most) two years of prior test data.
 
@@ -56,8 +56,8 @@ irregularities or inconsistencies in the assessment data.
 
 Either single- or super-cohort baseline SGP coefficient matrices can be constructed
 by selecting the configuration code from the appropriate 'SGP_CONFIG' subdirectory
-([SingleCohort](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/SGP_CONFIG/STEP_2_BASELINE/SingleCohort/)
-or [SuperCohort](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/SGP_CONFIG/STEP_2_BASELINE/SuperCohort/)).
+([SingleCohort](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_2_BASELINE/SingleCohort/)
+or [SuperCohort](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_2_BASELINE/SuperCohort/)).
 The resulting matrices can be used interchangeably in the `SGP` package when
 inserted in the `SGPstateData` where required. However, the code has been written
 to use the single-cohort matrices in the code for subsequent steps.
@@ -82,11 +82,11 @@ interest is only in the calculation of SGPs, then you can forego parts 3b and 3c
 
 #### Part A: Calculation of SGPs
 
-The R script [Demonstration_COVID_SGP_2021_PART_A](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_A.R)
+The R script [Demonstration_COVID_SGP_2021_PART_A](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_A.R)
 uses `updateSGP` applied to the SGP object from Step 1 together with the 2021 data.
 Part A calculates **ONLY** SGPs, although both baseline and cohort referenced SGP
 versions are calculated. The content area and grade sequences for these analyses
-are specified in the configuration code located [here](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/SGP_CONFIG/STEP_3/)
+are specified in the configuration code located [here](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_3/)
 
 #### Parts B and C: Calculate student growth projections (AGPs)
 
@@ -105,34 +105,34 @@ with the skip year matrices in Step 2.
 
 ##### Part B: Calculate Baseline Referenced Straight Projections.
 
-The R script [Demonstration_COVID_SGP_2021_PART_B](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_B.R)
+The R script [Demonstration_COVID_SGP_2021_PART_B](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_B.R)
 is used to calculate **JUST** the baseline referenced _straight_ projections.
 Like with the other scripts examined thus far, configurations for
-[ELA](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/SGP_CONFIG/STEP_3b/ELA.R)
-and [MATHEMATICS](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/SGP_CONFIG/STEP_3b/MATHEMATICS.R)
+[ELA](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_3b/ELA.R)
+and [MATHEMATICS](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_3b/MATHEMATICS.R)
 are provided that explicitly state what the baseline projection sequences are.
 In addition, the configurations reference grade projection sequences that are
-embedded within the `SGPstateData` beginning [on line 33](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_B.R#L33)
+embedded within the `SGPstateData` beginning [on line 33](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_B.R#L33)
 of the analysis script. Straight projections have to be done separately from
 lagged projections due to the fact that lagged projections must skip a grade/year
 whereas straight projections do not skip. Note that the script (on
-[line 86](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_B.R#L86))
+[line 86](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_B.R#L86))
 also calculates the associated scale score targets for the straight projection AGPs.
 
 ##### Part C: Calculate Baseline Referenced Lagged Projections.
 
-The R script [Demonstration_COVID_SGP_2021_PART_C](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_C.R)
+The R script [Demonstration_COVID_SGP_2021_PART_C](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_C.R)
 is used to calculate **JUST** the baseline referenced _lagged_ projections. Lagged
 projections are used to determine AGPs and evaluate the adequacy of growth toward
 a pre-defined standard in the current year. Part C is the last part of the 2021
-analyses. Note that the script (on [line 85](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_C.R#L85))
+analyses. Note that the script (on [line 85](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_C.R#L85))
 also calculates the associated scale score targets for the lagged projection AGPs.
 Like with the other scripts examined thus far, configurations for
-[ELA](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/SGP_CONFIG/STEP_3c/ELA.R)
-and [MATHEMATICS](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/SGP_CONFIG/STEP_3c/MATHEMATICS.R)
+[ELA](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_3c/ELA.R)
+and [MATHEMATICS](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_3c/MATHEMATICS.R)
 are provided that explicitly state what the baseline projection sequences are.
 In addition, the configurations reference grade projection sequences that are
-embedded within the `SGPstateData` beginning [on line 32](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_C.R#L27)
+embedded within the `SGPstateData` beginning [on line 32](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_C.R#L27)
 of the analysis script. These projections sequences differ from those in Part B
 (for straight projections) in that they specify that a grade needs to be skipped
 because of the missed year of testing.
@@ -144,11 +144,11 @@ In 2022, two years after the pandemic skipped year, things have returned to 'nor
 in terms of the testing schedule and the penultimate test is from the
 year before and (hopefully!) teaching, learning and test taking is also back to
 all in-person. The R script for this first year of 'recovery' is
-[Demonstration_COVID_SGP_2022](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/Step_4_Recovery_Year_1/Demonstration_COVID_SGP_2022.R),
+[Demonstration_COVID_SGP_2022](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_4_Recovery_Year_1/Demonstration_COVID_SGP_2022.R),
 which is used to calculate SGPs, straight projections and lagged projections in
 a single call to `updateSGP`. All analyses are cohort and baseline referenced,
 which allows us to compare students and schools from both current (post-COVID/2022)
-and baseline (pre-COVID/2019) norms. Note that in the [2022 configuration code](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/SGP_CONFIG/STEP_4/)
+and baseline (pre-COVID/2019) norms. Note that in the [2022 configuration code](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_4/)
 we specify the max order for the SGPs and projections to be 1 (use a single prior
 from 2021). It's possible to calculate SGPs using additional priors (from 2019)
 but those will only be available for students in grade 6 and higher. However,
@@ -160,7 +160,7 @@ capable of annual projections.
 In 2023, three years after the pandemic skipped year and the second year of recovery,
 things are truly back to 'normal' in test taking with two consecutive years of
 prior test data. The R script for this recovery year is
-[Demonstration_COVID_SGP_2023](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss/Step_5_Recovery_Year_2/Demonstration_COVID_SGP_2023.R).
+[Demonstration_COVID_SGP_2023](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_5_Recovery_Year_2/Demonstration_COVID_SGP_2023.R).
 Again we calculate SGPs, straight projections and lagged projections in the same
 step with a single call to the `updateSGP` function. We also continue to calculate
 cohort and baseline referenced SGPs, which allows us to compare norms from the

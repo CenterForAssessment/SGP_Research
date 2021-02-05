@@ -4,8 +4,8 @@
 ###                                                                          ###
 ################################################################################
 
-###   Set working directory to Learning_Loss repo
-setwd("Learning_Loss")
+###   Set working directory to Learning_Loss_Analysis repo
+setwd("Learning_Loss_Analysis")
 
 ###   Load packages
 require(SGP)
