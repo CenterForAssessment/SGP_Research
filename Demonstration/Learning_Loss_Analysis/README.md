@@ -86,7 +86,7 @@ The R script [Demonstration_COVID_SGP_2021_PART_A](https://github.com/CenterForA
 uses `updateSGP` applied to the SGP object from Step 1 together with the 2021 data.
 Part A calculates **ONLY** SGPs, although both baseline and cohort referenced SGP
 versions are calculated. The content area and grade sequences for these analyses
-are specified in the configuration code located [here](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_3/)
+are specified in the configuration code located [here.](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_3/)
 
 #### Parts B and C: Calculate student growth projections (AGPs)
 
@@ -112,7 +112,7 @@ Like with the other scripts examined thus far, configurations for
 and [MATHEMATICS](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_3b/MATHEMATICS.R)
 are provided that explicitly state what the baseline projection sequences are.
 In addition, the configurations reference grade projection sequences that are
-embedded within the `SGPstateData` beginning [on line 33](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_B.R#L33)
+embedded within the `SGPstateData` beginning [on line 33](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_B.R#L32)
 of the analysis script. Straight projections have to be done separately from
 lagged projections due to the fact that lagged projections must skip a grade/year
 whereas straight projections do not skip. Note that the script (on
@@ -132,7 +132,7 @@ Like with the other scripts examined thus far, configurations for
 and [MATHEMATICS](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/SGP_CONFIG/STEP_3c/MATHEMATICS.R)
 are provided that explicitly state what the baseline projection sequences are.
 In addition, the configurations reference grade projection sequences that are
-embedded within the `SGPstateData` beginning [on line 32](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_C.R#L27)
+embedded within the `SGPstateData` beginning [on line 32](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_3_Skip_Year_Analyses/Demonstration_COVID_SGP_2021_PART_C.R#L31)
 of the analysis script. These projections sequences differ from those in Part B
 (for straight projections) in that they specify that a grade needs to be skipped
 because of the missed year of testing.
