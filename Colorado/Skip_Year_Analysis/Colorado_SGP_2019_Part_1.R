@@ -8,17 +8,16 @@
 require(SGP)
 require(data.table)
 
-###   Load Official data and subset 2019
-
-load("./Data/Colorado_Data_LONG_NO_SKIP.Rdata") # From 2019 CO SGP Analyses
+###   Load SGP object from 2017 (pre-skip) analysis
 load("Data/Colorado_SGP-2017.Rdata")
-Colorado_Data_LONG_2019 <- Colorado_Data_LONG_NO_SKIP[YEAR == "2019"]
 
+###   Load skip-year data and subset 2019
+load("./Data/Colorado_Data_LONG_NO_SKIP.Rdata") # From 2019 CO SGP Analyses
+Colorado_Data_LONG_2019 <- Colorado_Data_LONG_NO_SKIP[YEAR == "2019"]
 
 ###   Read in 2017 SGP Configuration Scripts and Combine
 source("SGP_CONFIG/2019_PART_1/ELA.R")
 source("SGP_CONFIG/2019_PART_1/MATHEMATICS.R")
-
 
 CO.2019.config <- c(
 	ELA.2019.config,
