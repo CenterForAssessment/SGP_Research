@@ -30,7 +30,7 @@ For brevity, only the canonical progressions are displayed in this appendix. The
 	if (grepl("SIMEX_RANKED", params$seq.sgp)) gof.type <- paste0(gof.type, ".RANKED_SIMEX")
 
 	eoc.analyses.list <- list()
-	for (ca in params$EOC_subjects) {
+	for (ca in params$GoF_EOC_subjects) {
 		###   Sequential Analyses
 		seq.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.seq[[1]], paste0(ca, ".2019", gof.type)))))
 		seq.plots <- seq.plots[order(seq.plots)][seq.plots != "Decile_Tables"]
@@ -114,7 +114,7 @@ For brevity, only the canonical progressions are displayed in this appendix. The
 
 
 ```{r, cache=FALSE, results="asis", echo=FALSE}
-	for (ca in params$EOC_subjects) {
+	for (ca in params$GoF_EOC_subjects) {
 		###   Progression Table:
 		canon.tbl <- data.table(matrix(c(
 									unlist(eoc.analyses.list[[ca]][["Canonical"]][["Sequential"]], use.names = FALSE),

@@ -80,9 +80,15 @@
   if (is.null(params$GL_subjects)) {
     params$GL_subjects <- unique(Report_Data[!is.na(SGP) & GRADE != "EOCT", CONTENT_AREA])
   }
-  params$GL_camel <- sapply(params$GL_subjects, capwords) # sub("ela", "ELA", tolower(params$GL_subjects))
+  if (is.null(params$GL_camel)) {
+    params$GL_camel <- sapply(params$GL_subjects, capwords) # sub("ela", "ELA", tolower(params$GL_subjects))
+  }
   params$GL_text <- paste(paste(head(params$GL_camel, -1), collapse=", "), tail(params$GL_camel, 1), sep=" and ") # sub("ela", "ELA", tolower(params$GL_text))
   params$GL_text_long <- sub("ELA", "English language arts (ELA)", params$GL_text) # "English language arts (ELA) and mathematics"
+
+  if (is.null(params$GoF_GL_subjects)) {
+    params$GoF_GL_subjects <- params$GL_subjects
+  }
 
   # if (is.null(params$EOC_subjects)) {
   #   params$EOC_subjects <- unique(Report_Data[!is.na(SGP) & GRADE == "EOCT", CONTENT_AREA])
@@ -95,6 +101,10 @@
   if (is.null(params$EOC_subjects)) {
     params$subject_order <- params$GL_subjects
   } else params$subject_order <- c(params$GL_subjects, params$EOC_subjects)
+
+  if (is.null(params$GoF_EOC_subjects)) {
+    params$GoF_EOC_subjects <- params$EOC_subjects
+  }
 
   ###   Grades
   if (is.null(params$seq.grades)) {

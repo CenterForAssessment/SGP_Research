@@ -8,15 +8,15 @@
 
 	seq.only.grd <- list()
 	if (is.null(params$skip.grades.list)) {
-		for (ca in params$GL_subjects) seq.only.grd[[ca]] <- setdiff(params$seq.grades, params$skip.grades)
+		for (ca in params$GoF_GL_subjects) seq.only.grd[[ca]] <- setdiff(params$seq.grades, params$skip.grades)
 		skip.excluded.grade.gof <- paste(skip.excluded.grade, params$GL_text)
 	} else {
-		for (ca in params$GL_subjects) seq.only.grd[[ca]] <- setdiff(params$seq.grades.list[[ca]], params$skip.grades.list[[ca]])
+		for (ca in params$GoF_GL_subjects) seq.only.grd[[ca]] <- setdiff(params$seq.grades.list[[ca]], params$skip.grades.list[[ca]])
 		skip.excluded.grade.gof <- skip.excluded.grade
 	}
 	seq.only.plots <- NULL
 
-	for (ca in params$GL_subjects) {
+	for (ca in params$GoF_GL_subjects) {
 		seq.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.seq[[1]], paste0(ca, ".2019", gof.type)))))
 		seq.plots <- seq.plots[order(seq.plots)][seq.plots != "Decile_Tables"]
 
@@ -26,10 +26,10 @@
 		seq.only.plots <- c(seq.only.plots, file.path(params$gof.path.seq[[1]], paste0(ca, ".2019", gof.type), paste0(seq.plots[tmp.grd==seq.only.grd[[ca]]], ".pdf")))
 	}
 
-	if (length(params$GL_subjects) > 2) tmp.width <- 0.4625 else tmp.width <- 0.5 # maybe do two pages since it creates a second page anyway with more than 2 subjects
+	if (length(params$GoF_GL_subjects) > 2) tmp.width <- 0.4625 else tmp.width <- 0.5 # maybe do two pages since it creates a second page anyway with more than 2 subjects
 
 	placeFigure(
 			files = seq.only.plots,
-			rows = ceiling(length(params$GL_subjects)/2), columns = 2, pdf.width = tmp.width,
+			rows = ceiling(length(params$GoF_GL_subjects)/2), columns = 2, pdf.width = tmp.width,
 			caption = paste("Sequential growth goodness of fit plots for", skip.excluded.grade.gof, "(no skip-year analyses)"))
 ```
