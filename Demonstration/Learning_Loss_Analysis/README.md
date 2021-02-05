@@ -14,7 +14,7 @@ detail below.
 
 ### Step 1: SGP analysis in pre-COVID pandemic years (2017-2019)
 
-The R script [Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis_Analysis/Step_1_Pre_COVID/Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R)
+The R script [Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R](https://github.com/CenterForAssessment/SGP_Research/blob/master/Demonstration/Learning_Loss_Analysis/Step_1_Pre_COVID/Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R)
 provides the source code associated with SGP/AGP calculation in 'normal', pre-COVID
 years, which begins with the second year of the testing data (2017) and ends with
 the year before the pandemic-shortened academic year (2019). The analysis configurations
