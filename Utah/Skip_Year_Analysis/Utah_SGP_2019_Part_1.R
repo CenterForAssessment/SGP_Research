@@ -8,23 +8,17 @@
 require(SGP)
 require(data.table)
 
-###   Load Official data and subset 2019
-
-load("./Data/Utah_Data_LONG_NO_SKIP.Rdata") # From 2019 CO SGP Analyses
+###   Load data created in Skip_Year_Analysis/Utah_Data_LONG.R
+load("./Data/Utah_Data_LONG_NO_SKIP.Rdata")
 
 ###   Make changes and additions to SGPstateData
-
-# SGPstateData[["UT"]][["Assessment_Program_Information"]][["Assessment_Transition"]] <- NULL # [["Year"]]
 SGPstateData[["UT"]][["SGP_Configuration"]][["print.other.gp"]] <- TRUE
 SGPstateData[["UT"]][["SGP_Configuration"]][["print.sgp.order"]] <- TRUE
 
-##    Create 2019 Knots and Boundaries (since not doing equated SGPs)
-load("../../../Utah/Data/UT_Knots_Boundaries.Rdata")
+##    Use 2019 Knots and Boundaries (since not doing equated SGPs)
+load("UT_Knots_Boundaries.Rdata") # added to Skip_Year_Analysis repo
 SGPstateData[["UT"]][["Achievement"]][["Knots_Boundaries"]] <- UT_Knots_Boundaries
 
-# UT_Temp <- Utah_Data_LONG_NO_SKIP[SchoolYear=='2019']
-# setnames(UT_Temp, c("SchoolYear", "StudentID"), c("YEAR", "ID"))
-# UT_2019.KBs <- createKnotsBoundaries(UT_Temp)
 
 ###   Create SGP Configurations and Combine
 

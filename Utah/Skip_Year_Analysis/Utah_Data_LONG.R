@@ -8,7 +8,7 @@
 require(SGP)
 require(data.table)
 
-###   Load Original Utah data from 2019 CO SGP Analyses
+###   Load Original Utah data from 2019 UT SGP Analyses
 
 load("../../../Utah/Data/Utah_SGP_LONG_Data.Rdata")
 Utah_Data_LONG_NO_SKIP <- Utah_SGP_LONG_Data[CONTENT_AREA != "SEC_MATH_I"]
