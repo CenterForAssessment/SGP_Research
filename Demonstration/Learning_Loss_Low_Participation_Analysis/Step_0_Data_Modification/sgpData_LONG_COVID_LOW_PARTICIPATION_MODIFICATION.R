@@ -45,8 +45,7 @@
                       by=SCHOOL_NUMBER] 
   
   school.agg <- data.frame(school.agg)
-  
- 
+   
   #B. Introduce Missingess -----------------------------------------------------
   #Introducing missingness as a (1) proportion of FRL and (2) randomly by school
   #more complicated versions of missing data could include scenarios like:
@@ -54,7 +53,7 @@
   #ii. by introducing a relationships between FRL & scale scores or, 
   #iii. an interaction between IEP & FRL concentrations in schools
   
-  #B. Introduce Missingness Related to FRL (adds more missing data for schools
+  #B. Define Missingness Related to FRL (adds more missing data for schools
   #that have very high and very low FRL)
   #B1. Introduce Missingness Related to Student who Are FRL
   school.agg$p_frl_missing <- (1.3*school.agg$p_FRL-.5)^3 +.1 +
@@ -90,7 +89,7 @@
                                      sample(x=seq(from=0, to=.05, by=.001), size=1), 
                                      school.agg$p_notfrl_missing) 
   
-  #A4.B School-Membership Missingness 
+  #A4.B  Define School-Membership Missingness 
   school.agg$p_missing <- rlnorm(length(school.agg$p_frl_missing), meanlog = -.15, sdlog = 1)/25
   
   school.agg$p_missing <- ifelse(school.agg$p_missing>= 1,  
@@ -133,7 +132,7 @@
     c2021.missing <- rbind(c2021.missing, dat)
   }
   
-#IV. Combine into Total Dataset ------------------------------------------------
+#III. Combine into Total Dataset ------------------------------------------------
   #Reduce just to years that would be observed in Spring 2021 and then 
   covid <- covid[covid$YEAR %in% c(2016, 2017, 2018, 2019),]
   covid$SCALE_SCORE_A <- NA
