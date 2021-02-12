@@ -16,8 +16,8 @@ load("Data/Demonstration_COVID_SGP_2021_STEP_3b.Rdata")
 load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")
 
 ###   Load configurations
-source("SGP_CONFIG/STEP_3c/ELA.R")
-source("SGP_CONFIG/STEP_3c/MATHEMATICS.R")
+source("SGP_CONFIG/STEP_3/PART_C_Lagged_Projections/ELA.R")
+source("SGP_CONFIG/STEP_3/PART_C_Lagged_Projections/MATHEMATICS.R")
 
 DEMO_COVID_CONFIG_STEP_3c <- c(ELA_2021.config, MATHEMATICS_2021.config)
 
@@ -90,41 +90,3 @@ Demonstration_COVID_SGP <- abcSGP(
 
 ###  Save results
 save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP_2021_STEP_3c.Rdata")
-
-
-
-#####
-###   Quick descriptives
-#####
-
-
-indiv_smry <- Demonstration_COVID_SGP@Data[VALID_CASE=='VALID_CASE', list(
-								Median_SGP = median(as.numeric(SGP), na.rm = TRUE),
-								Mean_SGP = round(mean(SGP, na.rm = TRUE), 1),
-								SD_SGP = round(sd(SGP, na.rm = TRUE), 1),
-								Score_Corr = round(cor(SCALE_SCORE, SCALE_SCORE_PRIOR, use="pairwise.complete"), 2),
-								Count_1 = .N,
-								Count_2 = sum(!is.na(SGP))), keyby = list(YEAR, CONTENT_AREA, GRADE)]
-indiv_smry[, Percent_w_SGP := round(Count_2/Count_1*100, 1)]
-
-indiv_smry[!is.na(Mean_SGP)]
-
-
-sch_smry <- Demonstration_COVID_SGP@Data[VALID_CASE=='VALID_CASE' & YEAR != "2016" & GRADE != "3", # & !is.na(SCHOOL_NUMBER),
-								list(
-										MEDIAN_SGP = median(as.numeric(SGP), na.rm = TRUE),
-										MEAN_SGP = mean(SGP, na.rm = TRUE),
-										MEAN_SCALE_SCORE_PRIOR_STANDARDIZED = mean(SCALE_SCORE_PRIOR_STANDARDIZED, na.rm=TRUE),
-										COUNT_PROFICIENT = sum(ACHIEVEMENT_LEVEL %in% c("Proficient", "Advanced")),
-										COUNT_SGP = sum(!is.na(SGP)),
-										TOTAL = .N),
-									keyby = c("YEAR", "CONTENT_AREA", "GRADE", "SCHOOL_NUMBER")]
-
-sch_smry[, Percent_Proficient := round(COUNT_PROFICIENT/TOTAL*100, 1)]
-
-##  Calculate School Level Summaries
-sch_stat <- sch_smry[COUNT_SGP > 9, list(
-		Mean = round(mean(MEAN_SGP, na.rm=TRUE), 1),
-		SD = round(sd(MEAN_SGP, na.rm=TRUE), 1),
-		Corr = round(cor(MEAN_SGP, MEAN_SCALE_SCORE_PRIOR_STANDARDIZED, use="complete.obs"), 2),
-		N = sum(!is.na(MEAN_SGP))), keyby = c("CONTENT_AREA", "GRADE")]

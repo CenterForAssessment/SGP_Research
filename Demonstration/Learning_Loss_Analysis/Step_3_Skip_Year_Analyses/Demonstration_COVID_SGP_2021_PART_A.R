@@ -1,6 +1,6 @@
 ################################################################################
 ###                                                                          ###
-###        STEP 3: Demonstration COVID Skip year SGP analyses for 2021       ###
+###        STEP 3: Demonstration COVID Skip-year SGP analyses for 2021       ###
 ###                                                                          ###
 ################################################################################
 
@@ -12,7 +12,7 @@ require(SGP)
 require(SGPdata)
 
 ###   Load data
-load("Data/Demonstration_COVID_SGP.Rdata")
+load("Data/Demonstration_COVID_SGP_2019_STEP_2B.Rdata")
 load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata") # Alternatively add 'SuperCohort' version if preferred
 
 ###   Create 2021 subset of COVID data

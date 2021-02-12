@@ -1,6 +1,6 @@
 ################################################################################
 ###                                                                          ###
-###        STEP 3: Demonstration COVID Skip year SGP analyses for 2021       ###
+###  STEP 2B: Demonstration COVID Skip-year Baseline SGP analyses for 2019   ###
 ###                                                                          ###
 ################################################################################
 
@@ -9,35 +9,30 @@ setwd("Learning_Loss_Analysis")
 
 ###   Load packages
 require(SGP)
-require(SGPdata)
 
 ###   Load data
-load("Data/Demonstration_COVID_SGP.Rdata")
+load("Data/Demonstration_COVID_SGP_STEP_1.Rdata")
 load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata") # Alternatively add 'SuperCohort' version if preferred
-
-###   Create 2021 subset of COVID data
-Demonstration_COVID_Data_LONG_2021 <- SGPdata::sgpData_LONG_COVID[YEAR == "2021"]
 
 ###   Add Baseline matrices calculated in STEP 2 to SGPstateData
 SGPstateData[["DEMO_COVID"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- DEMO_COVID_Baseline_Matrices
 
 ###   Read in STEP 3 SGP Configuration Scripts and Combine
-source("SGP_CONFIG/STEP_3/ELA.R")
-source("SGP_CONFIG/STEP_3/MATHEMATICS.R")
+source("SGP_CONFIG/STEP_2/PART_B/ELA.R")
+source("SGP_CONFIG/STEP_2/PART_B/MATHEMATICS.R")
 
-DEMO_COVID_CONFIG_STEP_3 <- c(ELA_2021.config, MATHEMATICS_2021.config)
+DEMO_COVID_CONFIG_STEP_2B <- c(ELA_2019.config, MATHEMATICS_2019.config)
 
 
 #####
-###   Run analysis
+###   Run analysis - run abcSGP on object from Step 1 (with BASELINE matrices and configurations - no additional data)
 #####
 
-Demonstration_COVID_SGP <- updateSGP(
-        what_sgp_object = Demonstration_COVID_SGP,
-        with_sgp_data_LONG = Demonstration_COVID_Data_LONG_2021,
-        steps = c("prepareSGP", "analyzeSGP", "combineSGP"),
-        sgp.config = DEMO_COVID_CONFIG_STEP_3,
-        sgp.percentiles = TRUE,
+Demonstration_COVID_SGP <- abcSGP(
+        sgp_object = Demonstration_COVID_SGP,
+        steps = c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
+        sgp.config = DEMO_COVID_CONFIG_STEP_2B,
+        sgp.percentiles = FALSE,
         sgp.projections = FALSE,
         sgp.projections.lagged = FALSE,
         sgp.percentiles.baseline = TRUE,
@@ -49,4 +44,4 @@ Demonstration_COVID_SGP <- updateSGP(
 )
 
 ###   Save results
-save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP_2021_STEP_3.Rdata")
+save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP_2019_STEP_2B.Rdata")

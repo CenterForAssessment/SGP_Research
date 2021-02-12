@@ -20,11 +20,12 @@ source("SGP_CONFIG/STEP_1/MATHEMATICS.R")
 
 DEMO_COVID_CONFIG_STEP_1 <- c(
 	ELA_2017.config,
-	ELA_2018.config,
-	ELA_2019.config,
-
 	MATHEMATICS_2017.config,
+
+	ELA_2018.config,
 	MATHEMATICS_2018.config,
+
+	ELA_2019.config,
 	MATHEMATICS_2019.config)
 
 
@@ -48,4 +49,4 @@ Demonstration_COVID_SGP <- abcSGP(
 
 
 ###   Save results
-save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP.Rdata")
+save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP_STEP_1.Rdata")

@@ -17,8 +17,8 @@ load("Data/Demonstration_COVID_SGP_2021_STEP_3.Rdata")
 load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")
 
 ###   Load configurations
-source("SGP_CONFIG/STEP_3b/ELA.R")
-source("SGP_CONFIG/STEP_3b/MATHEMATICS.R")
+source("SGP_CONFIG/STEP_3/PART_B_Straight_Projections/ELA.R")
+source("SGP_CONFIG/STEP_3/PART_B_Straight_Projections/MATHEMATICS.R")
 
 DEMO_COVID_CONFIG_STEP_3b <- c(ELA_2021.config, MATHEMATICS_2021.config)
 
