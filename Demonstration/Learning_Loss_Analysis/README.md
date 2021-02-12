@@ -3,13 +3,27 @@ COVID-19 Learning Loss Analysis Source Code and Documentation
 
 This repository contains source code demonstrating how to calculate student growth
 percentiles (SGPs) and adequate growth projections (AGPs) when a testing year is
-skipped like just happened in 2020 due to the COVID-19 pandemic. The repository
+skipped similarly to what happened in 2020 due to the COVID-19 pandemic. The repository
 utilizes the demonstration COVID LONG data set contained in the
 [SGPdata package](https://github.com/CenterForAssessment/SGPdata) that provides
 7 longitudinal data panels (2016 to 2019 and 2021 to 2023) for grades 3 to 8 in
 two content areas (Mathematics and ELA). Test data for 2020 is missing entirely.
-The analyses are illustrated across several steps that are described in greater
-detail below.
+The analyses are illustrated across several steps with a general overview described
+briefly below and in greater detail in each step's subdirectory README file.
+
+### Step 0: Data Modification
+
+The demonstration COVID LONG data set (`SGPdata::sgpData_LONG_COVID`) does not
+include any of the potential impacts from the COVID-19 pandemic ('learning loss',
+low participation rates, mode of instruction, etc.).  Rather, the data set has
+been left in a relatively pristine condition so as to allow for data modification
+to simulate these varying impacts - in isolation or combination, to varying degrees,
+for varying subgroups and subsets of students, or any other foreseeable circumstance.
+
+In Step 0, several different data simulation scenarios are provided. Users can
+simply skip Step 0 and run the analyses using the data "as-is" to obtain a reference
+set of results data that could then be used to compare simulated impact results
+(sensitivity analyses).
 
 
 ### Step 1: SGP analysis in pre-COVID pandemic years (2017-2019)
