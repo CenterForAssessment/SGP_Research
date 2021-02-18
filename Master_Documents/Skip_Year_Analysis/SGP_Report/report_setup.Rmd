@@ -49,7 +49,7 @@
     params$test.abv <- SGPstateData[[tmp.state.abv]][["Assessment_Program_Information"]][["Assessment_Abbreviation"]]
   }
   if (is.null(params$test.url)) {
-    params$test.url <- SGPstateData[[tmp.state.abv]][["Assessment_Program_Information"]][["URL"]]
+    params$test.url <- SGPstateData[[tmp.state.abv]][["Assessment_Program_Information"]][["Organization"]][["URL"]]
   }
   if (is.null(params$test.trans.year)) {
     params$test.trans.year <- SGPstateData[[tmp.state.abv]][["Assessment_Program_Information"]][["Assessment_Transition"]][["Year"]]

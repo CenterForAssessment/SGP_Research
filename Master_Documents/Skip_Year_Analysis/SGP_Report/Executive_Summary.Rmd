@@ -26,7 +26,7 @@ if(length(params$test.name) > 1) {
 
 
 ##    Calculate School Level Values
-	exec_sch_sum <- Report_Data[VALID_CASE=='VALID_CASE' & YEAR == "2019" & !is.na(SCHOOL_NUMBER), list(
+	exec_sch_sum <- Report_Data[VALID_CASE=='VALID_CASE' & !is.na(SCHOOL_NUMBER), list(
       			          MEAN_NO_SKIP_SGP = mean(eval(parse(text = params$seq.sgp)), na.rm = TRUE),
             			    MEAN_SKIP_SGP = mean(eval(parse(text = params$skip.sgp)), na.rm = TRUE)),
             			  keyby = "SCHOOL_NUMBER"][,DIFFERENCE_SKIP_NO_SKIP_MEAN_SGP:=round(abs(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP), 2)] # keyby = c("CONTENT_AREA", "SCHOOL_NUMBER")

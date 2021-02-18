@@ -24,6 +24,7 @@ For brevity, only the canonical progressions are displayed in this appendix. The
 		return(tmp.priors)
 	}
 
+	gof.year <- ifelse(params$Year_Long_Form, "2018_2019", "2019")
 	gof.type <- NULL
 	if (grepl("BASELINE", params$seq.sgp)) gof.type <- ".BASELINE"
 	if (grepl("SIMEX$", params$seq.sgp)) gof.type <- paste0(gof.type, ".SIMEX")
@@ -32,7 +33,7 @@ For brevity, only the canonical progressions are displayed in this appendix. The
 	eoc.analyses.list <- list()
 	for (ca in params$GoF_EOC_subjects) {
 		###   Sequential Analyses
-		seq.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.seq[[1]], paste0(ca, ".2019", gof.type)))))
+		seq.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.seq[[1]], paste0(ca, ".", gof.year, gof.type)))))
 		seq.plots <- seq.plots[order(seq.plots)][seq.plots != "Decile_Tables"]
 
 		##    Find canonical progression (nested)
@@ -42,10 +43,10 @@ For brevity, only the canonical progressions are displayed in this appendix. The
 		canonical.ca <- gsub("MATHEMATICS", "MATH",
 					head(rev(SGPstateData[[params$state.abv[[1]]]][["SGP_Configuration"]][["content_area.projection.sequence"]][[ca]][1:ca.index]), max.order))
 		canonical.grd <- head(rev(SGPstateData[[params$state.abv[[1]]]][["SGP_Configuration"]][["grade.projection.sequence"]][[ca]][1:ca.index]), max.order)
-		canonical.year <- c("2019", SGP:::yearIncrement("2019", 1, tail(cumsum(head(rev(
+		canonical.year <- c(gof.year, SGP:::yearIncrement(gof.year, 1, tail(cumsum(head(rev(
 					SGPstateData[[params$state.abv[[1]]]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[ca]][1:(ca.index-1)]), max.order)), -1)))
 		canonical.prog <- sapply(tail(seq(max.order), -1), function(f) paste(canonical.year[1:f], canonical.ca[1:f], canonical.grd[1:f], sep="_", collapse=";"))
-		seq.plot.list <- file.path(params$gof.path.seq[[1]], paste0(ca, ".2019", gof.type), paste0(canonical.prog[which.max(nchar(canonical.prog))], ".pdf")) # which.max to only do the full progression plot
+		seq.plot.list <- file.path(params$gof.path.seq[[1]], paste0(ca, ".", gof.year, gof.type), paste0(canonical.prog[which.max(nchar(canonical.prog))], ".pdf")) # which.max to only do the full progression plot
 
 		##    weed out norm group nesting
 		nest.test <- sapply(seq(seq.plots), function(f) grepl(seq.plots[f], seq.plots[-f]))
@@ -68,7 +69,7 @@ For brevity, only the canonical progressions are displayed in this appendix. The
 		}
 
 		###   Skip Year Analyses
-		skp.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.skip[[1]], paste0(ca, ".2019", gof.type)))))
+		skp.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.skip[[1]], paste0(ca, ".", gof.year, gof.type)))))
 		skp.plots <- skp.plots[order(skp.plots)][skp.plots != "Decile_Tables"]
 
 		##    Find canonical progression (nested)
@@ -79,12 +80,12 @@ For brevity, only the canonical progressions are displayed in this appendix. The
 			canonical.ca <- gsub("MATHEMATICS", "MATH",
 							head(rev(SGPstateData[[params$state.abv[[1]]]][["SGP_Configuration"]][["content_area.projection.sequence"]][[ca]][1:ca.index]), max.order))[-2]
 			canonical.grd <- head(rev(SGPstateData[[params$state.abv[[1]]]][["SGP_Configuration"]][["grade.projection.sequence"]][[ca]][1:ca.index]), max.order)[-2]
-			canonical.year <- c("2019", SGP:::yearIncrement("2019", 1, tail(cumsum(head(rev(
+			canonical.year <- c(gof.year, SGP:::yearIncrement(gof.year, 1, tail(cumsum(head(rev(
 							SGPstateData[[params$state.abv[[1]]]][["SGP_Configuration"]][["year_lags.projection.sequence"]][[ca]][1:(ca.index-1)]), max.order)), -1)))[-2]
 			canonical.prog <- sapply(tail(seq((max.order-1)), -1), function(f) paste(canonical.year[1:f], canonical.ca[1:f], canonical.grd[1:f], sep="_", collapse=";"))
 		}
 		canonical.prog.seq <- canonical.prog[which.max(nchar(canonical.prog))]
-		skp.plot.list <- file.path(params$gof.path.skip[[1]], paste0(ca, ".2019", gof.type), paste0(canonical.prog.seq, ".pdf")) # which.max to only do the full progression plot
+		skp.plot.list <- file.path(params$gof.path.skip[[1]], paste0(ca, ".", gof.year, gof.type), paste0(canonical.prog.seq, ".pdf")) # which.max to only do the full progression plot
 
 		##    weed out norm group nesting
 		nest.test <- sapply(seq(skp.plots), function(f) grepl(skp.plots[f], skp.plots[-f]))
