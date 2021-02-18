@@ -7,17 +7,20 @@
 ### Load packages
 
 require(SGP)
-require(SGPdata)
-
+require(data.table)
 
 ### Load data
 
 load("Data/Demonstration_SGP_2016_2017.Rdata")
+load("Data/Demonstration_SGP_LONG_Data_2018_2019.Rdata")
 
 
-### Create subset of data
-
-Demonstration_Data_LONG_2018_2019 <- sgpData_LONG[YEAR == "2018_2019"]
+###   Rename derived/related variables by pre-pending 'NO_SKIP_SGP'
+original.names <- c(grep("^SGP", names(Demonstration_SGP_LONG_Data_2018_2019), value=TRUE),
+                    grep("STATUS_3_YEAR", names(Demonstration_SGP_LONG_Data_2018_2019), value=TRUE),
+                    grep("PRIOR", names(Demonstration_SGP_LONG_Data_2018_2019), value=TRUE))
+new.names <- gsub('(_SGP)+','_SGP', paste0("NO_SKIP_SGP_", gsub("^SGP_", "", original.names)))
+setnames(Demonstration_SGP_LONG_Data_2018_2019, original.names, new.names)
 
 
 ### Load configurations
@@ -31,8 +34,9 @@ SGP_CONFIG_2018_2019_PART_1 <- c(READING_2018_2019.config, MATHEMATICS_2018_2019
 ### Run analysis
 
 Demonstration_SGP_2018_2019_PART_1 <- updateSGP(
-                        Demonstration_SGP_2016_2017,
-                        Demonstration_Data_LONG_2018_2019,
+                        state="DEMO",
+                        what_sgp_object = Demonstration_SGP_2016_2017,
+                        with_sgp_data_LONG = Demonstration_SGP_LONG_Data_2018_2019,
                         steps=c("prepareSGP", "analyzeSGP", "combineSGP"),
                         sgp.percentiles=TRUE,
                         sgp.projections=FALSE,
@@ -40,7 +44,7 @@ Demonstration_SGP_2018_2019_PART_1 <- updateSGP(
                         sgp.percentiles.baseline=FALSE,
                         sgp.projections.baseline=FALSE,
                         sgp.projections.lagged.baseline=FALSE,
-			save.intermediate.results=FALSE,
+                        save.intermediate.results=FALSE,
                         sgp.config=SGP_CONFIG_2018_2019_PART_1)
 
 

@@ -32,7 +32,7 @@ SGPstateData[["DEMO"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]][["RE
 
 ### Run analysis
 
-Demonstration_SGP_2018_2019_PART_2a <- abcSGP(
+Demonstration_SGP_2018_2019_PART_2a <- abcSGP(state="DEMO",
                         Demonstration_SGP_2018_2019_PART_1,
                         steps=c("prepareSGP", "analyzeSGP", "combineSGP"),
                         sgp.percentiles=FALSE,
