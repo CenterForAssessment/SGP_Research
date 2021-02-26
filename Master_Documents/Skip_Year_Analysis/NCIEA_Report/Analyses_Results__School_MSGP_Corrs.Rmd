@@ -1,5 +1,19 @@
 ### School mean SGP correlations
 
+```{r, results='asis', echo=FALSE}
+if (tolower(params$render.format) == "pagedreport") {
+cat(
+"<aside class = 'info-callout'>
+
+<p class='info-callout-title'>Information call-out</p>
+
+[S]chools with high mean one-year SGPs predominantly have high mean skip-year SGPs and vice-versa.
+
+</aside>"
+)
+}
+```
+
 Like with individual results, correlations at the school level between one-year and skip-year mean SGPs are very high. Table `r tblNum(1)` reports the correlations (restricted to schools with `r params$min.school.size` or more students) which approach `r round(max(c(sch_cor$Skip_x_Sequential, sch_cor_x$Skip_x_Sequential)), 1)` based upon approximately `r n.schools` `r params$state.name` schools. The results demonstrate that schools with high mean one-year SGPs predominantly have high mean skip-year SGPs and vice-versa. Though not reported, similarly high correlations are observed within schools at the grade level, as well as at the district level.
 
 ```{r, results='asis', echo=FALSE, School_Lev_Cors}
@@ -36,7 +50,10 @@ Figure `r getCounter("figure")+1` visualizes the relationship between school lev
 ```
 
 ```{r, results="asis", echo=FALSE}
-	# tmp.img.path <- ifelse(tolower(params$render.format)=="bookdown", file.path("..", ".."), "..")
+	if (tolower(params$render.format) == "pagedreport") {
+		pageBreak()
+	}
+
 	placeFigure(
 		files = file.path("..", "assets", "img", "Skip_Year_SGP_Comp_SGP.svg"), html.width = "100%",
 		caption = "Sequential- and skip-year mean SGP by content area and student filter")
