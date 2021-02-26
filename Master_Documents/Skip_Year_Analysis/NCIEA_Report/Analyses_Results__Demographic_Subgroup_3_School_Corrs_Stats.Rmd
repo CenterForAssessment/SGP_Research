@@ -15,7 +15,9 @@ Table `r tblNum(1)` provides the correlations between school level sequential an
 	cor_tbl_demog[, CONTENT_AREA := sapply(CONTENT_AREA, capwords)]
 	setnames(cor_tbl_demog, sapply(gsub("PCT_Demog_x_", "", names(cor_tbl_demog)), capwords))
 
-  cat(dualTable(as.matrix(cor_tbl_demog),
-  			align=paste(rep("r", ncol(cor_tbl_demog)), collapse=""), n.rgroup = rep(length(params$GL_subjects), 2),
-				caption=paste("School level correlations between mean SGPs and percent",  demog.group$label, "by student inclusion filter")))
+	tmp.caption <- paste("School level correlations between mean SGPs and percent",  demog.group$label, "by student inclusion filter")
+	knitr::knit_print(htmlTable::htmlTable(as.matrix(cor_tbl_demog), title="",
+	  align=paste(rep("r", ncol(cor_tbl_demog)), collapse=""),
+		n.rgroup = rep(length(params$GL_subjects), 2), rnames=FALSE,
+	  caption=tblCap(tmp.caption), css.class="gmisc_table breakboth"))
 ```

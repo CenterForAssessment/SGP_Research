@@ -1,4 +1,3 @@
-
 ### `r demog.group$name`
 
 Table `r tblNum(1)` provides the frequencies and proportions of students that had a sequential and/or skip-year SGP calculated in 2019, disaggregated by those identified as `r sub("english", "English", tolower(demog.group$name))` (`r if( !is.null(demog.group$description) ) demog.group$description else demog.group$label`), or not, and content area. `r if(!is.null(demog.group$count.comment)) {demog.group$count.comment} `
@@ -36,8 +35,10 @@ Table `r tblNum(1)` provides the frequencies and proportions of students that ha
 	row.names(demog_counts) <- NULL
 	setnames(demog_counts, c("Content Area", paste(demog.group$label, "Status"), "Total Students", "Count", "Percent", "Count", "Percent"))
 
-	cat(dualTable(as.matrix(demog_counts),
-  	align=paste(rep("r", ncol(demog_counts)), collapse=""),
-		n.rgroup = rep(2, nrow(demog_counts)/2), n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
-		caption= paste("Sequential and skip-year SGP counts and percentages by content area and",  demog.group$label, "status"))) # , files = tbl.file
+	tmp.caption <- paste("Sequential and skip-year SGP counts and percentages by content area and",  demog.group$label, "status")
+	knitr::knit_print(htmlTable::htmlTable(as.matrix(demog_counts), title="", 
+	  align=paste(rep("r", ncol(demog_counts)), collapse=""),
+		n.rgroup = rep(2, nrow(demog_counts)/2), rnames=FALSE,
+	  n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
+	  caption=tblCap(tmp.caption), css.class="gmisc_table breakboth"))
 ```

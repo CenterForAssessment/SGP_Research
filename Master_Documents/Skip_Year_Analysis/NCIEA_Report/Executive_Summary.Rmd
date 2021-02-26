@@ -44,8 +44,16 @@ if(length(params$test.name) > 1) {
   } else excluded.grade.text <- "certain grade level"
 ```
 
-```{r, results='asis', echo=FALSE, Exec_Summary}
-  exec.sum.text <- readLines(file.path(params$child.file.path, "Executive_Summary_Text.Rmd"))
+```{r, results='asis', echo=FALSE}
+
+	###  Not sure this process can be simplified any...  
+	###  Needs to be a YAML chunk for bookdown, but just regular text for pagedown (Literasee nciea_report template)
+	# wmwd <- knitr::knit_print(print(getwd()))
+	if (tolower(params$render.format) == "bookdown") {
+		exec.sum.text <- readLines(file.path(params$child.file.path[[1]], "Executive_Summary_Text.Rmd"))
+	} else {
+		exec.sum.text <- readLines("Executive_Summary_Text.Rmd")
+	}
 
   param.to.replace <- unique(do.call(rbind, str_match_all(exec.sum.text, "PRM__\\s*(.*?)\\s*__PRM")))
   for (i in seq(nrow(param.to.replace))) exec.sum.text <- gsub(param.to.replace[i,1], eval(parse(text=paste0("params[['", param.to.replace[i,2], "']][[1]]"))), exec.sum.text, fixed=TRUE)
@@ -53,5 +61,13 @@ if(length(params$test.name) > 1) {
   text.to.replace <- unique(do.call(rbind, str_match_all(exec.sum.text, "TXT__\\s*(.*?)\\s*__TXT")))
   for (i in seq(nrow(text.to.replace))) exec.sum.text <- gsub(text.to.replace[i,1], eval(parse(text=text.to.replace[i,2])), exec.sum.text, fixed=TRUE)
 
-  cat(exec.sum.text, sep = "\n")
+	if (tolower(params$render.format) == "bookdown") {
+		cat(c("---", "abstract: |"), sep = "\n")
+		cat("\t", exec.sum.text, sep = "\n\t")
+		cat(c("", "---"), sep = "\n")
+	} else {
+		cat(c("","<div class='exec-summary'>", "", "# Executive Summary {-}"), sep = "\n")
+		cat(exec.sum.text, sep = "\n")
+		cat(c("", "</div>"), sep = "\n")
+	}
 ```

@@ -8,4 +8,4 @@ The most prominent alternative to the standard one-year (sequential) student aca
 - Even though it is possible to calculate skip-year growth, it is not clear that it can be used in lieu of one-year growth for
 state accountability reporting.
 
-\noindent Due to the uncertainty of instruction, testing, and accountability in the coming year, the best that any state can do at this point in time is to examine historical data in anticipation of different situations that might arise in 2021. This report is part of the due diligence being conducted by the `r params$state.org` (`r params$state.org.abv`) in preparation for Spring 2021.
+Due to the uncertainty of instruction, testing, and accountability in the coming year, the best that any state can do at this point in time is to examine historical data in anticipation of different situations that might arise in 2021. This report is part of the due diligence being conducted by the `r params$state.org` (`r params$state.org.abv`) in preparation for Spring 2021.

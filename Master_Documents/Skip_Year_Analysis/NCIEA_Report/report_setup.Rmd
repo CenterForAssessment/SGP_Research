@@ -21,7 +21,8 @@
   }
   if (params$draft.text != "") {
     if (!grepl("[\\]|[<]", params$draft.text)) {
-      params$draft.text <- paste0("\\vspace{16pt} \\noindent  \\textbf{", params$draft.text, "} \\vspace{20pt}")
+      params$draft.text <- paste0("<p style='text-align: center;'><br><strong>", params$draft.text, "</strong><br></p>")
+      # params$draft.text <- paste0("\\vspace{16pt} \\noindent  \\textbf{", params$draft.text, "} \\vspace{20pt}")
     }
   }
 
@@ -164,39 +165,40 @@
   }
 
   if (ifelse(!exists("github.download.tf"), FALSE, github.download.tf)) {
-    params$child.file.path <- file.path(params$working.directory, "assets", "github_children")
+    params$child.file.path <- file.path("..", "assets", "rmd", "github_children")
     options("renderMultiDocument_Message" = paste0(
                 "\tChild .Rmd files have been downloaded from Github and 'child.file.path' parameter temporarily set to '", file.path(".", "assets", "github_children"), "'!!!\n\t",
                 "These files may be inspected and edited as needed before re-rendering. In order to keep files for future use/re-rendering, set    \n\t",
-                "'child.file.path' to '", file.path(".", "assets", "github_children"), "' in 'report_params' list or 'params' YAML to avoid file re-download/overwrite.     "))
+                "'child.file.path' to '", file.path(".", "assets", "rmd", "github_children"), "' in 'report_params' list or 'params' YAML to avoid file re-download/overwrite.     "))
   }
 
   ###   Normalize Child and GoFit plot paths
-  if (!is.null(params$child.file.path)|!is.null(params$gof.path.seq)|!is.null(params$gof.path.skip)) {
-    tmp.wd <- getwd()
-    setwd(params$working.directory)
-    if (!is.null(params$child.file.path)) {
-      params$child.file.path <- normalizePath(params$child.file.path[[1]]) # need the '[[1]]' to knit to .Rmd for testing/editing
-    }
-    if (!is.null(params$gof.path.seq)) {
-      params$gof.path.seq <- normalizePath(params$gof.path.seq[[1]])
-    }
-    if (!is.null(params$gof.path.skip)) {
-      params$gof.path.skip <- normalizePath(params$gof.path.skip[[1]])
-    }
-    setwd(tmp.wd)
-  }
+  # if (!is.null(params$child.file.path)|!is.null(params$gof.path.seq)|!is.null(params$gof.path.skip)) {
+  #   tmp.wd <- getwd()
+  #   setwd(params$working.directory)
+  #   if (!is.null(params$child.file.path)) {
+  #     params$child.file.path <- normalizePath(params$child.file.path[[1]]) # need the '[[1]]' to knit to .Rmd for testing/editing
+  #   }
+  #   if (!is.null(params$gof.path.seq)) {
+  #     params$gof.path.seq <- normalizePath(params$gof.path.seq[[1]])
+  #   }
+  #   if (!is.null(params$gof.path.skip)) {
+  #     params$gof.path.skip <- normalizePath(params$gof.path.skip[[1]])
+  #   }
+  #   setwd(tmp.wd)
+  # }
 ```
 
 
 ```{r, echo=FALSE, include=FALSE}
   ## set a universal Cache path
-  knitr::opts_chunk$set(cache.path = "assets/_cache/Skip_Year_Report")
+  knitr::opts_chunk$set(cache.path = "../assets/_cache/Skip_Year_Report")
 
   ##  Load some R packages and functions required for HTML table creation silently.
   ##  Load SGP and other packages here to avoid messages.
 	require(data.table)
   require(ggplot2)
+  require(svglite)
 	require(Gmisc)
   require(htmlTable)
   require(SGP)
@@ -208,8 +210,8 @@
 	options("fig_caption_no_roman"=FALSE)
 
   ##  Create assets and/or img directories if doesn't exist
-  if (!dir.exists(file.path(params$working.directory, "assets", "img"))) {
-    dir.create(file.path(params$working.directory, "assets", "img"), showWarnings = FALSE, recursive = TRUE)
+  if (!dir.exists(file.path("..", "assets", "img"))) {
+    dir.create(file.path("..", "assets", "img"), showWarnings = FALSE, recursive = TRUE)
   }
 
   ### Utility function - Assumes first two "levels" are the main dichotomy

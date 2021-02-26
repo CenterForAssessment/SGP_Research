@@ -5,14 +5,15 @@ Like with individual results, correlations at the school level between one-year 
 ```{r, results='asis', echo=FALSE, School_Lev_Cors}
 	cor_tbl <- data.table(`Content Area` = params$GL_camel, `All Students` = sch_cor$Skip_x_Sequential, `Skip-Year Subset` = sch_cor_x$Skip_x_Sequential)
 
-  cat(dualTable(as.matrix(cor_tbl),
-  	align=paste(rep('r', ncol(cor_tbl)), collapse=''),
-		caption='School level correlations between mean SGPs with unfiltered and filtered students'))
+	tmp.caption <- 'School level correlations between mean SGPs with unfiltered and filtered students'
+	knitr::knit_print(htmlTable::htmlTable(as.matrix(cor_tbl), title="",
+	  align=paste(rep('r', ncol(cor_tbl)), collapse=''),
+	  caption=tblCap(tmp.caption), css.class="gmisc_table breakboth"))
 ```
 
 Figure `r getCounter("figure")+1` visualizes the relationship between school level MSGP and prior achievement by content area and student inclusion filter. Bubble sizes are representative of school size, and the black diagonal line represents perfect correlation (i.e. no difference).
 
-```{r, cache=TRUE, echo=FALSE, include=FALSE, Sch_Diff_Plots}
+```{r, cache=TRUE, echo=FALSE, include=FALSE}
   plot_data_gl <- rbindlist(list(sch_msgp[, Schools := "All Schools"], sch_msgp_x[, Schools := "Skip-Year Subset"]))
   cor.sch <- plot_data_gl[!is.na(MEAN_SKIP_SGP), list( # COUNT_NO_SKIP_SGP >= params$min.school.size & COUNT_SKIP_SGP >= params$min.school.size & # now done for all sch_msgp/x
 		                           cors=round(cor(MEAN_NO_SKIP_SGP, MEAN_SKIP_SGP, use="complete.obs"), 2)), keyby=c("CONTENT_AREA", "Schools")]
@@ -31,13 +32,12 @@ Figure `r getCounter("figure")+1` visualizes the relationship between school lev
    p <- p + geom_text(data=cor.sch, aes(label=paste("r = ", cors, sep="")), x = 75, y = 25, size = 4.0, colour = "red")
    p <- p + geom_abline(slope=1, intercept = 0)
 
-   ggsave(filename = file.path(params$working.directory, "assets", "img", "Skip_Year_SGP_Comp_SGP.pdf"), plot=p, device = "pdf", width = 7.5, height = 6, units = "in")
+   ggsave(filename = file.path("..", "assets", "img", "Skip_Year_SGP_Comp_SGP.svg"), plot=p, device = "svg", width = 7.5, height = 6, units = "in")
 ```
 
-```{r, results="asis", echo=FALSE, Sch_Cor_Plot_Place}
+```{r, results="asis", echo=FALSE}
+	# tmp.img.path <- ifelse(tolower(params$render.format)=="bookdown", file.path("..", ".."), "..")
 	placeFigure(
-			files = file.path(params$working.directory, "assets", "img", "Skip_Year_SGP_Comp_SGP.pdf"),
-			caption = "Sequential- and skip-year mean SGP by content area and student filter")
-
-	pageBreak()
+		files = file.path("..", "assets", "img", "Skip_Year_SGP_Comp_SGP.svg"), html.width = "100%",
+		caption = "Sequential- and skip-year mean SGP by content area and student filter")
 ```

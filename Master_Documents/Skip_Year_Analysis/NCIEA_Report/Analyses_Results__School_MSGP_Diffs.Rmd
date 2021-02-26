@@ -13,13 +13,15 @@ Like at the individual level, a high correlation does not imply the quantities a
 	diff_tbl[, CONTENT_AREA := sapply(CONTENT_AREA, capwords)]
 	setnames(diff_tbl, "CONTENT_AREA", "Content Area")
 
-  cat(dualTable(as.matrix(diff_tbl), align="rrcc", n.rgroup=rep(length(params$GL_subjects), 2),
-		caption='School level skip-year to one-year median and 95th percentile absolute differences'))
+	tmp.caption <- "School level skip-year to one-year median and 95th percentile absolute differences"
+	knitr::knit_print(htmlTable::htmlTable(as.matrix(diff_tbl), title="",
+	  align="rrcc", n.rgroup=rep(length(params$GL_subjects), 2), rnames=FALSE,
+	  caption=tblCap(tmp.caption), css.class="gmisc_table breakboth"))
 ```
 
 School size is one driver of the differences in one- and skip-year mean SGPs to consider. Figure `r getCounter("figure")+1` illustrates the relationship between school level MSGP observed (*not absolute*) differences and school size, disaggregated by content area and student inclusion filter. In these plots, MSGP differences are defined as **skip-year MSGP *minus* one-year MSGP**; therefore positive numbers can be interpreted as showing an increase in schools' MSGP when using skip-year calculations, and vice-versa.
 
-```{r, cache=TRUE, echo=FALSE, include=FALSE, Sch_Diff_Plot}
+```{r, cache=TRUE, echo=FALSE, include=FALSE}
   plot_data_gl[, Mean_Difference := round(MEAN_SKIP_SGP-MEAN_NO_SKIP_SGP, 2)] # NOT absolute
 
   p <- ggplot() + facet_grid(CONTENT_AREA ~ Schools) +
@@ -33,13 +35,15 @@ School size is one driver of the differences in one- and skip-year mean SGPs to 
   p <- p + scale_x_continuous(name="School Size")
   p <- p + scale_y_continuous(name="School Mean SGP Differences")
 
-  ggsave(filename = file.path(params$working.directory, "assets", "img", "Skip_Year_SGP_Comp_Diff_x_N.pdf"), plot=p, device = "pdf", width = 7, height = 5.5, units = "in")
+  ggsave(filename = file.path("..", "assets", "img", "Skip_Year_SGP_Comp_Diff_x_N.svg"), plot=p, device = "svg", width = 7, height = 5.5, units = "in")
 ```
 
 ```{r, results="asis", echo=FALSE}
-		placeFigure(
-			files = file.path(params$working.directory, "assets", "img", "Skip_Year_SGP_Comp_Diff_x_N.pdf"),
-			caption = "Mean SGP differences by content area and student inclusion filter")
+	# tmp.img.path <- ifelse(tolower(params$render.format)=="bookdown", file.path("..", ".."), "..")
+	placeFigure(
+		files = file.path("..", "assets", "img", "Skip_Year_SGP_Comp_Diff_x_N.svg"), html.width = "100%",
+		caption = "Mean SGP differences by content area and student inclusion filter")
 ```
+
 
 School level differences like student level differences were, on average, minor. However, numerous schools showed one-year/skip-year differences that were not minor and could possibly lead to a different accountability determination. Further analysis should include re-running 2019 accountability calculations to determine what impact using skip-year growth in place of one-year growth has on school performance framework ratings. Such results could be added to this report if made available or done in cooperation with the Center for Assessment.

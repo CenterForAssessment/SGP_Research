@@ -20,11 +20,10 @@ Figure `r getCounter("figure")+1` provides the same visualization of the relatio
    p <- p + scale_x_continuous(name=paste("School Percent", demog.group$label))
    p <- p + scale_y_continuous(name="School Mean SGP Differences")
 
-   plot.file <- file.path(params$working.directory, "assets", "img", paste0("Skip_Year_SGP_Comp_SGP_x_", demog.group$label, "_EOC.pdf"))
-	 ggsave(filename = plot.file, plot=p, device = "pdf", width = 7.5, height = 7, units = "in")
+   plot.file <- file.path("..", "assets", "img", paste0("Skip_Year_SGP_Comp_SGP_x_", demog.group$label, "_EOC.svg"))
+	 ggsave(filename = plot.file, plot=p, device = "svg", width = 7.5, height = 7, units = "in")
 ```
 
-```{r, results="asis", echo=FALSE}
-	placeFigure(files = plot.file,
-			        caption = paste("Mean SGP difference by percent", demog.group$label, "by EOC subject"))
+```{r, fig.cap = markdown::markdownToHTML(text=Gmisc::figCapNo(paste("Mean SGP difference by percent", demog.group$label, "by EOC subject")), fragment.only=TRUE), out.width="100%", fig.align='center', out.extra='data-prefix="Figure"'}
+knitr::include_graphics(plot.file)
 ```

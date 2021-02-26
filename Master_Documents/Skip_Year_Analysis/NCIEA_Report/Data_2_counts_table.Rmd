@@ -95,8 +95,13 @@ Table `r tblNum(1)` provides frequencies and proportions associated with student
 	SGP_Counts[which(SGP_Counts==0)] <- '  --  --  '
 	SGP_Counts[which(SGP_Counts==" 0.0")] <- ' --  -- '
 
-  cat(dualTable(SGP_Counts,
-  	align=paste(rep('r', ncol(SGP_Counts)), collapse=''),
-		n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
-		caption='Sequential and skip-year SGP counts and percentages for 2019 by content area and grade'))
+  tmp.caption <- 'Sequential and skip-year SGP counts and percentages for 2019 by content area and grade'
+  knitr::knit_print(htmlTable::htmlTable(SGP_Counts, title="",
+    align=paste(rep('r', ncol(SGP_Counts)), collapse=''),
+    n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
+    caption=tblCap(tmp.caption), css.class="gmisc_table breakboth"))
+  # cat(dualTable(SGP_Counts,
+  # 	align=paste(rep('r', ncol(SGP_Counts)), collapse=''),
+	# 	n.cgroup=c(3, 2, 2), cgroup=c("", "Sequential", "Skip Year"),
+	# 	caption='Sequential and skip-year SGP counts and percentages for 2019 by content area and grade'))
 ```

@@ -22,7 +22,9 @@ The mean and standard deviation of SGPs at the individual level is similar for b
 	SGP_Corrs <- as.matrix(SGP_Corrs)
 	SGP_Corrs[which(is.na(SGP_Corrs))] <- ' -- -- '
 
-  cat(dualTable(SGP_Corrs,
-  	align="rrccccccc", n.cgroup=c(3, 3, 3), cgroup=c("", "Sequential", "Skip Year"),
-		caption='Sequential and skip-year SGP correlation, and SGP mean/standard deviation and test score correlations by content area and grade.'))
+	tmp.caption <- 'Sequential and skip-year SGP correlation, and SGP mean/standard deviation and test score correlations by content area and grade.'
+	knitr::knit_print(htmlTable::htmlTable(SGP_Corrs, title="",
+	  align="rrccccccc",
+	  n.cgroup=c(3, 3, 3), cgroup=c("", "Sequential", "Skip Year"),
+	  caption=tblCap(tmp.caption), css.class="gmisc_table breakboth"))
 ```
