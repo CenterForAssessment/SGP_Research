@@ -27,9 +27,6 @@
 	}
 ```
 
-Table `r tblNum(1)` provides frequencies and proportions associated with student skip-year and one-year SGP counts by year, content area, and grade. An important aspect of Table `r tblNum(1)` is that there are no `r skip.excluded.grade` skip-year SGPs because no prior score exists with which to calculate growth since there is no exam administered two grades prior. The absence of SGPs for an entire grade level has a significant impact on comparisons done at the elementary school level. Since one-year growth summaries (mean or median) usually include the `r skip.excluded.grade` SGPs, one-year to skip-year comparisons for elementary schools are not well aligned (using all growth data) since different grades are included. We discuss this issue later and provide supplemental analyses at the school level that include only grades and content areas that could have both one-year and skip-year SGPs calculated.
-
-
 ```{r, cache=TRUE, echo=FALSE, include=FALSE, Student_Lev_Values}
 	indiv_smry <- Report_Data[VALID_CASE=='VALID_CASE' & eval(parse(text = params$seq.subset)), list(
                   SGP_Corr = round(cor(eval(parse(text = params$seq.sgp)), eval(parse(text = params$skip.sgp)), use="pairwise.complete"), 2),
