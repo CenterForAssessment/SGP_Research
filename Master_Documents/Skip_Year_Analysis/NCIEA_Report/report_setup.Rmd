@@ -210,8 +210,8 @@
 	options("fig_caption_no_roman"=FALSE)
 
   ##  Create assets and/or img directories if doesn't exist
-  if (!dir.exists(file.path("..", "assets", "img"))) {
-    dir.create(file.path("..", "assets", "img"), showWarnings = FALSE, recursive = TRUE)
+  if (!dir.exists(file.path(params$base.directory, "assets", "img"))) {
+    dir.create(file.path(params$base.directory, "assets", "img"), showWarnings = FALSE, recursive = TRUE)
   }
 
   ### Utility function - Assumes first two "levels" are the main dichotomy

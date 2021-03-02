@@ -35,7 +35,7 @@ School size is one driver of the differences in one- and skip-year mean SGPs to 
   p <- p + scale_x_continuous(name="School Size")
   p <- p + scale_y_continuous(name="School Mean SGP Differences")
 
-  ggsave(filename = file.path("..", "assets", "img", "Skip_Year_SGP_Comp_Diff_x_N.svg"), plot=p, device = "svg", width = 7, height = 5.5, units = "in")
+  ggsave(filename = file.path(params$base.directory, "assets", "img", "Skip_Year_SGP_Comp_Diff_x_N.svg"), plot=p, device = "svg", width = 7, height = 5.5, units = "in")
 ```
 
 ```{r, results="asis", echo=FALSE}
