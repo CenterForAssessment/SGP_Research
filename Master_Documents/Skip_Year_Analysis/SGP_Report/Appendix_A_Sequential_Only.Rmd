@@ -1,6 +1,7 @@
 ##  Sequential Analyses Only
 
 ```{r, cache=FALSE, results="asis", echo=FALSE}
+	gof.year <- ifelse(params$Year_Long_Form, "2018_2019", "2019")
 	gof.type <- NULL
 	if (grepl("BASELINE", params$seq.sgp)) gof.type <- ".BASELINE"
 	if (grepl("SIMEX$", params$seq.sgp)) gof.type <- paste0(gof.type, ".SIMEX")
@@ -17,13 +18,13 @@
 	seq.only.plots <- NULL
 
 	for (ca in params$GoF_GL_subjects) {
-		seq.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.seq[[1]], paste0(ca, ".2019", gof.type)))))
+		seq.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.seq[[1]], paste0(ca, ".", gof.year, gof.type)))))
 		seq.plots <- seq.plots[order(seq.plots)][seq.plots != "Decile_Tables"]
 
 		tmp.prg <- sapply(seq.plots, function(f) strsplit(f, ";")[[1]])
-		tmp.grd <- sapply(tmp.prg, function(f) gsub(paste0("2019_", sub("MATHEMATICS", "MATH", ca), "_"), "", f[1]))
+		tmp.grd <- sapply(tmp.prg, function(f) gsub(paste0(gof.year, "_", sub("MATHEMATICS", "MATH", ca), "_"), "", f[1]))
 
-		seq.only.plots <- c(seq.only.plots, file.path(params$gof.path.seq[[1]], paste0(ca, ".2019", gof.type), paste0(seq.plots[tmp.grd==seq.only.grd[[ca]]], ".pdf")))
+		seq.only.plots <- c(seq.only.plots, file.path(params$gof.path.seq[[1]], paste0(ca, ".", gof.year, gof.type), paste0(seq.plots[tmp.grd==seq.only.grd[[ca]]], ".pdf")))
 	}
 
 	if (length(params$GoF_GL_subjects) > 2) tmp.width <- 0.4625 else tmp.width <- 0.5 # maybe do two pages since it creates a second page anyway with more than 2 subjects

@@ -18,6 +18,8 @@
 		seq.plot.list <- NULL
 		skip.plot.list <- NULL
 
+		# wmwd2 <- knitr::knit_print(print(getwd())) # ...Documentation/assets/rmd/NCIEA_Report
+
 		seq.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.seq[[1]], paste0(ca, ".", gof.year, gof.type)))))
 		seq.plots <- seq.plots[order(seq.plots)][seq.plots != "Decile_Tables"]
 		# weed out norm group nesting
@@ -29,7 +31,7 @@
 		seq.plots <- seq.plots[!duplicated(seq.grd) & seq.grd %in% seq.skip.grd[[ca]]]  #  additional removal of dups needed for Utah
 		if (any(!seq.grd %in% seq.skip.grd[[ca]])) seq.grd <- seq.grd[seq.grd %in% seq.skip.grd[[ca]]]
 		seq.plots <- seq.plots[order(unlist(sapply(seq.grd[!duplicated(seq.grd)], as.numeric)))] # re-order for grades >= 10
-		seq.plot.list <- c(seq.plot.list, file.path(params$gof.path.seq[[1]], paste0(ca, ".", gof.year, gof.type), paste0(seq.plots[!is.na(seq.plots)], ".pdf")))
+		seq.plot.list <- c(seq.plot.list, file.path(params$gof.path.seq[[1]], paste0(ca, ".", gof.year, gof.type), paste0(seq.plots[!is.na(seq.plots)], ".png")))
 
 		skip.plots <-  unique(gsub(".png|.pdf", "", list.files(file.path(params$gof.path.skip[[1]], paste0(ca, ".", gof.year, gof.type)))))
 		skip.plots <- skip.plots[order(skip.plots)][skip.plots != "Decile_Tables"]
@@ -41,7 +43,28 @@
 		skip.plots <- skip.plots[!duplicated(skip.grd) & skip.grd %in% seq.skip.grd[[ca]]]
 		if (any(!skip.grd %in% seq.skip.grd[[ca]])) skip.grd <- skip.grd[skip.grd %in% seq.skip.grd[[ca]]]
 		skip.plots <- skip.plots[order(unlist(sapply(skip.grd[!duplicated(skip.grd)], as.numeric)))] # re-order for grades >= 10
-		skip.plot.list <- c(skip.plot.list, file.path(params$gof.path.skip[[1]], paste0(ca, ".", gof.year, gof.type), paste0(skip.plots[!is.na(skip.plots)], ".pdf")))
+		skip.plot.list <- c(skip.plot.list, file.path(params$gof.path.skip[[1]], paste0(ca, ".", gof.year, gof.type), paste0(skip.plots[!is.na(skip.plots)], ".png")))
+
+		###  Added for bookdown/pagedown
+		seq.tmp.dir <- lapply(file.path(params$base.directory, "assets", "img", "Goodness_of_Fit", "Sequential", gsub(params$gof.path.seq, "", seq.plot.list, fixed=TRUE)), strsplit, "/")
+		for (d in seq(seq.tmp.dir)) { # should all be the same here (same content area) and already created in seq only
+			if(!file.exists(file.path(params$base.directory, "assets", "img", "Goodness_of_Fit", "Sequential", tail(seq.tmp.dir[[d]][[1]], 2)[1]))) {
+				dir.create(file.path(params$base.directory, "assets", "img", "Goodness_of_Fit", "Sequential", tail(seq.tmp.dir[[d]][[1]], 2)[1]))
+			}
+		}
+		doc.seq.plot.paths <- file.path(params$base.directory, "assets", "img", "Goodness_of_Fit", "Sequential", gsub(params$gof.path.seq, "", seq.plot.list, fixed=TRUE))
+		doc.seq.plot.place <- file.path("..", "assets", "img", "Goodness_of_Fit", "Sequential", gsub(params$gof.path.seq, "", seq.plot.list, fixed=TRUE))
+		file.copy(seq.plot.list, doc.seq.plot.paths)
+
+		skip.tmp.dir <- lapply(file.path(params$base.directory, "assets", "img", "Goodness_of_Fit", "Skip_Year", gsub(params$gof.path.skip, "", skip.plot.list, fixed=TRUE)), strsplit, "/")
+		for (d in seq(skip.tmp.dir)) { # should be needed ONCE
+			if(fc.tf.seq <- !file.exists(file.path(params$base.directory, "assets", "img", "Goodness_of_Fit", "Skip_Year", tail(skip.tmp.dir[[d]][[1]], 2)[1]))) {
+				dir.create(file.path(params$base.directory, "assets", "img", "Goodness_of_Fit", "Skip_Year", tail(skip.tmp.dir[[d]][[1]], 2)[1]), recursive = TRUE)
+			} # fe.tf to trap TRUE/FALSE output
+		}
+		doc.skip.plot.paths <- file.path(params$base.directory, "assets", "img", "Goodness_of_Fit", "Skip_Year", gsub(params$gof.path.skip, "", skip.plot.list, fixed=TRUE))
+		doc.skip.plot.place <- file.path("..", "assets", "img", "Goodness_of_Fit", "Skip_Year", gsub(params$gof.path.skip, "", skip.plot.list, fixed=TRUE))
+		fc.tf.skp <- file.copy(skip.plot.list, doc.skip.plot.paths)
 
 		plot.chunks <- split(seq_along(seq.skip.grd[[ca]]), ggplot2::cut_interval(seq_along(seq.skip.grd[[ca]]), length=2))
 		GOF_Subj <- params$GL_subjects[which(params$GoF_GL_subjects==ca)]
@@ -53,8 +76,8 @@
 		")
 		for (k in seq(plot.chunks)){
 			placeFigure(
-					files = c(rbind(seq.plot.list[plot.chunks[[k]]], skip.plot.list[plot.chunks[[k]]])),
-					rows = length(plot.chunks[[k]]), columns = 2, pdf.width = 0.5,
+					files = c(rbind(doc.seq.plot.place[plot.chunks[[k]]], doc.skip.plot.place[plot.chunks[[k]]])),
+					rows = length(plot.chunks[[k]]), columns = 2,
 					caption = paste0("Sequential (left) and skip-year (right) fit plots for ", capwords(sub("MATHEMATICS", "MATH", GOF_Subj)),
 													" (grades ", paste(seq.skip.grd[[ca]][plot.chunks[[k]]], collapse = " - "),")"))
 		}

@@ -7,7 +7,6 @@
 ### Load packages
 
 require(SGP)
-require(SGPdata)
 
 
 ### Load data
@@ -83,7 +82,7 @@ SGPstateData[["DEMO"]][["SGP_Configuration"]][["max.forward.projection.sequence"
 
 ### Run analysis
 
-Demonstration_SGP_2018_2019_PART_2b <- abcSGP(
+Demonstration_SGP_2018_2019_PART_2b <- abcSGP(state="DEMO",
                         Demonstration_SGP_2018_2019_PART_2a,
                         steps=c("prepareSGP", "analyzeSGP", "combineSGP"),
                         sgp.percentiles=FALSE,

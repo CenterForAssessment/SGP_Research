@@ -36,7 +36,7 @@ SGP_CONFIG_2019_2020 <- c(READING_2019_2020.config, MATHEMATICS_2019_2020.config
 
 ### Run analysis
 
-Demonstration_SGP_2019_2020 <- updateSGP(
+Demonstration_SGP_2019_2020 <- updateSGP(state="DEMO",
                         Demonstration_SGP_2018_2019_PART_2c,
                         Demonstration_Data_LONG_2019_2020,
                         steps=c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
@@ -47,7 +47,7 @@ Demonstration_SGP_2019_2020 <- updateSGP(
                         sgp.projections.baseline=FALSE,
                         sgp.projections.lagged.baseline=FALSE,
                         sgp.target.scale.scores=TRUE,
-			save.intermediate.results=FALSE,
+                        save.intermediate.results=FALSE,
                         sgp.config=SGP_CONFIG_2019_2020)
 
 
