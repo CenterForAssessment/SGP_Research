@@ -1,0 +1,98 @@
+<!-- HTML_Start -->
+<!-- dualTable -->
+
+```
+## Warning in (function (x, header = NULL, rnames = NULL, rowlabel = NULL, : You have not specified rnames but you seem to have rgroups. If you have the first column as rowname but you want the rgroups
+## to result in subhedings with indentation below then, you should change the rnames to the first column and then remove it from the table matrix (the x argument object).
+```
+
+<table class='gmisc_table breakboth' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
+<thead>
+<tr><td colspan='9' style='text-align: left;'>
+\caption*{\textbf{Table 9:} Sequential and skip-year SGP counts and percentages by content area and ELL status</td></tr>
+<tr>
+<th colspan='3' style='font-weight: 900; border-top: 2px solid grey; text-align: center;'></th><th style='border-bottom: none; border-top: 2px solid grey;' colspan=1>&nbsp;</th>
+<th colspan='2' style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Sequential</th><th style='border-bottom: none; border-top: 2px solid grey;' colspan=1>&nbsp;</th>
+<th colspan='2' style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Skip Year</th>
+</tr>
+<tr>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Content Area</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>ELL Status</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Total Students</th> 
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;' colspan=1>&nbsp;</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Count</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Percent</th> 
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;' colspan=1>&nbsp;</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Count</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Percent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style='text-align: right;'>Mathematics</td>
+<td style='text-align: right;'>No</td>
+<td style='text-align: right;'>25,341</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>22,061</td>
+<td style='text-align: right;'>87.1</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>19,968</td>
+<td style='text-align: right;'>78.8</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'>Yes</td>
+<td style='text-align: right;'>2,960</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>2,660</td>
+<td style='text-align: right;'>89.9</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>2,482</td>
+<td style='text-align: right;'>83.9</td>
+</tr>
+<tr>
+<td style='text-align: right;'>Reading</td>
+<td style='text-align: right;'>No</td>
+<td style='text-align: right;'>25,316</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>22,015</td>
+<td style='text-align: right;'>87.0</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>19,916</td>
+<td style='text-align: right;'>78.7</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: right;'></td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>Yes</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>2,948</td> 
+<td style='border-bottom: 2px solid grey; text-align: right;' colspan=1>&nbsp;</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>2,637</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>89.5</td> 
+<td style='border-bottom: 2px solid grey; text-align: right;' colspan=1>&nbsp;</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>2,275</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>77.2</td>
+</tr>
+</tbody>
+</table>
+<!-- LaTeX_Start dualTable
+\begin{table}[H]
+\caption*{\textbf{Table 9:} Sequential and skip-year SGP counts and percentages by content area and ELL status\label{table9}} 
+\begin{center}
+\begin{tabular}{rrrcrrcrr}
+\hline\hline
+\multicolumn{3}{c}{\bfseries }&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries Sequential}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries Skip Year}\tabularnewline
+\cline{5-6} \cline{8-9}
+\multicolumn{1}{c}{Content Area}&\multicolumn{1}{c}{ELL Status}&\multicolumn{1}{c}{Total Students}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Count}&\multicolumn{1}{c}{Percent}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Count}&\multicolumn{1}{c}{Percent}\tabularnewline
+\hline
+&&&&&&&&\tabularnewline
+Mathematics&No&25,341&&22,061&87.1&&19,968&78.8\tabularnewline
+&Yes&2,960&&2,660&89.9&&2,482&83.9\tabularnewline
+\hline
+&&&&&&&&\tabularnewline
+Reading&No&25,316&&22,015&87.0&&19,916&78.7\tabularnewline
+&Yes&2,948&&2,637&89.5&&2,275&77.2\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+LaTeX_End -->

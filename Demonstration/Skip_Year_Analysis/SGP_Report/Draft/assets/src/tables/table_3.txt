@@ -1,0 +1,103 @@
+<!-- HTML_Start -->
+<!-- dualTable -->
+
+```
+## Warning in (function (x, header = NULL, rnames = NULL, rowlabel = NULL, : You have not specified rnames but you seem to have rgroups. If you have the first column as rowname but you want the rgroups
+## to result in subhedings with indentation below then, you should change the rnames to the first column and then remove it from the table matrix (the x argument object).
+```
+
+<table class='gmisc_table breakboth' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
+<thead>
+<tr><td colspan='10' style='text-align: left;'>
+\caption*{\textbf{Table 3:} School level mean and standard deviation of MSGPs, and correlation of MSGPs with mean prior achievement</td></tr>
+<tr>
+<th colspan='2' style='font-weight: 900; border-top: 2px solid grey; text-align: center;'></th><th style='border-bottom: none; border-top: 2px solid grey;' colspan=1>&nbsp;</th>
+<th colspan='3' style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Sequential</th><th style='border-bottom: none; border-top: 2px solid grey;' colspan=1>&nbsp;</th>
+<th colspan='3' style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Skip Year</th>
+</tr>
+<tr>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Filter</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Content Area</th> 
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;' colspan=1>&nbsp;</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Mean</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>SD</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Corr</th> 
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;' colspan=1>&nbsp;</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Mean</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>SD</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Corr</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style='text-align: right;'>All Students</td>
+<td style='text-align: right;'>Mathematics</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>49.3</td>
+<td style='text-align: right;'> 9.1</td>
+<td style='text-align: right;'>0.50</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>49.0</td>
+<td style='text-align: right;'>13.5</td>
+<td style='text-align: right;'>0.32</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'>Reading</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>49.1</td>
+<td style='text-align: right;'> 7.4</td>
+<td style='text-align: right;'>0.43</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>48.7</td>
+<td style='text-align: right;'>10.0</td>
+<td style='text-align: right;'>0.42</td>
+</tr>
+<tr>
+<td style='text-align: right;'>Skip-Year Subset</td>
+<td style='text-align: right;'>Mathematics</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>49.1</td>
+<td style='text-align: right;'>11.5</td>
+<td style='text-align: right;'>0.38</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>49.0</td>
+<td style='text-align: right;'>13.5</td>
+<td style='text-align: right;'>0.32</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: right;'></td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>Reading</td> 
+<td style='border-bottom: 2px solid grey; text-align: right;' colspan=1>&nbsp;</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>49.0</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'> 8.2</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>0.34</td> 
+<td style='border-bottom: 2px solid grey; text-align: right;' colspan=1>&nbsp;</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>48.7</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>10.0</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>0.42</td>
+</tr>
+</tbody>
+</table>
+<!-- LaTeX_Start dualTable
+\begin{table}[H]
+\caption*{\textbf{Table 3:} School level mean and standard deviation of MSGPs, and correlation of MSGPs with mean prior achievement\label{table3}} 
+\begin{center}
+\begin{tabular}{rrcrrrcrrr}
+\hline\hline
+\multicolumn{2}{c}{\bfseries }&\multicolumn{1}{c}{\bfseries }&\multicolumn{3}{c}{\bfseries Sequential}&\multicolumn{1}{c}{\bfseries }&\multicolumn{3}{c}{\bfseries Skip Year}\tabularnewline
+\cline{4-6} \cline{8-10}
+\multicolumn{1}{c}{Filter}&\multicolumn{1}{c}{Content Area}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{SD}&\multicolumn{1}{c}{Corr}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{SD}&\multicolumn{1}{c}{Corr}\tabularnewline
+\hline
+&&&&&&&&&\tabularnewline
+All Students&Mathematics&&49.3& 9.1&0.50&&49.0&13.5&0.32\tabularnewline
+&Reading&&49.1& 7.4&0.43&&48.7&10.0&0.42\tabularnewline
+\hline
+&&&&&&&&&\tabularnewline
+Skip-Year Subset&Mathematics&&49.1&11.5&0.38&&49.0&13.5&0.32\tabularnewline
+&Reading&&49.0& 8.2&0.34&&48.7&10.0&0.42\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+LaTeX_End -->

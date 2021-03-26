@@ -1,0 +1,66 @@
+<!-- HTML_Start -->
+<!-- dualTable -->
+
+```
+## Warning in (function (x, header = NULL, rnames = NULL, rowlabel = NULL, : You have not specified rnames but you seem to have rgroups. If you have the first column as rowname but you want the rgroups
+## to result in subhedings with indentation below then, you should change the rnames to the first column and then remove it from the table matrix (the x argument object).
+```
+
+<table class='gmisc_table breakboth' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
+<thead>
+<tr><td colspan='4' style='text-align: left;'>
+\caption*{\textbf{Table 8:} School level correlations between mean SGPs and percent FRL by student inclusion filter</td></tr>
+<tr>
+<th style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Filter</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Content Area</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Sequential</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Skip Year</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style='text-align: right;'>All Students</td>
+<td style='text-align: right;'>Mathematics</td>
+<td style='text-align: right;'>-0.54</td>
+<td style='text-align: right;'>-0.62</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'>Reading</td>
+<td style='text-align: right;'>-0.57</td>
+<td style='text-align: right;'>-0.69</td>
+</tr>
+<tr>
+<td style='text-align: right;'>Skip-Year Subset</td>
+<td style='text-align: right;'>Mathematics</td>
+<td style='text-align: right;'>-0.58</td>
+<td style='text-align: right;'>-0.63</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: right;'></td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>Reading</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>-0.51</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>-0.69</td>
+</tr>
+</tbody>
+</table>
+<!-- LaTeX_Start dualTable
+\begin{table}[H]
+\caption*{\textbf{Table 8:} School level correlations between mean SGPs and percent FRL by student inclusion filter\label{table8}} 
+\begin{center}
+\begin{tabular}{rrrr}
+\hline\hline
+\multicolumn{1}{c}{Filter}&\multicolumn{1}{c}{Content Area}&\multicolumn{1}{c}{Sequential}&\multicolumn{1}{c}{Skip Year}\tabularnewline
+\hline
+&&&\tabularnewline
+All Students&Mathematics&-0.54&-0.62\tabularnewline
+&Reading&-0.57&-0.69\tabularnewline
+\hline
+&&&\tabularnewline
+Skip-Year Subset&Mathematics&-0.58&-0.63\tabularnewline
+&Reading&-0.51&-0.69\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+LaTeX_End -->

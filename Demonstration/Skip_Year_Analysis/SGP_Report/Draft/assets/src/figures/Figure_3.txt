@@ -1,0 +1,20 @@
+<!-- HTML_Start -->
+<!-- placeFigure -->
+
+<div class='caption'> <strong>Figure 3:</strong> Mean SGP difference by percent FRL by content area and student inclusion filter </div>
+<div class='content-node image'>
+<div class='image-content'>
+<img src='/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/SGP_Report/assets/img/Skip_Year_SGP_Comp_SGP_x_FRL.pdf' style='width: 640px;'/> 
+</div><!-- END image-content -->
+
+</div><!-- END content-node image -->
+
+<!-- LaTeX_Start placeFigure
+\begin{figure}[H]
+\caption*{{{\bf{Figure 3:}} } Mean SGP difference by percent FRL by content area and student inclusion filter}
+  \begin{subfigure}[b]{1\textwidth}
+    \includegraphics[width=\textwidth]{/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/SGP_Report/assets/img/Skip_Year_SGP_Comp_SGP_x_FRL.pdf}
+  \end{subfigure}
+\end{figure}
+
+LaTeX_End -->

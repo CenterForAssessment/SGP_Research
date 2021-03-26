@@ -1,0 +1,50 @@
+<!-- HTML_Start -->
+<!-- placeFigure -->
+
+<div class='caption'> <strong>Figure A2:</strong> Sequential (left) and skip-year (right) fit plots for Math (grades 5 - 6) </div>
+<div class='content-node image'>
+<div class='click-zoom'>
+<div class='img-row'>
+<div class='img-column'>
+<label>
+<input type='checkbox'> 
+<img src='/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Sequential_GOF/Goodness_of_Fit/MATHEMATICS.2018_2019/2018_2019_MATH_5;2017_2018_MATH_4;2016_2017_MATH_3.pdf' style='width: 100%'/> 
+</label>
+<label>
+<input type='checkbox'> 
+<img src='/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Sequential_GOF/Goodness_of_Fit/MATHEMATICS.2018_2019/2018_2019_MATH_6;2017_2018_MATH_5;2016_2017_MATH_4;2015_2016_MATH_3.pdf' style='width: 100%'/> 
+</label>
+</div><!-- END img-column-->
+<div class='img-column'>
+<label>
+<input type='checkbox'> 
+<img src='/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Goodness_of_Fit/MATHEMATICS.2018_2019/2018_2019_MATH_5;2016_2017_MATH_3.pdf' style='width: 100%'/> 
+</label>
+<label>
+<input type='checkbox'> 
+<img src='/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Goodness_of_Fit/MATHEMATICS.2018_2019/2018_2019_MATH_6;2016_2017_MATH_4;2015_2016_MATH_3.pdf' style='width: 100%'/> 
+</label>
+</div><!-- END img-column-->
+</div><!-- END img-row -->
+</div><!-- END click-zoom -->
+
+</div><!-- END content-node image -->
+
+<!-- LaTeX_Start placeFigure
+\begin{figure}[H]
+\caption*{{{\bf{Figure A2:}} } Sequential (left) and skip-year (right) fit plots for Math (grades 5 - 6)}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Sequential_GOF/Goodness_of_Fit/MATHEMATICS.2018_2019/2018_2019_MATH_5;2017_2018_MATH_4;2016_2017_MATH_3.pdf}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Goodness_of_Fit/MATHEMATICS.2018_2019/2018_2019_MATH_5;2016_2017_MATH_3.pdf}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Sequential_GOF/Goodness_of_Fit/MATHEMATICS.2018_2019/2018_2019_MATH_6;2017_2018_MATH_5;2016_2017_MATH_4;2015_2016_MATH_3.pdf}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Goodness_of_Fit/MATHEMATICS.2018_2019/2018_2019_MATH_6;2016_2017_MATH_4;2015_2016_MATH_3.pdf}
+  \end{subfigure}
+\end{figure}
+
+LaTeX_End -->
