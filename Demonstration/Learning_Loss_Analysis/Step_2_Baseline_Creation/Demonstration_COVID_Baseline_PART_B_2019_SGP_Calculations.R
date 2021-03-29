@@ -35,8 +35,8 @@ Demonstration_COVID_SGP <- abcSGP(
         sgp.percentiles = FALSE,
         sgp.projections = FALSE,
         sgp.projections.lagged = FALSE,
-        sgp.percentiles.baseline = TRUE,
-        sgp.projections.baseline = FALSE,
+        sgp.percentiles.baseline = TRUE, # Need for 2021 SGP comparisons
+        sgp.projections.baseline = TRUE, # Need for Ho's Fair Trend/Equity Check metrics
         sgp.projections.lagged.baseline = FALSE,
         save.intermediate.results = FALSE
         # parallel.config = ...  #  Optional parallel processing - see SGP
