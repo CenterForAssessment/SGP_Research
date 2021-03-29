@@ -1,0 +1,239 @@
+<!-- HTML_Start -->
+<!-- dualTable -->
+<table class='gmisc_table breakboth' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
+<thead>
+<tr><td colspan='11' style='text-align: left;'>
+\caption*{\textbf{Table 2:} Sequential and skip-year SGP correlation, and SGP mean/standard deviation and test score correlations by content area and grade.</td></tr>
+<tr>
+<th colspan='3' style='font-weight: 900; border-top: 2px solid grey; text-align: center;'></th><th style='border-bottom: none; border-top: 2px solid grey;' colspan=1>&nbsp;</th>
+<th colspan='3' style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Sequential</th><th style='border-bottom: none; border-top: 2px solid grey;' colspan=1>&nbsp;</th>
+<th colspan='3' style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Skip Year</th>
+</tr>
+<tr>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Content Area</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Grade</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>SGP Corr</th> 
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;' colspan=1>&nbsp;</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Mean</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>SD</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Score Corr</th> 
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;' colspan=1>&nbsp;</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Mean</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>SD</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Score Corr</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style='text-align: right;'>Mathematics</td>
+<td style='text-align: right;'> 4</td>
+<td style='text-align: center;'> -- -- </td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.9</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.79</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'> -- -- </td>
+<td style='text-align: center;'> -- -- </td>
+<td style='text-align: center;'> -- -- </td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 5</td>
+<td style='text-align: center;'>0.76</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>50.1</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.84</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.9</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.75</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 6</td>
+<td style='text-align: center;'>0.80</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.7</td>
+<td style='text-align: center;'>28.8</td>
+<td style='text-align: center;'>0.85</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>50.0</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.79</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 7</td>
+<td style='text-align: center;'>0.71</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>50.3</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.89</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>50.2</td>
+<td style='text-align: center;'>28.7</td>
+<td style='text-align: center;'>0.81</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 8</td>
+<td style='text-align: center;'>0.78</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.8</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.90</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>50.1</td>
+<td style='text-align: center;'>29.0</td>
+<td style='text-align: center;'>0.86</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 9</td>
+<td style='text-align: center;'>0.80</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.7</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.90</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>50.1</td>
+<td style='text-align: center;'>29.1</td>
+<td style='text-align: center;'>0.88</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'>10</td>
+<td style='text-align: center;'>0.80</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>50.2</td>
+<td style='text-align: center;'>29.0</td>
+<td style='text-align: center;'>0.90</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>50.0</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.88</td>
+</tr>
+<tr>
+<td style='text-align: right;'>Reading</td>
+<td style='text-align: right;'> 4</td>
+<td style='text-align: center;'> -- -- </td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.9</td>
+<td style='text-align: center;'>28.8</td>
+<td style='text-align: center;'>0.77</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'> -- -- </td>
+<td style='text-align: center;'> -- -- </td>
+<td style='text-align: center;'> -- -- </td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 5</td>
+<td style='text-align: center;'>0.80</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.8</td>
+<td style='text-align: center;'>28.8</td>
+<td style='text-align: center;'>0.83</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.9</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.76</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 6</td>
+<td style='text-align: center;'>0.82</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.7</td>
+<td style='text-align: center;'>28.8</td>
+<td style='text-align: center;'>0.85</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>50.0</td>
+<td style='text-align: center;'>28.5</td>
+<td style='text-align: center;'>0.81</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 7</td>
+<td style='text-align: center;'>0.83</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.9</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.83</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>50.3</td>
+<td style='text-align: center;'>28.8</td>
+<td style='text-align: center;'>0.79</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 8</td>
+<td style='text-align: center;'>0.82</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.8</td>
+<td style='text-align: center;'>29.0</td>
+<td style='text-align: center;'>0.87</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>50.0</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.85</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 9</td>
+<td style='text-align: center;'>0.83</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.5</td>
+<td style='text-align: center;'>28.9</td>
+<td style='text-align: center;'>0.86</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>49.9</td>
+<td style='text-align: center;'>29.0</td>
+<td style='text-align: center;'>0.84</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: right;'></td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>10</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>0.86</td> 
+<td style='border-bottom: 2px solid grey; text-align: center;' colspan=1>&nbsp;</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>49.4</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>28.9</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>0.84</td> 
+<td style='border-bottom: 2px solid grey; text-align: center;' colspan=1>&nbsp;</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>49.9</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>29.0</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>0.81</td>
+</tr>
+</tbody>
+</table>
+<!-- LaTeX_Start dualTable
+\begin{table}[H]
+\caption*{\textbf{Table 2:} Sequential and skip-year SGP correlation, and SGP mean/standard deviation and test score correlations by content area and grade.\label{table2}} 
+\begin{center}
+\begin{tabular}{rrccccccccc}
+\hline\hline
+\multicolumn{3}{c}{\bfseries }&\multicolumn{1}{c}{\bfseries }&\multicolumn{3}{c}{\bfseries Sequential}&\multicolumn{1}{c}{\bfseries }&\multicolumn{3}{c}{\bfseries Skip Year}\tabularnewline
+\cline{5-7} \cline{9-11}
+\multicolumn{1}{c}{Content Area}&\multicolumn{1}{c}{Grade}&\multicolumn{1}{c}{SGP Corr}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{SD}&\multicolumn{1}{c}{Score Corr}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{SD}&\multicolumn{1}{c}{Score Corr}\tabularnewline
+\hline
+Mathematics& 4& -- -- &&49.9&28.9&0.79&& -- -- & -- -- & -- -- \tabularnewline
+& 5&0.76&&50.1&28.9&0.84&&49.9&28.9&0.75\tabularnewline
+& 6&0.80&&49.7&28.8&0.85&&50.0&28.9&0.79\tabularnewline
+& 7&0.71&&50.3&28.9&0.89&&50.2&28.7&0.81\tabularnewline
+& 8&0.78&&49.8&28.9&0.90&&50.1&29.0&0.86\tabularnewline
+& 9&0.80&&49.7&28.9&0.90&&50.1&29.1&0.88\tabularnewline
+&10&0.80&&50.2&29.0&0.90&&50.0&28.9&0.88\tabularnewline
+Reading& 4& -- -- &&49.9&28.8&0.77&& -- -- & -- -- & -- -- \tabularnewline
+& 5&0.80&&49.8&28.8&0.83&&49.9&28.9&0.76\tabularnewline
+& 6&0.82&&49.7&28.8&0.85&&50.0&28.5&0.81\tabularnewline
+& 7&0.83&&49.9&28.9&0.83&&50.3&28.8&0.79\tabularnewline
+& 8&0.82&&49.8&29.0&0.87&&50.0&28.9&0.85\tabularnewline
+& 9&0.83&&49.5&28.9&0.86&&49.9&29.0&0.84\tabularnewline
+&10&0.86&&49.4&28.9&0.84&&49.9&29.0&0.81\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+LaTeX_End -->

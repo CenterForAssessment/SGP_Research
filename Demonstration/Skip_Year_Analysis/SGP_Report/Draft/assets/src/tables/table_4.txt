@@ -1,0 +1,40 @@
+<!-- HTML_Start -->
+<!-- dualTable -->
+<table class='gmisc_table breakboth' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
+<thead>
+<tr><td colspan='3' style='text-align: left;'>
+\caption*{\textbf{Table 4:} School level correlations between mean SGPs with unfiltered and filtered students</td></tr>
+<tr>
+<th style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Content Area</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>All Students</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Skip-Year Subset</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style='text-align: right;'>Mathematics</td>
+<td style='text-align: right;'>0.86</td>
+<td style='text-align: right;'>0.87</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: right;'>Reading</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>0.87</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>0.89</td>
+</tr>
+</tbody>
+</table>
+<!-- LaTeX_Start dualTable
+\begin{table}[H]
+\caption*{\textbf{Table 4:} School level correlations between mean SGPs with unfiltered and filtered students\label{table4}} 
+\begin{center}
+\begin{tabular}{rrr}
+\hline\hline
+\multicolumn{1}{c}{Content Area}&\multicolumn{1}{c}{All Students}&\multicolumn{1}{c}{Skip-Year Subset}\tabularnewline
+\hline
+Mathematics&0.86&0.87\tabularnewline
+Reading&0.87&0.89\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+LaTeX_End -->

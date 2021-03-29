@@ -1,0 +1,36 @@
+<!-- HTML_Start -->
+<!-- placeFigure -->
+
+<div class='caption'> <strong>Figure A1:</strong> Sequential growth goodness of fit plots for 4<sup>th</sup> grade Mathematics and Reading (no skip-year analyses) </div>
+<div class='content-node image'>
+<div class='click-zoom'>
+<div class='img-row'>
+<div class='img-column'>
+<label>
+<input type='checkbox'> 
+<img src='/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Sequential_GOF/Goodness_of_Fit/MATHEMATICS.2018_2019/2018_2019_MATH_4;2017_2018_MATH_3.pdf' style='width: 100%'/> 
+</label>
+</div><!-- END img-column-->
+<div class='img-column'>
+<label>
+<input type='checkbox'> 
+<img src='/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Sequential_GOF/Goodness_of_Fit/READING.2018_2019/2018_2019_READING_4;2017_2018_READING_3.pdf' style='width: 100%'/> 
+</label>
+</div><!-- END img-column-->
+</div><!-- END img-row -->
+</div><!-- END click-zoom -->
+
+</div><!-- END content-node image -->
+
+<!-- LaTeX_Start placeFigure
+\begin{figure}[H]
+\caption*{{{\bf{Figure A1:}} } Sequential growth goodness of fit plots for 4$^{th}$ grade Mathematics and Reading (no skip-year analyses)}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Sequential_GOF/Goodness_of_Fit/MATHEMATICS.2018_2019/2018_2019_MATH_4;2017_2018_MATH_3.pdf}
+  \end{subfigure}
+  \begin{subfigure}[b]{0.5\textwidth}
+    \includegraphics[width=\textwidth]{/Users/avi/Dropbox (SGP)/SGP/State_Alt_Analyses/Demonstration/Skip_Year_Analysis/Sequential_GOF/Goodness_of_Fit/READING.2018_2019/2018_2019_READING_4;2017_2018_READING_3.pdf}
+  \end{subfigure}
+\end{figure}
+
+LaTeX_End -->

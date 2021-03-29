@@ -1,0 +1,98 @@
+<!-- HTML_Start -->
+<!-- dualTable -->
+
+```
+## Warning in (function (x, header = NULL, rnames = NULL, rowlabel = NULL, : You have not specified rnames but you seem to have rgroups. If you have the first column as rowname but you want the rgroups
+## to result in subhedings with indentation below then, you should change the rnames to the first column and then remove it from the table matrix (the x argument object).
+```
+
+<table class='gmisc_table breakboth' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
+<thead>
+<tr><td colspan='9' style='text-align: left;'>
+\caption*{\textbf{Table 7:} Sequential and skip-year SGP correlation and mean/standard deviation by content area and FRL status</td></tr>
+<tr>
+<th colspan='3' style='font-weight: 900; border-top: 2px solid grey; text-align: center;'></th><th style='border-bottom: none; border-top: 2px solid grey;' colspan=1>&nbsp;</th>
+<th colspan='2' style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Sequential</th><th style='border-bottom: none; border-top: 2px solid grey;' colspan=1>&nbsp;</th>
+<th colspan='2' style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Skip Year</th>
+</tr>
+<tr>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Content Area</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>FRL Status</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>SGP Correlation</th> 
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;' colspan=1>&nbsp;</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Mean</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>SD</th> 
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;' colspan=1>&nbsp;</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Mean</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>SD</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style='text-align: right;'>Mathematics</td>
+<td style='text-align: right;'>No</td>
+<td style='text-align: center;'>0.76</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>53.0</td>
+<td style='text-align: center;'>28.6</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>54.7</td>
+<td style='text-align: center;'>28.1</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'>Yes</td>
+<td style='text-align: center;'>0.77</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>43.4</td>
+<td style='text-align: center;'>28.4</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>40.1</td>
+<td style='text-align: center;'>28.1</td>
+</tr>
+<tr>
+<td style='text-align: right;'>Reading</td>
+<td style='text-align: right;'>No</td>
+<td style='text-align: center;'>0.83</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>51.9</td>
+<td style='text-align: center;'>28.7</td> 
+<td style='text-align: center;' colspan=1>&nbsp;</td>
+<td style='text-align: center;'>53.5</td>
+<td style='text-align: center;'>28.4</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: right;'></td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>Yes</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>0.82</td> 
+<td style='border-bottom: 2px solid grey; text-align: center;' colspan=1>&nbsp;</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>44.8</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>28.7</td> 
+<td style='border-bottom: 2px solid grey; text-align: center;' colspan=1>&nbsp;</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>42.4</td>
+<td style='border-bottom: 2px solid grey; text-align: center;'>28.3</td>
+</tr>
+</tbody>
+</table>
+<!-- LaTeX_Start dualTable
+\begin{table}[H]
+\caption*{\textbf{Table 7:} Sequential and skip-year SGP correlation and mean/standard deviation by content area and FRL status\label{table7}} 
+\begin{center}
+\begin{tabular}{rrccccccc}
+\hline\hline
+\multicolumn{3}{c}{\bfseries }&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries Sequential}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries Skip Year}\tabularnewline
+\cline{5-6} \cline{8-9}
+\multicolumn{1}{c}{Content Area}&\multicolumn{1}{c}{FRL Status}&\multicolumn{1}{c}{SGP Correlation}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{SD}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Mean}&\multicolumn{1}{c}{SD}\tabularnewline
+\hline
+&&&&&&&&\tabularnewline
+Mathematics&No&0.76&&53.0&28.6&&54.7&28.1\tabularnewline
+&Yes&0.77&&43.4&28.4&&40.1&28.1\tabularnewline
+\hline
+&&&&&&&&\tabularnewline
+Reading&No&0.83&&51.9&28.7&&53.5&28.4\tabularnewline
+&Yes&0.82&&44.8&28.7&&42.4&28.3\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+LaTeX_End -->

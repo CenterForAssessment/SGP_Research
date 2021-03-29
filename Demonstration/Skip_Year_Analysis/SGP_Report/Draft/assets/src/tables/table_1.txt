@@ -1,0 +1,209 @@
+<!-- HTML_Start -->
+<!-- dualTable -->
+<table class='gmisc_table breakboth' style='border-collapse: collapse; margin-top: 1em; margin-bottom: 1em;' >
+<thead>
+<tr><td colspan='9' style='text-align: left;'>
+\caption*{\textbf{Table 1:} Sequential and skip-year SGP counts and percentages for 2019 by content area and grade</td></tr>
+<tr>
+<th colspan='3' style='font-weight: 900; border-top: 2px solid grey; text-align: center;'></th><th style='border-bottom: none; border-top: 2px solid grey;' colspan=1>&nbsp;</th>
+<th colspan='2' style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Sequential</th><th style='border-bottom: none; border-top: 2px solid grey;' colspan=1>&nbsp;</th>
+<th colspan='2' style='font-weight: 900; border-bottom: 1px solid grey; border-top: 2px solid grey; text-align: center;'>Skip Year</th>
+</tr>
+<tr>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Content Area</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Grade</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Total Students</th> 
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;' colspan=1>&nbsp;</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Count</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Percent</th> 
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;' colspan=1>&nbsp;</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Count</th>
+<th style='font-weight: 900; border-bottom: 1px solid grey; text-align: center;'>Percent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style='text-align: right;'>Mathematics</td>
+<td style='text-align: right;'> 4</td>
+<td style='text-align: right;'>4,562</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,048</td>
+<td style='text-align: right;'>88.7</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>  --  --  </td>
+<td style='text-align: right;'> --  -- </td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 5</td>
+<td style='text-align: right;'>4,636</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,170</td>
+<td style='text-align: right;'>89.9</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,803</td>
+<td style='text-align: right;'>82.0</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 6</td>
+<td style='text-align: right;'>4,584</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,034</td>
+<td style='text-align: right;'>88.0</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,707</td>
+<td style='text-align: right;'>80.9</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 7</td>
+<td style='text-align: right;'>4,526</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,046</td>
+<td style='text-align: right;'>89.4</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,673</td>
+<td style='text-align: right;'>81.2</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 8</td>
+<td style='text-align: right;'>4,529</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,073</td>
+<td style='text-align: right;'>89.9</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,686</td>
+<td style='text-align: right;'>81.4</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 9</td>
+<td style='text-align: right;'>5,217</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,199</td>
+<td style='text-align: right;'>80.5</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,928</td>
+<td style='text-align: right;'>75.3</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'>10</td>
+<td style='text-align: right;'>4,809</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,199</td>
+<td style='text-align: right;'>87.3</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,653</td>
+<td style='text-align: right;'>76.0</td>
+</tr>
+<tr>
+<td style='text-align: right;'>Reading</td>
+<td style='text-align: right;'> 4</td>
+<td style='text-align: right;'>4,550</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,845</td>
+<td style='text-align: right;'>84.5</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>  --  --  </td>
+<td style='text-align: right;'> --  -- </td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 5</td>
+<td style='text-align: right;'>4,631</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,157</td>
+<td style='text-align: right;'>89.8</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,607</td>
+<td style='text-align: right;'>77.9</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 6</td>
+<td style='text-align: right;'>4,581</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,024</td>
+<td style='text-align: right;'>87.8</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,688</td>
+<td style='text-align: right;'>80.5</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 7</td>
+<td style='text-align: right;'>4,526</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,036</td>
+<td style='text-align: right;'>89.2</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,665</td>
+<td style='text-align: right;'>81.0</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 8</td>
+<td style='text-align: right;'>4,525</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,062</td>
+<td style='text-align: right;'>89.8</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,680</td>
+<td style='text-align: right;'>81.3</td>
+</tr>
+<tr>
+<td style='text-align: right;'></td>
+<td style='text-align: right;'> 9</td>
+<td style='text-align: right;'>5,214</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>4,186</td>
+<td style='text-align: right;'>80.3</td> 
+<td style='text-align: right;' colspan=1>&nbsp;</td>
+<td style='text-align: right;'>3,910</td>
+<td style='text-align: right;'>75.0</td>
+</tr>
+<tr>
+<td style='border-bottom: 2px solid grey; text-align: right;'></td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>10</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>4,787</td> 
+<td style='border-bottom: 2px solid grey; text-align: right;' colspan=1>&nbsp;</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>4,187</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>87.5</td> 
+<td style='border-bottom: 2px solid grey; text-align: right;' colspan=1>&nbsp;</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>3,641</td>
+<td style='border-bottom: 2px solid grey; text-align: right;'>76.1</td>
+</tr>
+</tbody>
+</table>
+<!-- LaTeX_Start dualTable
+\begin{table}[H]
+\caption*{\textbf{Table 1:} Sequential and skip-year SGP counts and percentages for 2019 by content area and grade\label{table1}} 
+\begin{center}
+\begin{tabular}{rrrcrrcrr}
+\hline\hline
+\multicolumn{3}{c}{\bfseries }&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries Sequential}&\multicolumn{1}{c}{\bfseries }&\multicolumn{2}{c}{\bfseries Skip Year}\tabularnewline
+\cline{5-6} \cline{8-9}
+\multicolumn{1}{c}{Content Area}&\multicolumn{1}{c}{Grade}&\multicolumn{1}{c}{Total Students}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Count}&\multicolumn{1}{c}{Percent}&\multicolumn{1}{c}{}&\multicolumn{1}{c}{Count}&\multicolumn{1}{c}{Percent}\tabularnewline
+\hline
+Mathematics& 4&4,562&&4,048&88.7&&  --  --  & --  -- \tabularnewline
+& 5&4,636&&4,170&89.9&&3,803&82.0\tabularnewline
+& 6&4,584&&4,034&88.0&&3,707&80.9\tabularnewline
+& 7&4,526&&4,046&89.4&&3,673&81.2\tabularnewline
+& 8&4,529&&4,073&89.9&&3,686&81.4\tabularnewline
+& 9&5,217&&4,199&80.5&&3,928&75.3\tabularnewline
+&10&4,809&&4,199&87.3&&3,653&76.0\tabularnewline
+Reading& 4&4,550&&3,845&84.5&&  --  --  & --  -- \tabularnewline
+& 5&4,631&&4,157&89.8&&3,607&77.9\tabularnewline
+& 6&4,581&&4,024&87.8&&3,688&80.5\tabularnewline
+& 7&4,526&&4,036&89.2&&3,665&81.0\tabularnewline
+& 8&4,525&&4,062&89.8&&3,680&81.3\tabularnewline
+& 9&5,214&&4,186&80.3&&3,910&75.0\tabularnewline
+&10&4,787&&4,187&87.5&&3,641&76.1\tabularnewline
+\hline
+\end{tabular}\end{center}
+\end{table}
+
+LaTeX_End -->
