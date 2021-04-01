@@ -75,6 +75,7 @@ SGPstateData[["DEMO_COVID"]][["SGP_Configuration"]][["max.forward.projection.seq
 
 Demonstration_COVID_SGP <- abcSGP(
         Demonstration_COVID_SGP,
+        years = "2021", # need to add years now (after adding 2019 baseline projections).  Why?
         steps=c("prepareSGP", "analyzeSGP", "combineSGP"),
         sgp.config=DEMO_COVID_CONFIG_STEP_3b,
         sgp.percentiles=FALSE,
