@@ -5,7 +5,7 @@
 ################################################################################
 
 ###   Set working directory to Learning_Loss_Analysis repo
-setwd("Learning_Loss_Analysis")
+setwd("..")
 
 ### Load necessary packages
 
@@ -17,10 +17,10 @@ library(data.table)
 Demonstration_COVID_Data_LONG <- data.table(SGPdata::sgpData_LONG_COVID[, c("ID", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "VALID_CASE"),])
 
 ###   Read in Baseline SGP Configuration Scripts and Combine
-source("SGP_CONFIG/STEP_2_BASELINE/SingleCohort/ELA.R")
-source("SGP_CONFIG/STEP_2_BASELINE/SingleCohort/MATHEMATICS.R")
-# source("SGP_CONFIG/STEP_2_BASELINE/SuperCohort/ELA.R")
-# source("SGP_CONFIG/STEP_2_BASELINE/SuperCohort/MATHEMATICS.R")
+source("SGP_CONFIG/STEP_2/PART_A/SingleCohort/ELA.R")
+source("SGP_CONFIG/STEP_2/PART_A/SingleCohort/MATHEMATICS.R")
+# source("SGP_CONFIG/STEP_2_BASELINE/PART_A/SuperCohort/ELA.R")
+# source("SGP_CONFIG/STEP_2_BASELINE/PART_A/SuperCohort/MATHEMATICS.R")
 
 DEMO_COVID_BASELINE_CONFIG_STEP_2 <- c(
 	ELA_BASELINE.config,

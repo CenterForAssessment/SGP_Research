@@ -5,7 +5,7 @@
 ################################################################################
 
 ###   Set working directory to Learning_Loss_Analysis repo
-setwd("Learning_Loss_Analysis")
+setwd("..")
 
 ###   Load packages
 require(SGP)

@@ -5,7 +5,8 @@
 ################################################################################
 
 ###   Set working directory to Learning_Loss_Analysis repo
-setwd("Learning_Loss_Analysis")
+#setwd("Learning_Loss_Analysis")
+setwd("..")
 
 ###   Load SGP package
 require(SGP)
@@ -34,17 +35,16 @@ DEMO_COVID_CONFIG_STEP_1 <- c(
 #####
 
 Demonstration_COVID_SGP <- abcSGP(
-				sgp_object = Demonstration_COVID_Data_LONG,
-				steps = c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
-				sgp.config=DEMO_COVID_CONFIG_STEP_1,
+	sgp_object = Demonstration_COVID_Data_LONG,
+	steps = c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
+	sgp.config=DEMO_COVID_CONFIG_STEP_1,
         sgp.percentiles = TRUE,
         sgp.projections = TRUE,
         sgp.projections.lagged = TRUE,
         sgp.percentiles.baseline = FALSE,
         sgp.projections.baseline = FALSE,
         sgp.projections.lagged.baseline = FALSE
-				# parallel.config = ...  #  Optional parallel processing - see SGP
-				# 	 									 	 #  package documentation for details.
+	# parallel.config = ...  #  Optional parallel processing - see SGP package documentation for details.
 )
 
 
