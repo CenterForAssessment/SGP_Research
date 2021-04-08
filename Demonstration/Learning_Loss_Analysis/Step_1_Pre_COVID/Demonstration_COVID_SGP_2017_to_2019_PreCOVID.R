@@ -19,7 +19,7 @@ Demonstration_COVID_Data_LONG <- SGPdata::sgpData_LONG_COVID[YEAR <= 2019]
 source("SGP_CONFIG/STEP_1/ELA.R")
 source("SGP_CONFIG/STEP_1/MATHEMATICS.R")
 
-DEMO_COVID_CONFIG_STEP_1 <- c(
+DEMO_COVID_CONFIG_STEP_1 <- rev(c(
 	ELA_2017.config,
 	MATHEMATICS_2017.config,
 
@@ -27,7 +27,7 @@ DEMO_COVID_CONFIG_STEP_1 <- c(
 	MATHEMATICS_2018.config,
 
 	ELA_2019.config,
-	MATHEMATICS_2019.config)
+	MATHEMATICS_2019.config))
 
 
 #####
@@ -35,16 +35,16 @@ DEMO_COVID_CONFIG_STEP_1 <- c(
 #####
 
 Demonstration_COVID_SGP <- abcSGP(
-	sgp_object = Demonstration_COVID_Data_LONG,
-	steps = c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
-	sgp.config=DEMO_COVID_CONFIG_STEP_1,
+				sgp_object = Demonstration_COVID_Data_LONG,
+				steps = c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
+				sgp.config=DEMO_COVID_CONFIG_STEP_1,
         sgp.percentiles = TRUE,
         sgp.projections = TRUE,
         sgp.projections.lagged = TRUE,
         sgp.percentiles.baseline = FALSE,
         sgp.projections.baseline = FALSE,
         sgp.projections.lagged.baseline = FALSE
-	# parallel.config = ...  #  Optional parallel processing - see SGP package documentation for details.
+				# parallel.config = ...  #  Optional parallel processing - see SGP package documentation for details.
 )
 
 

@@ -30,8 +30,11 @@ source("Demonstration_COVID_Baseline_PART_A_Matrix_Calculations.R")
 print("END STEP 2, PART A")
 setwd("Step_2_Baseline_Creation")
 print("BEGIN STEP 2, PART B")
-source("Demonstration_COVID_Baseline_PART_B_2019_SGP_Calculations.R")
+source("Demonstration_COVID_Baseline_PART_B_2019_Growth_Percentiles.R")
 print("END STEP 2, PART B")
+print("BEGIN STEP 2, PART C")
+source("Demonstration_COVID_Baseline_PART_C_2019_Growth_Projections.R")
+print("END STEP 2, PART C")
 
 # STEP 3
 

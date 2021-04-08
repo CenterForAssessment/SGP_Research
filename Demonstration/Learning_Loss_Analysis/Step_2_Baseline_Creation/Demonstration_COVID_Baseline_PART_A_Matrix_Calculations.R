@@ -1,6 +1,6 @@
 ################################################################################
 ###                                                                          ###
-###           STEP 2: Create Demonstration COVID Baseline Matrices           ###
+###          STEP 2A: Create Demonstration COVID Baseline Matrices           ###
 ###                                                                          ###
 ################################################################################
 
@@ -10,11 +10,10 @@ setwd("..")
 ### Load necessary packages
 
 library(SGP)
-library(SGPdata)
-library(data.table)
 
 ###  Create a smaller subset of the LONG data to work with.
-Demonstration_COVID_Data_LONG <- data.table(SGPdata::sgpData_LONG_COVID[, c("ID", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "VALID_CASE"),])
+Demonstration_COVID_Data_LONG <- data.table::data.table(SGPdata::sgpData_LONG_COVID[,
+	c("ID", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "VALID_CASE"),])
 
 ###   Read in Baseline SGP Configuration Scripts and Combine
 source("SGP_CONFIG/STEP_2/PART_A/SingleCohort/ELA.R")

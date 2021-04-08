@@ -12,12 +12,12 @@ require(SGP)
 
 ###   Load data
 load("Data/Demonstration_COVID_SGP_STEP_1.Rdata")
-load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata") # Alternatively add 'SuperCohort' version if preferred
 
-###   Add Baseline matrices calculated in STEP 2 to SGPstateData
+###   Add Baseline matrices calculated in STEP 2, PART A  to SGPstateData
+load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata") # Alternatively add 'SuperCohort' version if preferred
 SGPstateData[["DEMO_COVID"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- DEMO_COVID_Baseline_Matrices
 
-###   Read in STEP 3 SGP Configuration Scripts and Combine
+###   Read in STEP 3, PART B SGP Configuration Scripts and Combine
 source("SGP_CONFIG/STEP_2/PART_B/ELA.R")
 source("SGP_CONFIG/STEP_2/PART_B/MATHEMATICS.R")
 
@@ -28,6 +28,12 @@ DEMO_COVID_CONFIG_STEP_2B <- c(ELA_2019.config, MATHEMATICS_2019.config)
 ###   Run analysis - run abcSGP on object from Step 1 (with BASELINE matrices and configurations - no additional data)
 #####
 
+###   Temporarily set names of prior scores from sequential/cohort analyses
+data.table::setnames(Demonstration_COVID_SGP@Data,
+  c("SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED"),
+  c("SS_PRIOR_COHORT", "SS_PRIOR_STD_COHORT"))
+
+###   abcSGP
 Demonstration_COVID_SGP <- abcSGP(
         sgp_object = Demonstration_COVID_SGP,
         steps = c("prepareSGP", "analyzeSGP", "combineSGP", "outputSGP"),
@@ -35,13 +41,18 @@ Demonstration_COVID_SGP <- abcSGP(
         sgp.percentiles = FALSE,
         sgp.projections = FALSE,
         sgp.projections.lagged = FALSE,
-        sgp.percentiles.baseline = TRUE, # Need for 2021 SGP comparisons
-        sgp.projections.baseline = TRUE, # Need for Ho's Fair Trend/Equity Check metrics
+        sgp.percentiles.baseline = TRUE,  #  Skip year SGPs for 2021 comparisons
+        sgp.projections.baseline = FALSE, #  Calculated in next step
         sgp.projections.lagged.baseline = FALSE,
         save.intermediate.results = FALSE
         # parallel.config = ...  #  Optional parallel processing - see SGP
 				# 	 									 	 #  package documentation for details.
 )
 
+###   Re-set and rename prior scores
+data.table::setnames(Demonstration_COVID_SGP@Data,
+  c("SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED", "SS_PRIOR_COHORT", "SS_PRIOR_STD_COHORT"),
+  c("SCALE_SCORE_PRIOR_BASELINE", "SCALE_SCORE_PRIOR_STANDARDIZED_BASELINE", "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED"))
+
 ###   Save results
-save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP_2019_STEP_2B.Rdata")
+save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP_2019_STEP_2b.Rdata")
