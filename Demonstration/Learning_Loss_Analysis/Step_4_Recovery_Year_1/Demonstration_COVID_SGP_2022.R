@@ -9,17 +9,16 @@ setwd("..")
 
 ###   Load packages
 require(SGP)
-require(SGPdata)
 
 ###   Load data
-load("Data/Demonstration_COVID_SGP_2021_STEP_3.Rdata")
-# load("Data/Demonstration_COVID_SGP_2021_STEP_3c.Rdata") # load this object if projections (steps 3b & 3c) have been run
-load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")
+load("Data/Demonstration_COVID_SGP_2021_STEP_3c.Rdata")
+# load("Data/Demonstration_COVID_SGP_2021_STEP_3a.Rdata") # load this object if projections (steps 3b & 3c) were NOT run
 
 ###   Create 2022 subset of COVID data
 Demonstration_COVID_Data_LONG_2022 <- SGPdata::sgpData_LONG_COVID[YEAR == "2022"]
 
 ###   Add Baseline matrices calculated in STEP 2 to SGPstateData
+load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")
 SGPstateData[["DEMO_COVID"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- DEMO_COVID_Baseline_Matrices
 
 

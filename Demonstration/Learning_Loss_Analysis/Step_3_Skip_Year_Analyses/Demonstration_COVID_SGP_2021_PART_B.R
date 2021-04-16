@@ -13,19 +13,19 @@ setwd("..")
 require(SGP)
 
 ###   Load data
-load("Data/Demonstration_COVID_SGP_2021_STEP_3.Rdata")
+load("Data/Demonstration_COVID_SGP_2021_STEP_3a.Rdata")
 load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")
 
 ###   Load configurations
-source("SGP_CONFIG/STEP_3/PART_B_Straight_Projections/ELA.R")
-source("SGP_CONFIG/STEP_3/PART_B_Straight_Projections/MATHEMATICS.R")
+source("SGP_CONFIG/STEP_3/PART_B/ELA.R")
+source("SGP_CONFIG/STEP_3/PART_B/MATHEMATICS.R")
 
 DEMO_COVID_CONFIG_STEP_3b <- c(ELA_2021.config, MATHEMATICS_2021.config)
 
 
 ###   Setup SGPstateData with baseline coefficient matrices grade specific projection sequences
 
-#  Add Baseline matrices calculated in STEP 2 to SGPstateData
+#  Add Baseline matrices calculated in STEP 2A to SGPstateData
 SGPstateData[["DEMO_COVID"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- DEMO_COVID_Baseline_Matrices
 SGPstateData[["DEMO_COVID"]][["SGP_Configuration"]][["sgp.target.scale.scores.merge"]] <- NULL
 

@@ -13,18 +13,18 @@ require(SGP)
 
 ###   Load data
 load("Data/Demonstration_COVID_SGP_2021_STEP_3b.Rdata")
-load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")
 
 ###   Load configurations
-source("SGP_CONFIG/STEP_3/PART_C_Lagged_Projections/ELA.R")
-source("SGP_CONFIG/STEP_3/PART_C_Lagged_Projections/MATHEMATICS.R")
+source("SGP_CONFIG/STEP_3/PART_C/ELA.R")
+source("SGP_CONFIG/STEP_3/PART_C/MATHEMATICS.R")
 
 DEMO_COVID_CONFIG_STEP_3c <- c(ELA_2021.config, MATHEMATICS_2021.config)
 
 
 ###   Setup SGPstateData with baseline coefficient matrices grade specific projection sequences
 
-#  Add Baseline matrices calculated in STEP 2 to SGPstateData
+#  Add Baseline matrices calculated in STEP 2A to SGPstateData
+load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")
 SGPstateData[["DEMO_COVID"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- DEMO_COVID_Baseline_Matrices
 SGPstateData[["DEMO_COVID"]][["Growth"]][["System_Type"]] <- "Baseline Referenced"
 
