@@ -52,4 +52,4 @@ DEMO_COVID_Baseline_Matrices <- baselineSGP(
 
 ###   Save results
 save(DEMO_COVID_Baseline_Matrices, file=file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata"))
-# save(DEMO_COVID_Baseline_Matrices, file="Data/DEMO_COVID_Baseline_Matrices-SuperCohort.Rdata")
+# save(DEMO_COVID_Baseline_Matrices, file=file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SuperCohort.Rdata"))
