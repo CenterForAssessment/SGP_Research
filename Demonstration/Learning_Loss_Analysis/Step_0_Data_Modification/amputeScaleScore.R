@@ -1,5 +1,4 @@
 `amputeScaleScore` <- function(
-    state = "DEMO_COVID",
     ampute.data = SGPdata::sgpData_LONG_COVID[YEAR <= 2021],
     additional.data = NULL,
     growth.config = NULL,
@@ -19,38 +18,31 @@
   require(SGP)
   require(mice)
   require(data.table)
+
+  ###   Utility functions from SGP package
   `%w/o%` <- function(x,y) x[!x %in% y]
 
-  ###   set up growth.config
-  if (is.null(growth.config)) {
-    TMP_OBJECT <- prepareSGP(ampute.data, create.additional.variables=FALSE)
-  } else TMP_OBJECT <- list()
+  `getKey` <- function(sgp_object) {
+  	if (is.SGP(sgp_object)) {
+  		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) return(c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ID", "YEAR_WITHIN")) else return(c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ID"))
+  	}
+  	if (is.data.table(sgp_object)) {
+  		if ("YEAR_WITHIN" %in% names(sgp_object)) return(c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ID", "YEAR_WITHIN")) else return(c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ID"))
+  	}
+  } ### END getKey
 
-  amp.config <- SGP:::getSGPConfig(
-    sgp_object=TMP_OBJECT,
-  	state = "DEMO_COVID",
-  	tmp_sgp_object = list(),
-  	content_areas=NULL,
-  	years = NULL,
-  	grades=NULL,
-  	sgp.config=growth.config,
-  	trim.sgp.config=TRUE,
-    sgp.percentiles=TRUE,
-    sgp.projections=FALSE,
-    sgp.projections.lagged=FALSE,
-    sgp.percentiles.baseline=FALSE,
-    sgp.projections.baseline=FALSE,
-    sgp.projections.lagged.baseline=FALSE,
-  	sgp.config.drop.nonsequential.grade.progression.variables = FALSE,
-  	sgp.minimum.default.panel.years=3,
-  	sgp.use.my.coefficient.matrices=NULL)[[1]]
 
-  for (f in seq(amp.config)) amp.config[[f]][["analysis.type"]] <- "GROWTH"
+  amp.config <- growth.config
 
+  if (!is.null(growth.config)) {
+    for (f in seq(amp.config)) amp.config[[f]][["analysis.type"]] <- "GROWTH"
+  }
   if (!is.null(status.config)) {
     for (f in seq(status.config)) status.config[[f]][["analysis.type"]] <- "STATUS"
     amp.config <- c(amp.config, status.config)
   }
+
+  if (is.null(amp.config)) stop("Either a 'growth.config' or 'status.config' must be supplied")
 
   ###   Cycle through amp.config to amputate by cohort
   amp.list <- vector(mode = "list", length = M)
@@ -63,14 +55,14 @@
     # ensure lookup table is ordered by years.  NULL out key after sorted so that it doesn't corrupt the join in dcast.
     setkey(tmp.lookup, V3)
     setkey(tmp.lookup, NULL)
-    setkeyv(ampute.data, SGP:::getKey(ampute.data))
+    setkeyv(ampute.data, getKey(ampute.data))
 
     tmp.long <- ampute.data[tmp.lookup]
 
     if (amp.iter$analysis.type == "GROWTH") {
       ###   convert long to wide
       long.to.wide.vars <- c(default.vars, institutions, demographics)
-      tmp.wide <- dcast(tmp.long, ID ~ YEAR, sep=".", drop=FALSE, value.var=long.to.wide.vars)
+      tmp.wide <- dcast(tmp.long, ID ~ YEAR, sep=".", drop=FALSE, value.var=long.to.wide.vars) # c("GRADE", "SCALE_SCORE")
 
       ###   Exclude kids missing 2 or more most recent years
       prior.year <- tail(amp.iter$sgp.panel.years, 2)[1]
@@ -142,7 +134,7 @@
       # ###   More thorough to do it with config than just long.final <- long.final[YEAR %in% current.year]
       # tmp.lookup <- SJ("VALID_CASE", tail(amp.iter[["sgp.content.areas"]], 1),
       #   tail(amp.iter[["sgp.panel.years"]], 1), tail(amp.iter[["sgp.grade.sequences"]], 1))
-      # setkeyv(long.final, SGP:::getKey(long.final))
+      # setkeyv(long.final, getKey(long.final))
       #
       # long.final <- long.final[tmp.lookup]
     } else {  #  END "GROWTH"  --  Begin "STATUS"
@@ -181,7 +173,7 @@
       ###   More thorough to do it with config than just long.final <- tmp.long[YEAR %in% current.year]
       tmp.lookup <- SJ("VALID_CASE", tail(amp.iter[["sgp.content.areas"]], 1),
         tail(amp.iter[["sgp.panel.years"]], 1), tail(amp.iter[["sgp.grade.sequences"]], 1))
-      setkeyv(ampute.data, SGP:::getKey(ampute.data))
+      setkeyv(ampute.data, getKey(ampute.data))
 
       long.final <- ampute.data[tmp.lookup]
     } ###  END "STATUS"
@@ -330,7 +322,7 @@
         list(final.amp.list[[L]], additional.data[, names(final.amp.list[[L]]), with=FALSE]), fill=TRUE)
     }
     if (invalidate.repeater.dups) {
-      setkeyv(final.amp.list[[L]], SGP:::getKey(final.amp.list[[L]]))
+      setkeyv(final.amp.list[[L]], getKey(final.amp.list[[L]]))
       setkeyv(final.amp.list[[L]], key(final.amp.list[[L]]) %w/o% "GRADE")
       dup.ids <- final.amp.list[[L]][which(duplicated(final.amp.list[[L]], by=key(final.amp.list[[L]]))), ID]
       final.amp.list[[L]][ID %in% dup.ids & is.na(SCALE_SCORE), VALID_CASE := "INVALID_CASE"]
