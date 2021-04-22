@@ -7,8 +7,8 @@
 #  (2) school membership (similar to FRL, each school is randomly assigned an effect based on
 #      random deviates from a mixture distribution)   
 #I. Setup ----------------------------------------------------------------------
-  library(SGPdata)
-  library(data.table)
+  require(SGPdata)
+  require(data.table)
   covid <-  sgpData_LONG_COVID
   set.seed(145)
   setwd("..") ## Set working directory to base directory

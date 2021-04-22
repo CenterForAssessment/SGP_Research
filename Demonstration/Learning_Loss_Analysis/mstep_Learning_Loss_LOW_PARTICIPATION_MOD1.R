@@ -27,34 +27,34 @@ source("sgpData_LONG_COVID_LOW_PARTICIPATION_MOD1.R")
 print("END STEP 0")
 
 
-## STEP 1
-setwd("Step_1_Pre_COVID")
-print("BEGIN STEP 1")
-source("Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R")
-print("END STEP 1")
+### STEP 1 (2018)
+#setwd("Step_1_Pre_COVID")
+#print("BEGIN STEP 1")
+#source("Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R")
+#print("END STEP 1")
 
 
-## STEP 2
+## STEP 2 (2019)
 # PART A
-setwd("Step_2_Baseline_Creation")
-print("BEGIN STEP 2, PART A")
-source("Demonstration_COVID_Baseline_PART_A_Matrix_Calculations.R")
-print("END STEP 2, PART A")
+#setwd("Step_2_Baseline_Creation")
+#print("BEGIN STEP 2, PART A")
+#source("Demonstration_COVID_Baseline_PART_A_Matrix_Calculations.R")
+#print("END STEP 2, PART A")
 
 # PART B
-setwd("Step_2_Baseline_Creation")
-print("BEGIN STEP 2, PART B")
-source("Demonstration_COVID_Baseline_PART_B_2019_Growth_Percentiles.R")
-print("END STEP 2, PART B")
+#setwd("Step_2_Baseline_Creation")
+#print("BEGIN STEP 2, PART B")
+#source("Demonstration_COVID_Baseline_PART_B_2019_Growth_Percentiles.R")
+#print("END STEP 2, PART B")
 
 # PART C
-setwd("Step_2_Baseline_Creation")
-print("BEGIN STEP 2, PART C")
-source("Demonstration_COVID_Baseline_PART_C_2019_Growth_Projections.R")
-print("END STEP 2, PART C")
+#setwd("Step_2_Baseline_Creation")
+#print("BEGIN STEP 2, PART C")
+#source("Demonstration_COVID_Baseline_PART_C_2019_Growth_Projections.R")
+#print("END STEP 2, PART C")
 
 
-## STEP 3
+## STEP 3 (2021)
 # PART A
 setwd("Step_3_Skip_Year_Analyses")
 print("BEGIN STEP 3, PART A")
