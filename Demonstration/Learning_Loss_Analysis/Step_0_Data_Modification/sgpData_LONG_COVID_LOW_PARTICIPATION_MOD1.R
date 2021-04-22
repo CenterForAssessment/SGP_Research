@@ -11,6 +11,7 @@
   library(data.table)
   covid <-  sgpData_LONG_COVID
   set.seed(145)
+  setwd("..") ## Set working directory to base directory
   
 #II. Introduce Missingess for 2021 Data ----------------------------------------
   #A Set up 2021 Data ----------------------------------------------------------
@@ -143,4 +144,11 @@
   
   c.mis <- c2021.missing[,names(c2021.missing)[names(c2021.missing) %in% names(covid)]]  
   covid <- rbind(covid,  c.mis)
-  
+ 
+#IV. Remove extraneous variables and save data set. 
+
+  sgpData_LONG_COVID <- as.data.table(covid)
+  sgpData_LONG_COVID[,SCALE_SCORE_A:=NULL]
+  sgpData_LONG_COVID[,ACHIEVEMENT_LEVEL_A:=NULL]
+  setkey(sgpData_LONG_COVID, VALID_CASE, CONTENT_AREA, YEAR, GRADE, ID)
+  save(sgpData_LONG_COVID, file="Data/LOW_PARTICIPATION_MOD1/sgpData_LONG_COVID.Rdata") 

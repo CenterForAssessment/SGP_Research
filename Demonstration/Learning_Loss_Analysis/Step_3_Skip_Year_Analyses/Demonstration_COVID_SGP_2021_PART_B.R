@@ -9,12 +9,18 @@
 ###   Set working directory to Learning_Loss_Analysis repo
 setwd("..")
 
+
+### Get output_directory set up for analyses
+if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
+
+
 ###   Load packages
 require(SGP)
 
 ###   Load data
-load("Data/Demonstration_COVID_SGP_2021_STEP_3a.Rdata")
-load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")
+load(file.path(output.directory, "Demonstration_COVID_SGP_2021_STEP_3a.Rdata"))
+load(file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata"))
+
 
 ###   Load configurations
 source("SGP_CONFIG/STEP_3/PART_B/ELA.R")
@@ -84,11 +90,12 @@ Demonstration_COVID_SGP <- abcSGP(
         sgp.percentiles.baseline=FALSE,
         sgp.projections.baseline=TRUE,
         sgp.projections.lagged.baseline=FALSE,
-        sgp.target.scale.scores=TRUE
+        sgp.target.scale.scores=TRUE,
+        outputSGP.directory=output.directory
         # parallel.config = ...  #  Optional parallel processing - see SGP
         # 	 									 	 #  package documentation for details.
 )
 
 
 ###   Save results
-save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP_2021_STEP_3b.Rdata")
+save(Demonstration_COVID_SGP, file=file.path(output.directory, "Demonstration_COVID_SGP_2021_STEP_3b.Rdata"))

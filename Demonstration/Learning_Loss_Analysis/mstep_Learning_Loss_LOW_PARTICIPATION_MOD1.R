@@ -1,7 +1,7 @@
 ################################################################################
 ###
 ### Single script to run many steps consecutively
-### BASIC ANALYSIS SCRIPT
+### LOW PARTICIPATION MOD 1
 ###
 ################################################################################
 
@@ -12,12 +12,20 @@ require(SGPdata)
 require(data.table)
 
 
-### Setup output.directory 
+### Setup output.directory
 
-output.directory <- "Data/BASIC_ANALYSIS"
+output.directory <- "Data/LOW_PARTICIPATION_MOD1"
 
 
 ### Conduct Analysis Steps in Sequence
+
+## STEP 0
+
+setwd("Step_0_Data_Modification")
+print("BEGIN STEP 0")
+source("sgpData_LONG_COVID_LOW_PARTICIPATION_MOD1.R")
+print("END STEP 0")
+
 
 ## STEP 1
 setwd("Step_1_Pre_COVID")
