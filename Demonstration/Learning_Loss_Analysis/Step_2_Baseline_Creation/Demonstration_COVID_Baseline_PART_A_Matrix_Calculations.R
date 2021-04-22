@@ -7,13 +7,21 @@
 ###   Set working directory to Learning_Loss_Analysis repo
 setwd("..")
 
-### Load necessary packages
 
-library(SGP)
+### Get output_directory set up for analyses
+if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
+
+
+### Load necessary packages
+require(SGP)
+require(SGPdata)
+require(data.table)
+
 
 ###  Create a smaller subset of the LONG data to work with.
-Demonstration_COVID_Data_LONG <- data.table::data.table(SGPdata::sgpData_LONG_COVID[,
+Demonstration_COVID_Data_LONG <- data.table(sgpData_LONG_COVID[,
 	c("ID", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "VALID_CASE"),])
+
 
 ###   Read in Baseline SGP Configuration Scripts and Combine
 source("SGP_CONFIG/STEP_2/PART_A/SingleCohort/ELA.R")
@@ -43,5 +51,5 @@ DEMO_COVID_Baseline_Matrices <- baselineSGP(
 
 
 ###   Save results
-save(DEMO_COVID_Baseline_Matrices, file="Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")
+save(DEMO_COVID_Baseline_Matrices, file=file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata"))
 # save(DEMO_COVID_Baseline_Matrices, file="Data/DEMO_COVID_Baseline_Matrices-SuperCohort.Rdata")

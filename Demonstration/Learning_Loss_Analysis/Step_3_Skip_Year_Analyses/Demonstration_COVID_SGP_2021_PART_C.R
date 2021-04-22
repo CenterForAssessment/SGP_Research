@@ -8,11 +8,18 @@
 ###   Set working directory to Learning_Loss_Analysis repo
 setwd("..")
 
+
+### Get output_directory set up for analyses
+if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
+
+
 ###   Load packages
 require(SGP)
 
+
 ###   Load data
-load("Data/Demonstration_COVID_SGP_2021_STEP_3b.Rdata")
+load(file.path(output.directory, "Demonstration_COVID_SGP_2021_STEP_3b.Rdata"))
+
 
 ###   Load configurations
 source("SGP_CONFIG/STEP_3/PART_C/ELA.R")
@@ -24,7 +31,7 @@ DEMO_COVID_CONFIG_STEP_3c <- c(ELA_2021.config, MATHEMATICS_2021.config)
 ###   Setup SGPstateData with baseline coefficient matrices grade specific projection sequences
 
 #  Add Baseline matrices calculated in STEP 2A to SGPstateData
-load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")
+load(file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata"))
 SGPstateData[["DEMO_COVID"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- DEMO_COVID_Baseline_Matrices
 SGPstateData[["DEMO_COVID"]][["Growth"]][["System_Type"]] <- "Baseline Referenced"
 
@@ -83,10 +90,11 @@ Demonstration_COVID_SGP <- abcSGP(
         sgp.projections.baseline=FALSE,
         sgp.projections.lagged.baseline=TRUE,
         sgp.target.scale.scores=TRUE,
+        outputSGP.directory=output.directory
         # parallel.config = ...  #  Optional parallel processing - see SGP
         # 	 									 	 #  package documentation for details.
 )
 
 
 ###  Save results
-save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP_2021_STEP_3c.Rdata")
+save(Demonstration_COVID_SGP, file=file.path(output.directory, "Demonstration_COVID_SGP_2021_STEP_3c.Rdata"))

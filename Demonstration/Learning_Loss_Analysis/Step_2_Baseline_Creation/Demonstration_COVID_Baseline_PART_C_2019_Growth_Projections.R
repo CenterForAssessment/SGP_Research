@@ -7,15 +7,23 @@
 ###   Set working directory to Learning_Loss_Analysis repo
 setwd("..")
 
+
+### Get output_directory set up for analyses
+if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
+
+
 ###   Load packages
 require(SGP)
 
+
 ###   Load data from baseline SGP analyses
-load("Data/Demonstration_COVID_SGP_2019_STEP_2b.Rdata")
+load(file.path(output.directory, "Demonstration_COVID_SGP_2019_STEP_2b.Rdata"))
+
 
 ###   Add Baseline matrices calculated in STEP 2, PART A to SGPstateData
-load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata") # Alternatively add 'SuperCohort' version if preferred
+load(file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")) # Alternatively add 'SuperCohort' version if preferred
 SGPstateData[["DEMO_COVID"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- DEMO_COVID_Baseline_Matrices
+
 
 ###   Read in STEP 3, PART C SGP Configuration Scripts and Combine
 source("SGP_CONFIG/STEP_2/PART_C/ELA.R")
@@ -41,9 +49,10 @@ Demonstration_COVID_SGP <- abcSGP(
         sgp.projections.baseline = TRUE, # Need P50_PROJ_YEAR_1_CURRENT for Ho's Fair Trend/Equity Check metrics
         sgp.projections.lagged.baseline = FALSE,
         save.intermediate.results = FALSE,
-				# parallel.config = ...  #  Optional parallel processing - see SGP
-				# 	 									 	 #  package documentation for details.
+        outputSGP.directory=output.directory
+		# parallel.config = ...  #  Optional parallel processing - see SGP
+		# 	 									 	 #  package documentation for details.
 )
 
 ###   Save results
-save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP_2019_STEP_2c.Rdata")
+save(Demonstration_COVID_SGP, file=file.path(output.directory, "Demonstration_COVID_SGP_2019_STEP_2c.Rdata"))

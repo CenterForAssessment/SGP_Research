@@ -7,14 +7,20 @@
 ###   Set working directory to Learning_Loss_Analysis repo
 setwd("..")
 
+
+### Get output_directory set up for analyses
+if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
+
+
 ###   Load packages
 require(SGP)
 
 ###   Load data
-load("Data/Demonstration_COVID_SGP_STEP_1.Rdata")
+load(file.path(output.directory, "Demonstration_COVID_SGP_STEP_1.Rdata"))
+
 
 ###   Add Baseline matrices calculated in STEP 2, PART A  to SGPstateData
-load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata") # Alternatively add 'SuperCohort' version if preferred
+load(file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")) # Alternatively add 'SuperCohort' version if preferred
 SGPstateData[["DEMO_COVID"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- DEMO_COVID_Baseline_Matrices
 
 ###   Read in STEP 3, PART B SGP Configuration Scripts and Combine
@@ -44,7 +50,8 @@ Demonstration_COVID_SGP <- abcSGP(
         sgp.percentiles.baseline = TRUE,  #  Skip year SGPs for 2021 comparisons
         sgp.projections.baseline = FALSE, #  Calculated in next step
         sgp.projections.lagged.baseline = FALSE,
-        save.intermediate.results = FALSE
+        save.intermediate.results = FALSE,
+        outputSGP.directory=output.directory
         # parallel.config = ...  #  Optional parallel processing - see SGP
 				# 	 									 	 #  package documentation for details.
 )
@@ -55,4 +62,4 @@ data.table::setnames(Demonstration_COVID_SGP@Data,
   c("SCALE_SCORE_PRIOR_BASELINE", "SCALE_SCORE_PRIOR_STANDARDIZED_BASELINE", "SCALE_SCORE_PRIOR", "SCALE_SCORE_PRIOR_STANDARDIZED"))
 
 ###   Save results
-save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP_2019_STEP_2b.Rdata")
+save(Demonstration_COVID_SGP, file=file.path(output.directory, "Demonstration_COVID_SGP_2019_STEP_2b.Rdata"))

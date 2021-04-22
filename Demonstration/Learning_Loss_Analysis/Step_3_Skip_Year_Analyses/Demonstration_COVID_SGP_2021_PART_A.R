@@ -7,18 +7,28 @@
 ###   Set working directory to Learning_Loss_Analysis repo
 setwd("..")
 
+
+### Get output_directory set up for analyses
+if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
+
+
 ###   Load packages
 require(SGP)
+require(SGPdata)
+
 
 ###   Load data
-load("Data/Demonstration_COVID_SGP_2019_STEP_2c.Rdata")
+load(file.path(output.directory, "Demonstration_COVID_SGP_2019_STEP_2c.Rdata"))
+
 
 ###   Create 2021 subset of COVID data
-Demonstration_COVID_Data_LONG_2021 <- SGPdata::sgpData_LONG_COVID[YEAR == "2021"]
+Demonstration_COVID_Data_LONG_2021 <- sgpData_LONG_COVID[YEAR == "2021"]
+
 
 ###   Add Baseline matrices calculated in STEP 2A to SGPstateData
-load("Data/DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata") # Alternatively add 'SuperCohort' version if preferred
+load(file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")) # Alternatively add 'SuperCohort' version if preferred
 SGPstateData[["DEMO_COVID"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- DEMO_COVID_Baseline_Matrices
+
 
 ###   Read in STEP 3 SGP Configuration Scripts and Combine
 source("SGP_CONFIG/STEP_3/PART_A/ELA.R")
@@ -42,10 +52,11 @@ Demonstration_COVID_SGP <- updateSGP(
         sgp.percentiles.baseline = TRUE,
         sgp.projections.baseline = FALSE,
         sgp.projections.lagged.baseline = FALSE,
-        save.intermediate.results = FALSE
+        save.intermediate.results = FALSE,
+        outputSGP.directory=output.directory
         # parallel.config = ...  #  Optional parallel processing - see SGP
 				# 	 									 	 #  package documentation for details.
 )
 
 ###   Save results
-save(Demonstration_COVID_SGP, file="Data/Demonstration_COVID_SGP_2021_STEP_3a.Rdata")
+save(Demonstration_COVID_SGP, file=file.path(output.directory, "Demonstration_COVID_SGP_2021_STEP_3a.Rdata"))
