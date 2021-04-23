@@ -24,7 +24,6 @@ load(file.path(output.directory, "Demonstration_COVID_SGP_2019_STEP_2c.Rdata"))
 ###   Create 2021 subset of COVID data
 Demonstration_COVID_Data_LONG_2021 <- sgpData_LONG_COVID[YEAR == "2021"]
 
-browser()
 
 ###   Add Baseline matrices calculated in STEP 2A to SGPstateData
 load(file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")) # Alternatively add 'SuperCohort' version if preferred
