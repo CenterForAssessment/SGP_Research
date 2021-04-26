@@ -17,6 +17,12 @@ require(data.table)
 output.directory <- "Data/LOW_PARTICIPATION_MOD1"
 
 
+### Copy some stuff from BASIC ANALYSES to LOW_PARTICIPATION_MOD1 directory for use with Step 3 (we bypass Step 1 and 2)
+
+file.copy(file.path("Data", "BASIC_ANALYSIS", "Demonstration_COVID_SGP_2019_STEP_2c.Rdata"), file.path(output.directory, "Demonstration_COVID_SGP_2019_STEP_2c.Rdata"))
+file.copy(file.path("Data", "BASIC_ANALYSIS", "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata"), file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata"))
+
+
 ### Conduct Analysis Steps in Sequence
 
 ## STEP 0
@@ -65,24 +71,24 @@ print("END STEP 3, PART A")
 setwd("Step_3_Skip_Year_Analyses")
 print("BEGIN STEP 3, PART B")
 source("Demonstration_COVID_SGP_2021_PART_B.R")
-print("END STEP 3, PART A")
+print("END STEP 3, PART B")
 
 # PART C
 setwd("Step_3_Skip_Year_Analyses")
 print("BEGIN STEP 3, PART C")
 source("Demonstration_COVID_SGP_2021_PART_C.R")
-print("END STEP 3, PART A")
+print("END STEP 3, PART C")
 
 
 ## STEP 4
-setwd("Step_4_Recovery_Year_1")
-print("BEGIN STEP 4")
-source("Demonstration_COVID_SGP_2022.R")
-print("END STEP 4")
+#setwd("Step_4_Recovery_Year_1")
+#print("BEGIN STEP 4")
+#source("Demonstration_COVID_SGP_2022.R")
+#print("END STEP 4")
 
 
 ## STEP 5
-setwd("Step_5_Recovery_Year_2")
-print("BEGIN STEP 5")
-source("Demonstration_COVID_SGP_2023.R")
-print("END STEP 5")
+#setwd("Step_5_Recovery_Year_2")
+#print("BEGIN STEP 5")
+#source("Demonstration_COVID_SGP_2023.R")
+#print("END STEP 5")
