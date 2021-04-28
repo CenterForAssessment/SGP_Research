@@ -98,7 +98,7 @@
         }
 
         ###   If using growth fill in missings with SGP = 50 to keep in complete data and give average weight
-        if (grepl("^SGP", ampute.vars)) {
+        if (any(grepl("^SGP", ampute.vars))) {
           tmp.growth.wide <- grep(prior.year, grep("^SGP", names(tmp.wide), value=TRUE), value=TRUE)
           for (tgw in tmp.growth.wide) tmp.wide[is.na(get(tgw)), eval(tgw) := 50]
         }
