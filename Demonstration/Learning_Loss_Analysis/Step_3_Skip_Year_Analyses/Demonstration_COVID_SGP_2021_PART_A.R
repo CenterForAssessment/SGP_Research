@@ -8,8 +8,9 @@
 setwd("..")
 
 
-### Get output_directory set up for analyses
+### Get input/output.directory set up for analyses
 if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
+if (!exists("input.directory")) input.directory <- output.directory
 
 
 ###   Load packages
@@ -18,15 +19,16 @@ require(SGPdata)
 
 
 ###   Load data
-load(file.path(output.directory, "Demonstration_COVID_SGP_2019_STEP_2c.Rdata"))
+load(file.path(input.directory, "Demonstration_COVID_SGP_2019_STEP_2c.Rdata"))
 
 
 ###   Create 2021 subset of COVID data
-Demonstration_COVID_Data_LONG_2021 <- sgpData_LONG_COVID[YEAR == "2021"]
+if (!exists("Demonstration_COVID_Data_LONG_2021"))
+  Demonstration_COVID_Data_LONG_2021 <- sgpData_LONG_COVID[YEAR == "2021"]
 
 
 ###   Add Baseline matrices calculated in STEP 2A to SGPstateData
-load(file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")) # Alternatively add 'SuperCohort' version if preferred
+load(file.path(input.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")) # Alternatively add 'SuperCohort' version if preferred
 SGPstateData[["DEMO_COVID"]][["Baseline_splineMatrix"]][["Coefficient_Matrices"]] <- DEMO_COVID_Baseline_Matrices
 
 
