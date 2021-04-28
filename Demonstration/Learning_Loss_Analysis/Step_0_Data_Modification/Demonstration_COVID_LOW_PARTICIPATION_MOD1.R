@@ -9,9 +9,11 @@
 #I. Setup ----------------------------------------------------------------------
   require(SGPdata)
   require(data.table)
-  covid <-  sgpData_LONG_COVID
+  covid <- copy(sgpData_LONG_COVID)
+  covid[,c("SCALE_SCORE_ACTUAL", "ACHIEVEMENT_LEVEL_ACTUAL"):=list(SCALE_SCORE, ACHIEVEMENT_LEVEL)]
   set.seed(145)
   setwd("..") ## Set working directory to base directory
+
 
 #II. Introduce Missingess for 2021 Data ----------------------------------------
   #A Set up 2021 Data ----------------------------------------------------------
@@ -102,9 +104,6 @@
                                         school.agg$p_missing)
 
   #B.Introduce Missingness into 2021 Data -------------------------------------
-  c2021$SCALE_SCORE_ACTUAL       <- c2021$SCALE_SCORE
-  c2021$ACHIEVEMENT_LEVEL_ACTUAL <- c2021$ACHIEVEMENT_LEVEL
-
   c2021.missing <- NULL
 
   for(i in 1:nrow(school.agg)){
@@ -139,7 +138,7 @@
 
   covid <- as.data.table(covid)
   c2021.missing <- as.data.table(c2021.missing)
-  c2021.missing[is.na(SCALE_SCORE),VALID_CASE:="INVALID_CASE"]
+  c2021.missing[is.na(SCALE_SCORE), VALID_CASE:="INVALID_CASE"]
 
   c.mis <- c2021.missing[,names(c2021.missing)[names(c2021.missing) %in% names(covid)], with=FALSE]
   covid <- rbindlist(list(covid,  c.mis))
