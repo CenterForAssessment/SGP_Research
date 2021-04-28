@@ -12,6 +12,8 @@ setwd("..")
 if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
 if (!exists("input.directory")) input.directory <- output.directory
 
+### Set up parrallel.config if it doesn't exist
+if (!exists("parallel.config")) parallel.config <- NULL
 
 ###   Load packages
 require(SGP)
@@ -55,8 +57,8 @@ Demonstration_COVID_SGP <- updateSGP(
         sgp.projections.baseline = FALSE,
         sgp.projections.lagged.baseline = FALSE,
         save.intermediate.results = FALSE,
-        outputSGP.directory=output.directory
-        # parallel.config = ...  #  Optional parallel processing - see SGP
+        outputSGP.directory=output.directory,
+        parallel.config=parallel.config  #  Optional parallel processing - see SGP
 				# 	 									 	 #  package documentation for details.
 )
 

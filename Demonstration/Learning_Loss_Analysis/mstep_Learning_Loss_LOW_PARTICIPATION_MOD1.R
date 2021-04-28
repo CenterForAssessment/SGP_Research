@@ -17,6 +17,11 @@ require(data.table)
 output.directory <- "Data/LOW_PARTICIPATION_MOD1"
 
 
+### Setup parallel.config
+
+parallel.config <- parallel.config = list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, BASELINE_PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4))
+
+
 ### Copy some stuff from BASIC ANALYSES to LOW_PARTICIPATION_MOD1 directory for use with Step 3 (we bypass Step 1 and 2)
 
 file.copy(file.path("Data", "BASIC_ANALYSIS", "Demonstration_COVID_SGP_2019_STEP_2c.Rdata"), file.path(output.directory, "Demonstration_COVID_SGP_2019_STEP_2c.Rdata"))
@@ -65,19 +70,26 @@ print("END STEP 0")
 setwd("Step_3_Skip_Year_Analyses")
 print("BEGIN STEP 3, PART A")
 source("Demonstration_COVID_SGP_2021_PART_A.R")
+
+for(d in c("ELA.2021", "ELA.2021.BASELINE", "MATHEMATICS.2021", "MATHEMATICS.2021.BASELINE")) {
+  if(!dir.exists(file.path(output.directory, "Goodness_of_Fit", d))) dir.create(file.path(output.directory, "Goodness_of_Fit", d), recursive = TRUE)
+  file.copy(file.path("Goodness_of_Fit", d),
+            file.path(output.directory, "Goodness_of_Fit"), recursive = TRUE)
+}
+
 print("END STEP 3, PART A")
 
 # PART B
-setwd("Step_3_Skip_Year_Analyses")
-print("BEGIN STEP 3, PART B")
-source("Demonstration_COVID_SGP_2021_PART_B.R")
-print("END STEP 3, PART B")
+#setwd("Step_3_Skip_Year_Analyses")
+#print("BEGIN STEP 3, PART B")
+#source("Demonstration_COVID_SGP_2021_PART_B.R")
+#print("END STEP 3, PART B")
 
 # PART C
-setwd("Step_3_Skip_Year_Analyses")
-print("BEGIN STEP 3, PART C")
-source("Demonstration_COVID_SGP_2021_PART_C.R")
-print("END STEP 3, PART C")
+#setwd("Step_3_Skip_Year_Analyses")
+#print("BEGIN STEP 3, PART C")
+#source("Demonstration_COVID_SGP_2021_PART_C.R")
+#print("END STEP 3, PART C")
 
 
 ## STEP 4

@@ -11,6 +11,9 @@ setwd("..")
 ### Get output_directory set up for analyses
 if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
 
+### Set up parrallel.config if it doesn't exist
+if (!exists("parallel.config")) parallel.config <- NULL
+
 
 ### Load necessary packages
 require(SGP)
@@ -44,8 +47,8 @@ DEMO_COVID_Baseline_Matrices <- baselineSGP(
 				sgp.baseline.config=DEMO_COVID_BASELINE_CONFIG_STEP_2,
 				return.matrices.only=TRUE,
 				calculate.baseline.sgps=FALSE,
-				goodness.of.fit.print=FALSE
-				# parallel.config = ...  #  Optional parallel processing - see SGP
+				goodness.of.fit.print=FALSE,
+				parallel.config=parallel.config  #  Optional parallel processing - see SGP
 				# 	 									 	 #  package documentation for details.
 )
 
