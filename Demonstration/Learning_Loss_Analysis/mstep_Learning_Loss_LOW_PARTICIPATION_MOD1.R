@@ -19,7 +19,7 @@ output.directory <- "Data/LOW_PARTICIPATION_MOD1"
 
 ### Setup parallel.config
 
-parallel.config <- parallel.config = list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, BASELINE_PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4))
+parallel.config <- list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, BASELINE_PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4))
 
 
 ### Copy some stuff from BASIC ANALYSES to LOW_PARTICIPATION_MOD1 directory for use with Step 3 (we bypass Step 1 and 2)

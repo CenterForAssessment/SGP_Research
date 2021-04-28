@@ -10,7 +10,7 @@ input.directory <- "Data/BASIC_ANALYSIS"
 output.directory <- "Data/LOW_PARTICIPATION_AMPUTE"
 
 ### Setup parallel.config
-parallel.config <- parallel.config = list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, BASELINE_PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4))
+parallel.config <- list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, BASELINE_PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4))
 
 ###   Define missingness type (before sourcing mstep script!)
 # missing.type <- "MCAR"
