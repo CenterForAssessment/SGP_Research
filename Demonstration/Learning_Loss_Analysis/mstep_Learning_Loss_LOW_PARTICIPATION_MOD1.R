@@ -29,7 +29,7 @@ file.copy(file.path("Data", "BASIC_ANALYSIS", "DEMO_COVID_Baseline_Matrices-Sing
 
 setwd("Step_0_Data_Modification")
 print("BEGIN STEP 0")
-source("sgpData_LONG_COVID_LOW_PARTICIPATION_MOD1.R")
+source("Demonstration_COVID_LOW_PARTICIPATION_MOD1.R")
 print("END STEP 0")
 
 

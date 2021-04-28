@@ -102,8 +102,8 @@
                                         school.agg$p_missing)
 
   #B.Introduce Missingness into 2021 Data -------------------------------------
-  c2021$SCALE_SCORE_A       <- c2021$SCALE_SCORE
-  c2021$ACHIEVEMENT_LEVEL_A <- c2021$ACHIEVEMENT_LEVEL
+  c2021$SCALE_SCORE_ACTUAL       <- c2021$SCALE_SCORE
+  c2021$ACHIEVEMENT_LEVEL_ACTUAL <- c2021$ACHIEVEMENT_LEVEL
 
   c2021.missing <- NULL
 
@@ -136,8 +136,6 @@
 #III. Combine into Total Dataset ------------------------------------------------
   #Reduce just to years that would be observed in Spring 2021 and then
   covid <- covid[covid$YEAR %in% c(2016, 2017, 2018, 2019),]
-  covid$SCALE_SCORE_A <- NA
-  covid$ACHIEVEMENT_LEVEL_A <- NA
 
   covid <- as.data.table(covid)
   c2021.missing <- as.data.table(c2021.missing)
@@ -149,7 +147,5 @@
 #IV. Remove extraneous variables and save data set.
 
   sgpData_LONG_COVID <- as.data.table(covid)
-  sgpData_LONG_COVID[,SCALE_SCORE_A:=NULL]
-  sgpData_LONG_COVID[,ACHIEVEMENT_LEVEL_A:=NULL]
   setkey(sgpData_LONG_COVID, VALID_CASE, CONTENT_AREA, YEAR, GRADE, ID)
   save(sgpData_LONG_COVID, file="Data/LOW_PARTICIPATION_MOD1/sgpData_LONG_COVID.Rdata")
