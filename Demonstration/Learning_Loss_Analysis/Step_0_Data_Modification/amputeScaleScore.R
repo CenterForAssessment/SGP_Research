@@ -4,12 +4,13 @@
     growth.config = NULL,
     status.config = NULL,
     default.vars = c("CONTENT_AREA", "GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL"),
-    demographics = c("FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "IEP_STATUS", "ETHNICITY", "GENDER"), #
+    demographics = c("FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "IEP_STATUS", "ETHNICITY", "GENDER"),
     institutions = c("SCHOOL_NUMBER", "DISTRICT_NUMBER"),
-    ampute.vars  = c("SCHOOL_NUMBER", "SCALE_SCORE", "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "IEP_STATUS"),
-    ampute.args = list(prop=0.3, type="RIGHT"), # as.list(args(mice::ampute)),
+    ampute.vars  = NULL, # c("SCHOOL_NUMBER", "SCALE_SCORE", "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS"),
+    ampute.var.weights = NULL, # list(SCALE_SCORE=3, FREE_REDUCED_LUNCH_STATUS=2, SCHOOL_NUMBER=1), # Put institution last (if used)
+    reverse.weight = "SCALE_SCORE",
+    ampute.args = list(prop=0.3, type="RIGHT"),
     partial.fill = TRUE,
-    reverse.scale.score.tail = TRUE,
     invalidate.repeater.dups = TRUE,
     seed = 4224L,
     M = 10){
@@ -31,7 +32,7 @@
   	}
   } ### END getKey
 
-
+  ###   Combine and augment config lists
   amp.config <- growth.config
 
   if (!is.null(growth.config)) {
@@ -43,6 +44,22 @@
   }
 
   if (is.null(amp.config)) stop("Either a 'growth.config' or 'status.config' must be supplied")
+
+  ###   If ampute.vars = NULL produce MCAR missingness
+  if (is.null(ampute.vars)) {
+    ampute.data[, TMP_MCAR_PROB := rnorm(.N), keyby=c("YEAR", "CONTENT_AREA", "GRADE")]
+    ampute.var.weights <- NULL
+    reverse.weight <- NULL
+    ampute.vars <- "TMP_MCAR_PROB"
+    default.vars <- c(default.vars, "TMP_MCAR_PROB")
+    remove.tmp.amp.var <- TRUE
+  } else remove.tmp.amp.var <- FALSE
+
+  long.to.wide.vars <- c(default.vars, institutions, demographics)
+  if (any(!ampute.vars %in% long.to.wide.vars)) {
+    vars.to.add <- ampute.vars[!ampute.vars %in% long.to.wide.vars]
+    message("\n\tampute.vars", vars.to.add, "not included in appropriate variable argument.  It has been temporarily added to the list of variables to return.")
+  }
 
   ###   Cycle through amp.config to amputate by cohort
   amp.list <- vector(mode = "list", length = M)
@@ -57,12 +74,11 @@
     setkey(tmp.lookup, NULL)
     setkeyv(ampute.data, getKey(ampute.data))
 
-    tmp.long <- ampute.data[tmp.lookup]
+    tmp.long <- ampute.data[tmp.lookup][, unique(c("VALID_CASE", "ID", "YEAR", long.to.wide.vars)), with=FALSE]
 
     if (amp.iter$analysis.type == "GROWTH") {
       ###   convert long to wide
-      long.to.wide.vars <- c(default.vars, institutions, demographics)
-      tmp.wide <- dcast(tmp.long, ID ~ YEAR, sep=".", drop=FALSE, value.var=long.to.wide.vars) # c("GRADE", "SCALE_SCORE")
+      tmp.wide <- dcast(tmp.long, ID ~ YEAR, sep=".", drop=FALSE, value.var=long.to.wide.vars)
 
       ###   Exclude kids missing 2 or more most recent years
       prior.year <- tail(amp.iter$sgp.panel.years, 2)[1]
@@ -72,7 +88,7 @@
       tmp.wide <- tmp.wide[!(is.na(get(prior.score)) & is.na(get(current.score))),]
 
       if (partial.fill) {
-        ###  Fill in missing content area and grades first
+        ###   Fill in missing content area and grades first
         for (ca in seq(amp.iter$sgp.panel.years)) {
           tmp.wide[, paste("CONTENT_AREA", amp.iter$sgp.panel.years[ca], sep=".") := amp.iter$sgp.content.areas[ca]]
         }
@@ -81,21 +97,27 @@
           tmp.wide[, paste("GRADE", amp.iter$sgp.panel.years[g], sep=".") := amp.iter$sgp.grade.sequences[g]]
         }
 
+        ###   If using growth fill in missings with SGP = 50 to keep in complete data and give average weight
+        if (any(grepl("^SGP", ampute.vars))) {
+          tmp.growth.wide <- grep(prior.year, grep("^SGP", names(tmp.wide), value=TRUE), value=TRUE)
+          for (tgw in tmp.growth.wide) tmp.wide[is.na(get(tgw)), eval(tgw) := 50]
+        }
+
         meas.list <- vector(mode = "list", length = length(long.to.wide.vars))
-        meas.list <- lapply(long.to.wide.vars, function(f) meas.list[[f]] <- grep(f, names(tmp.wide)))
+        meas.list <- lapply(long.to.wide.vars, function(f) meas.list[[f]] <- grep(paste0(f, "[.]"), names(tmp.wide)))
         names(meas.list) <- long.to.wide.vars
 
         ###   First stretch out to get missings in log data
-        tmp.long <- melt(tmp.wide, id = "ID", variable.name = "YEAR", measure=meas.list)
+        long.final <- melt(tmp.wide, id = "ID", variable.name = "YEAR", measure=meas.list)
 
         ###   Fill in demographics
-        setkey(tmp.long, ID, YEAR)
-        tmp.long <- data.table(dplyr::ungroup(tidyr::fill(dplyr::group_by(tmp.long, ID),
+        setkey(long.final, ID, YEAR)
+        long.final <- data.table(dplyr::ungroup(tidyr::fill(dplyr::group_by(long.final, ID),
                                 tidyselect::all_of(demographics), .direction="downup")))
 
         ###   Fill in school numbers (CLUDGE) - try to figure out how to do with random forrest or something better...
         if ("SCHOOL_NUMBER" %in% institutions) {
-          tmp.long.elem <- tmp.long[GRADE %in% c(3:5)]
+          tmp.long.elem <- long.final[GRADE %in% c(3:5)]
           if (length(unique(tmp.long.elem[, GRADE])) == 1L) {
             tmp.long.elem[is.na(SCHOOL_NUMBER), SCHOOL_NUMBER :=
               sample(unique(na.omit(tmp.long.elem$SCHOOL_NUMBER)), size=sum(is.na(tmp.long.elem$SCHOOL_NUMBER)), replace=TRUE)]
@@ -104,7 +126,7 @@
                                           SCHOOL_NUMBER, .direction="updown")))
           }
 
-          tmp.long.mid <- tmp.long[GRADE %in% c(6:8)]
+          tmp.long.mid <- long.final[GRADE %in% c(6:8)]
           if (length(unique(tmp.long.mid[, GRADE])) == 1L) {
             tmp.long.mid[is.na(SCHOOL_NUMBER), SCHOOL_NUMBER :=
               sample(unique(na.omit(tmp.long.mid$SCHOOL_NUMBER)), size=sum(is.na(tmp.long.mid$SCHOOL_NUMBER)), replace=TRUE)]
@@ -113,52 +135,55 @@
                                         SCHOOL_NUMBER, .direction="updown")))
           }
 
-          tmp.long <- rbindlist(list(tmp.long.elem, tmp.long.mid))
+          long.final <- rbindlist(list(tmp.long.elem, tmp.long.mid))
         }
 
         if ("DISTRICT_NUMBER" %in% institutions) {
-          tmp.long <- data.table(dplyr::ungroup(tidyr::fill(dplyr::group_by(tmp.long, ID),
+          long.final <- data.table(dplyr::ungroup(tidyr::fill(dplyr::group_by(long.final, ID),
                                   DISTRICT_NUMBER, .direction="updown")))
         }
 
-        tmp.long[, YEAR := as.character(factor(YEAR, labels = amp.iter[["sgp.panel.years"]]))]
+        long.final[, YEAR := as.character(factor(YEAR, labels = amp.iter[["sgp.panel.years"]]))]
 
         ###   re-widen
-        tmp.wide <- dcast(tmp.long, ID ~ YEAR, sep=".", drop=FALSE, value.var=long.to.wide.vars)
-      }  #  END partial.fill
+        ##    This could probably be made more parsimonious!  Really only need
+        ##    current & most recent prior year w/ ampute.vars
+        tmp.wide <- dcast(long.final, ID ~ YEAR, sep=".", drop=FALSE, value.var=long.to.wide.vars)
+      }  else { #  END partial.fill
+        long.final <- melt(tmp.wide, id = "ID", variable.name = "YEAR", measure=meas.list)
+        long.final[, YEAR := as.character(factor(YEAR, labels = amp.iter[["sgp.panel.years"]]))]
+      }
 
-      long.final <- melt(tmp.wide, id = "ID", variable.name = "YEAR", measure=meas.list)
-      long.final[, YEAR := as.character(factor(YEAR, labels = amp.iter[["sgp.panel.years"]]))]
       long.final[, VALID_CASE := "VALID_CASE"]
-      # ###   Create long.final with only the "current" year (last elements of the config)
-      # ###   More thorough to do it with config than just long.final <- long.final[YEAR %in% current.year]
-      # tmp.lookup <- SJ("VALID_CASE", tail(amp.iter[["sgp.content.areas"]], 1),
-      #   tail(amp.iter[["sgp.panel.years"]], 1), tail(amp.iter[["sgp.grade.sequences"]], 1))
-      # setkeyv(long.final, getKey(long.final))
-      #
-      # long.final <- long.final[tmp.lookup]
+
     } else {  #  END "GROWTH"  --  Begin "STATUS"
       ###   Create institution level summaries
       prior.years <- head(amp.iter$sgp.panel.years, -1)
       tmp.grades <- unique(head(amp.iter$sgp.grade.sequences, -1))
       current.year <- tail(amp.iter$sgp.panel.years, 1)
-      demog.amp.vars <- intersect(ampute.vars, demographics)
 
       subset.wide <- tmp.long[YEAR %in% current.year, c("ID", ampute.vars %w/o% "SCALE_SCORE"), with=FALSE] # assuming not using any other current year data.
-      tmp.long.priors <- tmp.long[YEAR %in% prior.years & GRADE %in% tmp.grades, ampute.vars, with=FALSE] # assuming not MNAR
-      if (reverse.scale.score.tail) {
-        tmp.long.priors[, "SCALE_SCORE" := -1*SCALE_SCORE]
+      tmp.long.priors <- tmp.long[YEAR %in% prior.years & GRADE %in% tmp.grades, ampute.vars, with=FALSE] # assuming not MNAR - all prior values for amp.vars
+
+      if (!is.null(reverse.weight)) {
+        for (rev.var in reverse.weight) {
+          tmp.long.priors[, eval(rev.var) := -1*get(rev.var)]
+        }
       }
-      for (demog in demog.amp.vars) {
-        tmp.long.priors[, eval(demog) := as.integer(factor(get(demog)))-1L]
-        subset.wide[, eval(demog) := as.integer(factor(get(demog)))-1L]
+
+      if (length(demog.amp.vars <- intersect(demographics, ampute.vars)) > 0) {
+        for (demog in demog.amp.vars) {
+          tmp.long.priors[, eval(demog) := as.integer(factor(get(demog)))-1L]
+          subset.wide[, eval(demog) := as.integer(factor(get(demog)))-1L]
+        }
       }
 
       if (length(inst.sum.var <- intersect(institutions, ampute.vars)) > 0) {
         for (inst in inst.sum.var) {
-          smry_eval_expression <- paste0("PERCENT_", gsub("_STATUS", "", demog.amp.vars), "_", strsplit(inst, "_")[[1]][1],
-              " = ", "(100*(sum(",demog.amp.vars,")/.N))")
-          smry_eval_expression <- c(paste0("MEAN_SS", "_", strsplit(inst, "_")[[1]][1], " = ", "mean(SCALE_SCORE, na.rm=TRUE)"), smry_eval_expression)
+          # smry_eval_expression <- paste0("PERCENT_", gsub("_STATUS", "", demog.amp.vars), "_", strsplit(inst, "_")[[1]][1],
+          #     " = ", "(100*(sum(",demog.amp.vars,")/.N))")
+          # smry_eval_expression <- c(paste0("MEAN_SS", "_", strsplit(inst, "_")[[1]][1], " = ", "mean(SCALE_SCORE, na.rm=TRUE)"), smry_eval_expression)
+          smry_eval_expression <- paste0("TMP_IMV_", ampute.vars %w/o% institutions, "_", inst, " = ", "mean(", ampute.vars %w/o% institutions, ", na.rm=TRUE)")
           smry_eval_expression <- setNames(smry_eval_expression, sub('^(.*) = .*', '\\1', smry_eval_expression))
 
           tmp_inst_smry <- tmp.long.priors[!is.na(eval(inst)),
@@ -166,6 +191,9 @@
 
           subset.wide <- merge(subset.wide, tmp_inst_smry, by=inst)
           subset.wide[, eval(inst) := NULL]
+          #  remove columns that are all NA (e.g., SGP for 3rd grade priors)
+          subset.wide <- subset.wide[,
+            names(subset.wide)[!unlist(lapply(names(subset.wide), function(f) all(is.na(subset.wide[,get(f)]))))], with=FALSE]
           subset.wide <- na.omit(subset.wide)
         }
       }
@@ -175,7 +203,7 @@
         tail(amp.iter[["sgp.panel.years"]], 1), tail(amp.iter[["sgp.grade.sequences"]], 1))
       setkeyv(ampute.data, getKey(ampute.data))
 
-      long.final <- ampute.data[tmp.lookup]
+      long.final <- ampute.data[tmp.lookup][, unique(c("VALID_CASE", "ID", "YEAR", long.to.wide.vars)), with=FALSE]
     } ###  END "STATUS"
 
     ###   AMPUTE
@@ -183,35 +211,41 @@
     ###   https://rianneschouten.github.io/mice_ampute/vignette/ampute.html#missingness_proportion_per_variable
 
     ##    Subset out scale scores and demographics
-    if (amp.iter$analysis.type == "GROWTH")  { # done above for "STATUS"
+    if (amp.iter$analysis.type == "GROWTH") {  #  done above for "STATUS"
       ##    Convert character/factor to numeric (0/1) data
-      demog.amp.vars <- grep(paste(demographics, collapse="|"), names(tmp.wide), value=TRUE)
-      for (demog in demog.amp.vars) {
-        tmp.wide[, eval(demog) := as.integer(factor(get(demog)))-1L]
-      }
+      wide.amp.vars <- paste(ampute.vars %w/o% institutions, prior.year, sep=".")
 
-      if (reverse.scale.score.tail) {
-        tmp.wide[, eval(prior.score) := -1*get(prior.score)]
-      }
-
-      ##    Create institutional level averages of achievement and demographics
-      if (length(inst.sum.var <- intersect(institutions, ampute.vars)) > 0) {
-        for (inst in inst.sum.var) {
-          tmp.inst.var <- paste0(inst, ".", prior.year)
-          tmp.wide[, paste0("MEAN_SS", "_", strsplit(inst, "_")[[1]][1]) := mean(get(prior.score), na.rm=TRUE), by=list(get(tmp.inst.var))]
-          for (demog in demog.amp.vars) {
-            tmp.wide[, paste0("PCT_", demog, "_", strsplit(inst, "_")[[1]][1]) := (sum(get(demog))/.N), by=list(get(tmp.inst.var))]
-          }
-          # subset.wide[, eval(tmp.inst.var) := NULL]
+      demog.amp.vars <- grep(paste(demographics, collapse="|"), wide.amp.vars, value=TRUE)
+      if (length(demog.amp.vars) > 0) {
+        for (demog in demog.amp.vars) {
+          tmp.wide[, eval(demog) := as.integer(factor(get(demog)))-1L]
         }
       }
 
+      if (!is.null(reverse.weight)) {
+        for (rev.var in paste(reverse.weight, prior.year, sep=".")) {
+          tmp.wide[, eval(rev.var) := -1*get(rev.var)]
+        }
+      }
+
+      ##    Create institutional level averages of achievement and demographics
+      ##    TMP_IMV_  -  temp institutional mean variable
+      if (length(inst.sum.var <- intersect(institutions, ampute.vars)) > 0) {
+        for (inst in inst.sum.var) {
+          tmp.inst.var <- paste0(inst, ".", prior.year)
+          for (wav in wide.amp.vars) {
+            tmp.wide[, paste0("TMP_IMV_", wav, "_", inst) := mean(get(wav), na.rm=TRUE), by=list(get(tmp.inst.var))] # strsplit(inst, "_")[[1]][1]
+          }
+        }
+      }
       subset.wide <- tmp.wide[!is.na(get(current.score)),
-        grep(paste0("ID|MEAN_SS|", paste(ampute.vars %w/o% institutions, collapse=paste0(".", prior.year, "|")), ".", prior.year), names(tmp.wide)), with=FALSE]
+        grep(paste0("ID|TMP_IMV_|", paste(wide.amp.vars, collapse="|")), names(tmp.wide)), with=FALSE]
+      #  remove columns that are all NA (e.g., SGP for 3rd grade priors)
+      subset.wide <- subset.wide[,
+        names(subset.wide)[!unlist(lapply(names(subset.wide), function(f) all(is.na(subset.wide[,get(f)]))))], with=FALSE]
       subset.wide <- na.omit(subset.wide)
 
       ##    Find the proportion relative to the complete data that needs to be amputated to give a total ~ ampute.args$prop
-      # target.prop <- round((ampute.args$prop - sum(is.na(tmp.wide[[current.score]]))/nrow(tmp.wide)), 3)
       target.prop <- round((round(nrow(tmp.wide)*ampute.args$prop, 0)-sum(is.na(tmp.wide[[current.score]])))/nrow(subset.wide), 3)
       if (target.prop < 0) {
         target.prop <- 0.001;too.low.tf <- TRUE
@@ -224,20 +258,21 @@
         too.low.tf <- FALSE
       }
     } else {
-      # target.prop <- round((ampute.args$prop - sum(is.na(long.final[, SCALE_SCORE]))/nrow(long.final)), 3)
       target.prop <- round((round(nrow(long.final)*ampute.args$prop, 0)-sum(is.na(long.final[, SCALE_SCORE])))/nrow(subset.wide), 3)
       ltol <- target.prop-c(0.03, rev(seq(0.001, 0.03, 0.00125)))
       utol <- target.prop+c(0.03, rev(seq(0.001, 0.03, 0.00125)))
       too.low.tf <- FALSE
     }
-    # ltol <- target.prop-0.049; utol <- target.prop+0.049 # just under 10% tollerance level
-    # ltol <- target.prop-c(0.09, rev(seq(0.001, 0.09, 0.004)), 0.001)
-    # utol <- target.prop+c(0.09, rev(seq(0.001, 0.09, 0.004)), 0.001)
 
     ##    Reduce amputation analysis data to non-NA data and standardize
     subset.wide.std <- scale(subset.wide[,-1,])
 
-    tmp.weights <- matrix(rep(1, ncol(subset.wide)-1), nrow = 1)
+    tmp.weights <- matrix(rep(1, ncol(subset.wide.std)), nrow = 1)
+    if (!is.null(ampute.var.weights)) {
+      for (n in names(ampute.var.weights)) {
+        tmp.weights[grep(n, names(subset.wide)[-1])] <- ampute.var.weights[[n]]
+      }
+    }
     tmp.scores <- apply(subset.wide.std, 1, function (x) tmp.weights %*% x)
     if (is.null(ampute.args$type)) ampute.args$type <- "RIGHT"
 
@@ -284,7 +319,6 @@
                                 P = rep(2, nrow(subset.wide)), prop = fin.prop,
                                 scores = list(tmp.scores), type = ampute.args$type)
 
-        # summary(mask_var[[1]])
         amp.ids <- subset.wide[which(mask_var[[1]]==0L), ID]
 
         ###   Amputate...  Finally!!!
@@ -294,8 +328,8 @@
           amp.list[[amp.m]][[K]][YEAR == current.year & ID %in% amp.ids, ACHIEVEMENT_LEVEL := NA]
         }
       }
-      # for (amp.m in seq(M)) {print(sum(is.na(amp.list[[amp.m]][[K]][, SCALE_SCORE]))/nrow(long.final))}
-      # for (amp.m in seq(M)) {print(amp.list[[amp.m]][[K]][, list(NAs = sum(is.na(SCALE_SCORE))/.N), keyby=list(YEAR, CONTENT_AREA, GRADE)])}
+      # for (amp.m in seq(M)) {print(sum(is.na(amp.list[[amp.m]][[K]][, SCALE_SCORE]))/nrow(long.final))} # debug for STATUS
+      # for (amp.m in seq(M)) {print(amp.list[[amp.m]][[K]][, list(NAs = sum(is.na(SCALE_SCORE))/.N), keyby=list(YEAR, CONTENT_AREA, GRADE)])} # debug for GROWTH
     } else {
       max.scores <- head(rev(sort(tmp.scores)), pick.miss*M)
       id.list <- subset.wide[which(tmp.scores %in% max.scores), ID]
@@ -316,6 +350,8 @@
 
   for (L in seq(M)) {
     final.amp.list[[L]] <- rbindlist(amp.list[[L]], fill=TRUE)
+
+    if (remove.tmp.amp.var) invisible(final.amp.list[[L]][, TMP_MCAR_PROB := NULL])
 
     if (!is.null(additional.data)) {
       final.amp.list[[L]] <- rbindlist(

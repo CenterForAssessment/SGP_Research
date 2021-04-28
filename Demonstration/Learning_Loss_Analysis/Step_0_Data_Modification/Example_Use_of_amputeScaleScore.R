@@ -47,14 +47,40 @@ args(amputeScaleScore)
 ##    institutions = c("SCHOOL_NUMBER", "DISTRICT_NUMBER")
 ##        - Institution IDs that will be used/or returned in the amputed data
 
-##    ampute.vars  = c("SCHOOL_NUMBER", "SCALE_SCORE", "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "IEP_STATUS")
-##        - The intersection of default.vars, demographics and institutions that
-##          will be used in the construction of the weighted scores that define
-##          the probability of being missing. Any institution included will be
-##          used to construct institution level means of other student level
-##          ampute.vars.  For example, with the default variables, student level
-##          scores and demographics will be used along with their associated
-##          school level mean scores and percent FRL, ELL and IEP (8 total factors)
+##    ampute.vars = NULL
+##        - Intersection of default.vars, demographics and institutions that will
+##          be used in the construction of the weighted scores that define the
+##          probability of being missing. Any institution included will be used
+##          to construct institution level means of other student level ampute.vars.
+##          For example, with c("SCHOOL_NUMBER", "SCALE_SCORE", "FREE_REDUCED_LUNCH_STATUS"),
+##          student level scores and demographics will be used along with their
+##          associated school level mean scores and proportion FRL (4 total factors).
+##        - The default (NULL) means that no factors are considered, creating a
+##          "missing completely at random" (MCAR) missingness pattern.
+
+##    ampute.var.weights = NULL
+##        - Relative weights assigned to the ampute vars.  Default is NULL meaning
+##          the weighted sum scores will be calculated with equal weight (=1).
+##          A named list can be provided with the desired relative weights. For
+##          example, 'list(SCALE_SCORE=3, FREE_REDUCED_LUNCH_STATUS=2, SCHOOL_NUMBER=1)'
+##          will weight a student's scale scores by a factor of 3 and FRL by 2,
+##          with all (any other ampute.vars) remaining at the default of 1. In
+##          this example, this includes any school level aggregates.  Note that
+##          differential weights for institutions should be placed at the end of
+##          the list.  If institution IDs (e.g., SCHOOL_NUMBER) are omitted from
+##          the list, the aggregates will be given the same weight as the
+##          associated student level variable.  In the given example, SCALE_SCORE
+##          and school mean scale score would be given a relative weight of 3.
+##        - This argument is ignored when `ampute.vars = NULL`.
+
+##    reverse.weight = "SCALE_SCORE"
+##        - The current default for ampute.args$type is "RIGHT", which means that
+##          students with high weighted scores have the highest probability for
+##          amputation.  This makes sense for high % FRL schools, but not for high
+##          achieving students and/or students in high achieving schools. This
+##          function inverses the variable(s) individual (and institutional mean)
+##          value(s) so that higher weight is given to lower scores/means.
+##        - This argument is ignored when `ampute.vars = NULL`.
 
 ##    ampute.args = list(prop=0.3, type="RIGHT")
 ##        - variables to be used in the mice:ampute.continuous function.  Currenly
@@ -78,14 +104,6 @@ args(amputeScaleScore)
 ##          data, which creates wholes for students with incomplete longitudinal
 ##          records.  This part of the function fills in these wholes for students
 ##          with existing missing data.
-
-##    reverse.scale.score.tail = TRUE
-##        - The current default for ampute.args$type is "RIGHT", which means that
-##          students with high weighted scores have the highest probability for
-##          amputation.  This makes sense for high % FRL schools, but not for high
-##          achieving students and/or students in high achieving schools. When TRUE
-##          this function inverses the scale scores/mean scores so that higher weight
-##          is given to lower scores/means.
 
 ##    invalidate.repeater.dups = TRUE
 ##        - Students who repeat a grade will get missing data rows inserted for
@@ -119,11 +137,10 @@ require(data.table)
 
 ###   We'll use a copy of the SGPdata::sgpData_LONG_COVID.  We'll also add
 ###   duplicate SCALE_SCORE and ACHIEVEMENT_LEVEL variables to compare with what
-###   has been amputated.  Its important not to name these in very similar ways
-###   to the original (e.g. SCALE_SCORE_ACTUAL will mess things up!).
+###   has been amputated.
 
 new_covid_data <- data.table::copy(SGPdata::sgpData_LONG_COVID)[,
-                                     SS_ACTUAL := SCALE_SCORE][,
+                                     SCALE_SCORE_ACTUAL := SCALE_SCORE][,
                                      ACH_LEV_ACTUAL := ACHIEVEMENT_LEVEL]
 
 ###   Read in STEP 0 SGP configuration scripts
@@ -165,9 +182,9 @@ priors_to_add <- new_covid_data[YEAR == "2019" & GRADE %in% c("7", "8")]
 MM = 10
 
 ##    Also need to add in the additiona variable names that we want returned in
-##    the data (SS_ACTUAL and ACH_LEV_ACTUAL).  We'll add those to the `default.vars`
+##    the data (SCALE_SCORE_ACTUAL and ACH_LEV_ACTUAL).  We'll add those to the `default.vars`
 
-table(Test_Data_LONG[[1]][!is.na(SCALE_SCORE) & is.na(SS_ACTUAL), GRADE, YEAR])  # nothing here - didn't return "SS_ACTUAL"
+table(Test_Data_LONG[[1]][!is.na(SCALE_SCORE) & is.na(SCALE_SCORE_ACTUAL), GRADE, YEAR])  # nothing here - didn't return "SCALE_SCORE_ACTUAL"
 
 
 ###   Run 10 amputations with added priors
@@ -178,7 +195,7 @@ Test_Data_LONG <- amputeScaleScore(
                         status.config = status_config_2021,
                         M=MM,
                         default.vars = c("CONTENT_AREA", "GRADE",
-                                         "SCALE_SCORE", "SS_ACTUAL",
+                                         "SCALE_SCORE", "SCALE_SCORE_ACTUAL",
                                          "ACHIEVEMENT_LEVEL", "ACH_LEV_ACTUAL"))
 
 ##    All 2019 prior scores are now added
@@ -186,8 +203,8 @@ table(Test_Data_LONG[[1]][, GRADE, YEAR])
 table(Test_Data_LONG[[10]][, GRADE, YEAR])
 
 ##    Total missing scores in 2021 (note that we still have their "actual" score)
-table(Test_Data_LONG[[3]][is.na(SCALE_SCORE) & !is.na(SS_ACTUAL), GRADE, YEAR])
-table(Test_Data_LONG[[3]][is.na(SCALE_SCORE) & !is.na(SS_ACTUAL), GRADE, CONTENT_AREA])
+table(Test_Data_LONG[[3]][is.na(SCALE_SCORE) & !is.na(SCALE_SCORE_ACTUAL), GRADE, YEAR])
+table(Test_Data_LONG[[3]][is.na(SCALE_SCORE) & !is.na(SCALE_SCORE_ACTUAL), GRADE, CONTENT_AREA])
 
 ##    Inspect score missingness for all amputations
 for (m in seq(MM)) {print(Test_Data_LONG[[m]][YEAR == "2021" & VALID_CASE == "VALID_CASE",
@@ -214,7 +231,7 @@ require(VIM)
 
 ###   Visualizations are easier with WIDE data, so we'll widen our datasets first.
 
-long.to.wide.vars <- c("GRADE", "SCALE_SCORE", "SS_ACTUAL",
+long.to.wide.vars <- c("GRADE", "SCALE_SCORE", "SCALE_SCORE_ACTUAL",
                        "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "ETHNICITY")
 
 ###  Create a wide data set from each M amputated data sets
@@ -280,7 +297,7 @@ scattmatrixMiss(as.data.frame(sgpData_WIDE_COVID[, c("SCALE_SCORE.2019", "SCALE_
 ###   Compare those with what we have in one of our amputated datasets:
 ###   Change m to see results from other amputations, and run the same plot types
 ###   for unaltered/amputed data back to back...
-histMiss(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE.2019", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
+histMiss(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE.2019", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE, only.miss=FALSE)
 marginplot(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE.2019", "SCALE_SCORE.2021")]))
 scattmatrixMiss(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE.2019", "SCALE_SCORE.2021")]), interactive=FALSE)
 
@@ -302,8 +319,15 @@ scattmatrixMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "8" & CONTENT_AR
 ###   is highly correlated with unobserved (current) score because we've used prior
 ###   scores to determine the probability of missingness.  Given their high correlation
 ###   we see that play out in the amputed data as well.
-histMiss(as.data.frame(Test_Data_WIDE[[m]][, c("SS_ACTUAL.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
-marginplot(as.data.frame(Test_Data_WIDE[[m]][, c("SS_ACTUAL.2021", "SCALE_SCORE.2021")]))
+
+histMiss(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE_ACTUAL.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
+
+##    The "marginplot" shows that the "observed" 2021 scores are identical to the
+##    "actual" scores (blue dots along a perfect diagonal) - those are unaltered.
+##    The distribution of the missing scores is skewed towards the lower end of
+##    achievement according to the (red) boxplot.
+
+marginplot(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE_ACTUAL.2021", "SCALE_SCORE.2021")]))
 
 
 #####
@@ -321,8 +345,8 @@ for (m in seq(MM)) {
   sch_mean <- Test_Data_LONG[[m]][YEAR %in% c("2019", "2021"), list(
     Mean_SS_SCHOOL = mean(SCALE_SCORE, na.rm=TRUE),
     SD_SS_SCHOOL = sd(SCALE_SCORE, na.rm=TRUE),
-    Mean_SS_SCHOOL_ACTUAL = mean(SS_ACTUAL, na.rm=TRUE),
-    SD_SS_SCHOOL_ACTUAL = sd(SS_ACTUAL, na.rm=TRUE),
+    Mean_SS_SCHOOL_ACTUAL = mean(SCALE_SCORE_ACTUAL, na.rm=TRUE),
+    SD_SS_SCHOOL_ACTUAL = sd(SCALE_SCORE_ACTUAL, na.rm=TRUE),
     N = .N, PRESENT = sum(!is.na(SCALE_SCORE)),
     MISSING = sum(is.na(SCALE_SCORE))), keyby = c("YEAR", "CONTENT_AREA", "GRADE", "SCHOOL_NUMBER")]
 
