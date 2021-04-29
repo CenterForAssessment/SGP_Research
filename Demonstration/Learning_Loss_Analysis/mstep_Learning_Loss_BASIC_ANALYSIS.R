@@ -48,6 +48,12 @@ print("END STEP 2, PART A")
 setwd("Step_2_Baseline_Creation")
 print("BEGIN STEP 2, PART B")
 source("Demonstration_COVID_Baseline_PART_B_2019_Growth_Percentiles.R")
+
+for(d in c("ELA.2019.BASELINE", "MATHEMATICS.2019.BASELINE")) {
+  if(!dir.exists(file.path(output.directory, "Goodness_of_Fit", d))) dir.create(file.path(output.directory, "Goodness_of_Fit", d), recursive = TRUE)
+  file.copy(file.path("Goodness_of_Fit", d),
+            file.path(output.directory, "Goodness_of_Fit"), recursive = TRUE)
+}
 print("END STEP 2, PART B")
 
 # PART C
@@ -107,3 +113,10 @@ for(d in c("ELA.2023", "ELA.2023.BASELINE", "MATHEMATICS.2023", "MATHEMATICS.202
             file.path(output.directory, "Goodness_of_Fit"), recursive = TRUE)
 }
 print("END STEP 5")
+
+
+## STEP 6
+setwd("Step_6_Summary_Comparisons")
+print("BEGIN STEP 6")
+source("Demonstration_COVID_Summary_Comparisons_2021_BASIC.R")
+print("END STEP 6")

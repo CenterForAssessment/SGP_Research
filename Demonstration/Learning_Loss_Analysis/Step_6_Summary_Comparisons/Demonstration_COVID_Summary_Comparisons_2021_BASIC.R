@@ -5,25 +5,33 @@
 ###
 ################################################################################
 
+### Get output_directory set up for analyses
+if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
+
+
 ### Load packages
 
 require(SGP)
 require(cfaTools)
 require(data.table)
-#debug(bootstrapSRS_SGP)
 
 setwd("..")
 
 ### Load Data
 
-load("Data/BASIC_ANALYSIS/Demonstration_COVID_SGP_2021_STEP_3c.Rdata")
+load(file.path(output.directory, "Demonstration_COVID_SGP_2021_STEP_3c.Rdata"))
 
 
 ### bootstrapSRS_SGP
 
-tmp.summaries <- bootstrapSRS_SGP(
+Demonstration_COVID_SGP_Summaries_STEP_6 <- bootstrapSRS_SGP(
                                 sgp_object=Demonstration_COVID_SGP,
                                 strata_variables=c("ETHNICITY", "FREE_REDUCED_LUNCH_STATUS", "SCALE_SCORE_DECILE"),
                                 strata_proportions_years="2021",
                                 summary_years="2021",
                                 sample_size=10000)
+
+
+### Save results
+
+save(Demonstration_COVID_SGP_Summaries_STEP_6, file=file.path(output.directory, "Demonstration_COVID_SGP_Summaries_STEP_6.Rdata"))
