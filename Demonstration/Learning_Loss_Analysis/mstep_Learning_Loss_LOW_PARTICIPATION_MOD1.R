@@ -73,8 +73,7 @@ source("Demonstration_COVID_SGP_2021_PART_A.R")
 
 for(d in c("ELA.2021", "ELA.2021.BASELINE", "MATHEMATICS.2021", "MATHEMATICS.2021.BASELINE")) {
   if(!dir.exists(file.path(output.directory, "Goodness_of_Fit", d))) dir.create(file.path(output.directory, "Goodness_of_Fit", d), recursive = TRUE)
-  file.copy(file.path("Goodness_of_Fit", d),
-            file.path(output.directory, "Goodness_of_Fit"), recursive = TRUE)
+  file.copy(file.path("Goodness_of_Fit", d), file.path(output.directory, "Goodness_of_Fit"), recursive=TRUE)
 }
 
 print("END STEP 3, PART A")
@@ -104,3 +103,14 @@ print("END STEP 3, PART A")
 #print("BEGIN STEP 5")
 #source("Demonstration_COVID_SGP_2023.R")
 #print("END STEP 5")
+
+
+## STEP 6
+setwd("Step_6_Summary_Comparisons")
+print("BEGIN STEP 6")
+source("Demonstration_COVID_Summary_Comparisons_2021.R")
+print("END STEP 6")
+
+## CLEANUP
+
+unlink("Goodness_of_Fit", recursive=TRUE)

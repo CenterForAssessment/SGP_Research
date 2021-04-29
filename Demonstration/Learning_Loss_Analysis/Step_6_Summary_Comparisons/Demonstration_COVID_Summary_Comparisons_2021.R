@@ -24,7 +24,7 @@ load(file.path(output.directory, "Demonstration_COVID_SGP_2021_STEP_3a.Rdata"))
 
 ### bootstrapSRS_SGP
 
-Demonstration_COVID_SGP_Summaries_STEP_6 <- bootstrapSRS_SGP(
+Demonstration_COVID_SGP_Summaries_MODIFIED_STEP_6 <- bootstrapSRS_SGP(
                                 sgp_object=Demonstration_COVID_SGP,
                                 strata_variables=c("ETHNICITY", "FREE_REDUCED_LUNCH_STATUS", "SCALE_SCORE_DECILE"),
                                 strata_proportions_years="2021",
@@ -32,6 +32,13 @@ Demonstration_COVID_SGP_Summaries_STEP_6 <- bootstrapSRS_SGP(
                                 sample_size=10000)
 
 
+### Merge in BASIC summaries for comparison
+
+load(file.path("Data/BASIC_ANALYSIS/Demonstration_COVID_SGP_Summaries_STEP_6.Rdata"))
+setnames(Demonstration_COVID_SGP_Summaries_STEP_6, c("MEAN_SCALE_SCORE", "MEAN_SGP"), c("MEAN_SCALE_SCORE_ACTUAL", "MEAN_SGP_ACTUAL"))
+Demonstration_COVID_SGP_Summaries_MODIFIED_STEP_6[,c("MEAN_SCALE_SCORE_ACTUAL", "MEAN_SGP_ACTUAL"):=Demonstration_COVID_SGP_Summaries_STEP_6[,c("MEAN_SCALE_SCORE_ACTUAL", "MEAN_SGP_ACTUAL")]]
+setcolorder(Demonstration_COVID_SGP_Summaries_MODIFIED_STEP_6, c("CONTENT_AREA", "YEAR", "GRADE", "MEAN_SCALE_SCORE_ACTUAL", "MEAN_SCALE_SCORE", "MEAN_SCALE_SCORE_INFERRED", "MEAN_SGP_ACTUAL", "MEAN_SGP", "MEAN_SGP_INFERRED", "MEAN_SCALE_SCORE_INFERRED_SE", "MEAN_SGP_INFERRED_SE"))
+
 ### Save results
 
-save(Demonstration_COVID_SGP_Summaries_STEP_6, file=file.path(output.directory, "Demonstration_COVID_SGP_Summaries_STEP_6.Rdata"))
+save(Demonstration_COVID_SGP_Summaries_MODIFIED_STEP_6, file=file.path(output.directory, "Demonstration_COVID_SGP_Summaries_MODIFIED_STEP_6.Rdata"))
