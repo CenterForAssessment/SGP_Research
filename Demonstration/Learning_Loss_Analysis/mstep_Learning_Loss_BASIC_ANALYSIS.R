@@ -115,3 +115,8 @@ setwd("Step_6_Summary_Comparisons")
 print("BEGIN STEP 6")
 source("Demonstration_COVID_Summary_Comparisons_2021_BASIC.R")
 print("END STEP 6")
+
+
+## CLEANUP
+
+unlink("Goodness_of_Fit", recursive=TRUE)

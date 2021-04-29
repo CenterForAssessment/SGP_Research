@@ -141,3 +141,9 @@ output.directory <- "Data/LOW_PARTICIPATION_AMPUTE"
 # print("BEGIN STEP 5")
 # source("Demonstration_COVID_SGP_2023.R")
 # print("END STEP 5")
+
+
+
+## CLEANUP
+
+unlink("Goodness_of_Fit", recursive=TRUE)
