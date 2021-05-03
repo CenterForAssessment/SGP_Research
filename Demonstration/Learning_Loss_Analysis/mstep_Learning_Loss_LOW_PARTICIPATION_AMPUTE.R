@@ -8,6 +8,8 @@
 ###   Setup input/output.directory
 input.directory <- "Data/BASIC_ANALYSIS"
 output.directory <- "Data/LOW_PARTICIPATION_AMPUTE"
+output.file <- "Amputed_Data_LONG_with_argument_list.Rdata"
+
 
 ### Setup parallel.config
 parallel.config <- list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, BASELINE_PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4))

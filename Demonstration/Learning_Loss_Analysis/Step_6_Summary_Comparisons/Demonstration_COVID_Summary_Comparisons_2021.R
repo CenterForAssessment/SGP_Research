@@ -7,6 +7,7 @@
 
 ### Get output_directory set up for analyses
 if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
+if (!exists("output.file")) output.file <- "Demonstration_COVID_SGP_2021_STEP_3a.Rdata"
 
 
 ### Load packages
@@ -19,7 +20,7 @@ setwd("..")
 
 ### Load Data
 
-load(file.path(output.directory, "Demonstration_COVID_SGP_2021_STEP_3a.Rdata"))
+load(file.path(output.directory, output.file))
 
 ### Define parameters
 
