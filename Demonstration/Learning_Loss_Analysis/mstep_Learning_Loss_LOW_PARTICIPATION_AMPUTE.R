@@ -163,7 +163,6 @@ for (MM in 1:length(Amputed_Data_LONG)) {
   setwd("Step_3_Skip_Year_Analyses")
   print(paste("BEGIN STEP 3, PART A, Amputed dataset", MM))
   source("Demonstration_COVID_SGP_2021_PART_A.R")
-  print(paste("END STEP 3, PART A, Amputed dataset", MM))
 
   outputSGP(Demonstration_COVID_SGP, output.type="LONG_Data", outputSGP.directory=output.directory)
   step_3a_file <- file.path(output.directory, "Demonstration_COVID_SGP_LONG_Data.Rdata")
@@ -175,6 +174,7 @@ for (MM in 1:length(Amputed_Data_LONG)) {
               file.path(output.directory, "Goodness_of_Fit"), recursive = TRUE)
   }
   rm(Demonstration_COVID_SGP);gc()
+  print(paste("END STEP 3, PART A, Amputed dataset", MM))
 }
 message("\n\tMstep with ", length(Amputed_Data_LONG), " datasets for STEP 3, PART A completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.at.overall)))
 
