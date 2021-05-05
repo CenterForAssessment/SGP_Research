@@ -14,7 +14,10 @@
 `%w/o%` <- function(x,y) x[!x %in% y]
 
 ###   Setup input/output.directory
-input.directory <- output.directory <- file.path("Data", "LOW_PARTICIPATION_AMPUTE")
+input.directory <- "Data/BASIC_ANALYSIS"
+output.directory <- "Data/LOW_PARTICIPATION_AMPUTE"
+output.file <- "Amputed_Data_LONG_with_argument_list.Rdata"
+
 
 ### Setup parallel.config
 if (!exists("cores")) cores <- 4
@@ -204,3 +207,9 @@ output.directory <- "Data/LOW_PARTICIPATION_AMPUTE"
 # print("BEGIN STEP 5")
 # source("Demonstration_COVID_SGP_2023.R")
 # print("END STEP 5")
+
+
+
+## CLEANUP
+
+unlink("Goodness_of_Fit", recursive=TRUE)

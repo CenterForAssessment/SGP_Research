@@ -31,8 +31,7 @@ source("Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R")
 
 for(d in c("ELA.2017", "ELA.2018", "ELA.2019", "MATHEMATICS.2017", "MATHEMATICS.2018", "MATHEMATICS.2019")) {
   if(!dir.exists(file.path(output.directory, "Goodness_of_Fit", d))) dir.create(file.path(output.directory, "Goodness_of_Fit", d), recursive = TRUE)
-  file.copy(file.path("Goodness_of_Fit", d),
-            file.path(output.directory, "Goodness_of_Fit"), recursive = TRUE)
+  file.copy(file.path("Goodness_of_Fit", d), file.path(output.directory, "Goodness_of_Fit"), recursive=TRUE)
 }
 print("END STEP 1")
 
@@ -48,6 +47,11 @@ print("END STEP 2, PART A")
 setwd("Step_2_Baseline_Creation")
 print("BEGIN STEP 2, PART B")
 source("Demonstration_COVID_Baseline_PART_B_2019_Growth_Percentiles.R")
+
+for(d in c("ELA.2019.BASELINE", "MATHEMATICS.2019.BASELINE")) {
+  if(!dir.exists(file.path(output.directory, "Goodness_of_Fit", d))) dir.create(file.path(output.directory, "Goodness_of_Fit", d), recursive = TRUE)
+  file.copy(file.path("Goodness_of_Fit", d), file.path(output.directory, "Goodness_of_Fit"), recursive=TRUE)
+}
 print("END STEP 2, PART B")
 
 # PART C
@@ -65,8 +69,7 @@ source("Demonstration_COVID_SGP_2021_PART_A.R")
 
 for(d in c("ELA.2021", "ELA.2021.BASELINE", "MATHEMATICS.2021", "MATHEMATICS.2021.BASELINE")) {
   if(!dir.exists(file.path(output.directory, "Goodness_of_Fit", d))) dir.create(file.path(output.directory, "Goodness_of_Fit", d), recursive = TRUE)
-  file.copy(file.path("Goodness_of_Fit", d),
-            file.path(output.directory, "Goodness_of_Fit"), recursive = TRUE)
+  file.copy(file.path("Goodness_of_Fit", d), file.path(output.directory, "Goodness_of_Fit"), recursive=TRUE)
 }
 print("END STEP 3, PART A")
 
@@ -90,8 +93,7 @@ source("Demonstration_COVID_SGP_2022.R")
 
 for(d in c("ELA.2022", "ELA.2022.BASELINE", "MATHEMATICS.2022", "MATHEMATICS.2022.BASELINE")) {
   if(!dir.exists(file.path(output.directory, "Goodness_of_Fit", d))) dir.create(file.path(output.directory, "Goodness_of_Fit", d), recursive = TRUE)
-  file.copy(file.path("Goodness_of_Fit", d),
-            file.path(output.directory, "Goodness_of_Fit"), recursive = TRUE)
+  file.copy(file.path("Goodness_of_Fit", d), file.path(output.directory, "Goodness_of_Fit"), recursive=TRUE)
 }
 print("END STEP 4")
 
@@ -103,7 +105,18 @@ source("Demonstration_COVID_SGP_2023.R")
 
 for(d in c("ELA.2023", "ELA.2023.BASELINE", "MATHEMATICS.2023", "MATHEMATICS.2023.BASELINE")) {
   if(!dir.exists(file.path(output.directory, "Goodness_of_Fit", d))) dir.create(file.path(output.directory, "Goodness_of_Fit", d), recursive = TRUE)
-  file.copy(file.path("Goodness_of_Fit", d),
-            file.path(output.directory, "Goodness_of_Fit"), recursive = TRUE)
+  file.copy(file.path("Goodness_of_Fit", d), file.path(output.directory, "Goodness_of_Fit"), recursive=TRUE)
 }
 print("END STEP 5")
+
+
+## STEP 6
+setwd("Step_6_Summary_Comparisons")
+print("BEGIN STEP 6")
+source("Demonstration_COVID_Summary_Comparisons_2021_BASIC.R")
+print("END STEP 6")
+
+
+## CLEANUP
+
+unlink("Goodness_of_Fit", recursive=TRUE)
