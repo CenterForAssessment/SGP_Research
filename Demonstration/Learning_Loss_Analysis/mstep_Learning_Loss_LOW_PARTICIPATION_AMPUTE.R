@@ -70,6 +70,8 @@ custom.ampSS.arg.list <- list(
 ###   Conduct Analysis Steps in Sequence
 #####
 
+started.at.overall <- proc.time()
+
 ##    STEP 0
 base.directory <- output.directory
 output.directory <- file.path(base.directory, paste0("MISSING_", custom.ampSS.arg.list$ampute.args$prop*100))
@@ -78,8 +80,6 @@ print("BEGIN STEP 0")
 source("Demonstration_COVID_LOW_PARTICIPATION_AMPUTE.R")
 print("END STEP 0")
 
-
-started.at.overall <- proc.time()
 
 if (run_prelim_steps) {
   output.directory <- file.path(base.directory, "Pre_COVID")
