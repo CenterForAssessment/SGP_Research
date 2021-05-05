@@ -14,9 +14,7 @@
 `%w/o%` <- function(x,y) x[!x %in% y]
 
 ###   Setup input/output.directory
-input.directory <- "Data/BASIC_ANALYSIS"
-output.directory <- "Data/LOW_PARTICIPATION_AMPUTE"
-output.file <- "Amputed_Data_LONG_with_argument_list.Rdata"
+input.directory <- output.directory <- file.path("Data", "LOW_PARTICIPATION_AMPUTE")
 
 
 ### Setup parallel.config
