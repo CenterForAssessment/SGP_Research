@@ -147,6 +147,11 @@ if (run_prelim_steps) {
   complete_sgps <- Demonstration_COVID_SGP@Data[YEAR=='2021' & !is.na(SGP), c("VALID_CASE", "ID", "YEAR", "CONTENT_AREA", "GRADE", "SCALE_SCORE_COMPLETE", "SGP", "SGP_BASELINE"),]
   setnames(complete_sgps, c("SGP", "SGP_BASELINE"), c("SGP_COMPLETE", "SGP_BASELINE_COMPLETE"))
   setkeyv(complete_sgps, c("VALID_CASE", "ID", "YEAR", "CONTENT_AREA", "GRADE", "SCALE_SCORE_COMPLETE"))
+} else {
+  load(file.path(base.directory, "Pre_COVID", "Demonstration_COVID_SGP_2021_STEP_3a.Rdata"))
+  complete_sgps <- Demonstration_COVID_SGP@Data[YEAR=='2021' & !is.na(SGP), c("VALID_CASE", "ID", "YEAR", "CONTENT_AREA", "GRADE", "SCALE_SCORE_COMPLETE", "SGP", "SGP_BASELINE"),]
+  setnames(complete_sgps, c("SGP", "SGP_BASELINE"), c("SGP_COMPLETE", "SGP_BASELINE_COMPLETE"))
+  setkeyv(complete_sgps, c("VALID_CASE", "ID", "YEAR", "CONTENT_AREA", "GRADE", "SCALE_SCORE_COMPLETE"))
 }
 
 ## STEP 3 (2021)
