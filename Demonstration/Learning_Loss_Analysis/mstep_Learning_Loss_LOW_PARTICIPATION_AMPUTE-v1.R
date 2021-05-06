@@ -128,8 +128,22 @@ output.directory <- "Data/LOW_PARTICIPATION_AMPUTE"
 # print("BEGIN STEP 3, PART C")
 # source("Demonstration_COVID_SGP_2021_PART_C.R")
 # print("END STEP 3, PART A")
-#
-#
+
+# PART D (Create summaries)
+
+setwd(" Step_3d_Summary_Results")
+print("BEGIN STEP 3, PART D, MCAR")
+output.file.directories <- "MCAR"
+source("Demonstration_COVID_Summary_Comparisons_2021_AMPUTE_V1.R")
+print("END STEP 3, PART D, MCAR")
+
+setwd(" Step_3d_Summary_Results")
+print("BEGIN STEP 3, PART D, STATUS_w_DEMOG")
+output.file.directories <- "STATUS_w_DEMOG"
+source("Demonstration_COVID_Summary_Comparisons_2021_AMPUTE_V1.R")
+print("END STEP 3, PART D, STATUS_w_DEMOG")
+
+
 # ## STEP 4
 # setwd("Step_4_Recovery_Year_1")
 # print("BEGIN STEP 4")

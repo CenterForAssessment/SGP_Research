@@ -90,6 +90,12 @@ print("END STEP 3, PART A")
 #source("Demonstration_COVID_SGP_2021_PART_C.R")
 #print("END STEP 3, PART C")
 
+# PART D
+setwd("Step_3d_Summary_Results")
+print("BEGIN STEP 3, PART D")
+source("Demonstration_COVID_Summary_Comparisons_2021_MOD1.R")
+print("END STEP 3, PART D")
+
 
 ## STEP 4
 #setwd("Step_4_Recovery_Year_1")
@@ -104,12 +110,6 @@ print("END STEP 3, PART A")
 #source("Demonstration_COVID_SGP_2023.R")
 #print("END STEP 5")
 
-
-## STEP 6
-setwd("Step_6_Summary_Comparisons")
-print("BEGIN STEP 6")
-source("Demonstration_COVID_Summary_Comparisons_2021_MOD1.R")
-print("END STEP 6")
 
 ## CLEANUP
 

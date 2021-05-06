@@ -77,13 +77,20 @@ print("END STEP 3, PART A")
 setwd("Step_3_Skip_Year_Analyses")
 print("BEGIN STEP 3, PART B")
 source("Demonstration_COVID_SGP_2021_PART_B.R")
-print("END STEP 3, PART A")
+print("END STEP 3, PART C")
 
 # PART C
 setwd("Step_3_Skip_Year_Analyses")
 print("BEGIN STEP 3, PART C")
 source("Demonstration_COVID_SGP_2021_PART_C.R")
-print("END STEP 3, PART A")
+print("END STEP 3, PART C")
+
+# PART D (Create summaries)
+
+setwd(" Step_3d_Summary_Results")
+print("BEGIN STEP 3, PART D")
+source("Demonstration_COVID_Summary_Comparisons_2021_BASIC.R")
+print("END STEP 3, PART D")
 
 
 ## STEP 4
@@ -108,13 +115,6 @@ for(d in c("ELA.2023", "ELA.2023.BASELINE", "MATHEMATICS.2023", "MATHEMATICS.202
   file.copy(file.path("Goodness_of_Fit", d), file.path(output.directory, "Goodness_of_Fit"), recursive=TRUE)
 }
 print("END STEP 5")
-
-
-## STEP 6
-setwd("Step_6_Summary_Comparisons")
-print("BEGIN STEP 6")
-source("Demonstration_COVID_Summary_Comparisons_2021_BASIC.R")
-print("END STEP 6")
 
 
 ## CLEANUP
