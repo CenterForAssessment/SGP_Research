@@ -5,14 +5,21 @@
 ###
 ################################################################################
 
+###  Variables to define before running:
+##     - missing.type <- "MCAR" # Define missingness type
+##     - cores -- the number of parallel processes to use
+##     - run_prelim_steps <- FALSE # unless you want to run steps 1-2B again
+
+###   Utility functions from SGP package
+`%w/o%` <- function(x,y) x[!x %in% y]
+
 ###   Setup input/output.directory
-input.directory <- "Data/BASIC_ANALYSIS"
-output.directory <- "Data/LOW_PARTICIPATION_AMPUTE"
-output.file <- "Amputed_Data_LONG_with_argument_list.Rdata"
+input.directory <- output.directory <- file.path("Data", "LOW_PARTICIPATION_AMPUTE")
 
 
 ### Setup parallel.config
-parallel.config <- list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=4, BASELINE_PERCENTILES=4, PROJECTIONS=4, LAGGED_PROJECTIONS=4, SGP_SCALE_SCORE_TARGETS=4))
+if (!exists("cores")) cores <- 4
+parallel.config <- list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=cores, BASELINE_PERCENTILES=cores, PROJECTIONS=cores, LAGGED_PROJECTIONS=cores, SGP_SCALE_SCORE_TARGETS=cores))
 
 ###   Define missingness type (before sourcing mstep script!)
 # missing.type <- "MCAR"
@@ -24,9 +31,9 @@ if (missing.type=="MCAR") {
 }
 
 if (missing.type=="STATUS_w_GROWTH") {
-  my.amp.vars = c("SCHOOL_NUMBER", "SCALE_SCORE", "SGP_ACTUAL")
+  my.amp.vars = c("SCHOOL_NUMBER", "SCALE_SCORE", "SGP_COMPLETE")
   my.amp.weights = list(SCALE_SCORE=2, SCHOOL_NUMBER=1) # Put institution last (if used) # , SCHOOL_NUMBER=1
-  my.rev.weight = c("SCALE_SCORE", "SGP_ACTUAL")
+  my.rev.weight = c("SCALE_SCORE", "SGP_COMPLETE")
 }
 
 if (missing.type=="STATUS_w_DEMOG") {
@@ -37,14 +44,13 @@ if (missing.type=="STATUS_w_DEMOG") {
 
 ###   Set amputeScaleScore arguments (Some need to be changed in Step_0_Data_Modification/sgpData_LONG_COVID_LOW_PARTICIPATION_AMPUTE.R)
 custom.ampSS.arg.list <- list(
-  # ampute.data = XXX,     # (!) Set in sgpData_LONG_COVID_LOW_PARTICIPATION_AMPUTE.R
+  # ampute.data =     XXX, # (!) Set in sgpData_LONG_COVID_LOW_PARTICIPATION_AMPUTE.R
   # additional.data = XXX, # (!) Set in sgpData_LONG_COVID_LOW_PARTICIPATION_AMPUTE.R
-  # growth.config = XXX,   # (!) Set in sgpData_LONG_COVID_LOW_PARTICIPATION_AMPUTE.R
-  # status.config = XXX,   # (!) Set in sgpData_LONG_COVID_LOW_PARTICIPATION_AMPUTE.R
+  # growth.config =   XXX, # (!) Set in sgpData_LONG_COVID_LOW_PARTICIPATION_AMPUTE.R
+  # status.config =   XXX, # (!) Set in sgpData_LONG_COVID_LOW_PARTICIPATION_AMPUTE.R
   default.vars = c("CONTENT_AREA", "GRADE",
                    "SCALE_SCORE", "ACHIEVEMENT_LEVEL",
-                   "SCALE_SCORE_ACTUAL", "ACH_LEV_ACTUAL", # "ACTUAL" duplicate vars created in sgpData_LONG_COVID_LOW_PARTICIPATION_AMPUTE.R
-                   "SGP_ACTUAL", "SGP_BASELINE_ACTUAL"),  #  "ACTUAL" original vars renamed in sgpData_LONG_COVID_LOW_PARTICIPATION_AMPUTE.R
+                   "SCALE_SCORE_COMPLETE", "ACH_LEV_COMPLETE"), # "ACTUAL" duplicate vars created in sgpData_LONG_COVID_LOW_PARTICIPATION_AMPUTE.R
   demographics = c("FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS",
                    "IEP_STATUS", "ETHNICITY", "GENDER"),
   institutions = c("SCHOOL_NUMBER", "DISTRICT_NUMBER"),
@@ -52,6 +58,7 @@ custom.ampSS.arg.list <- list(
   ampute.var.weights = my.amp.weights,
   reverse.weight = my.rev.weight,
   ampute.args = list(prop=0.3, type="RIGHT"),
+  complete.cases.only = TRUE,
   partial.fill = TRUE,
   invalidate.repeater.dups = TRUE,
   seed = 4224L,
@@ -63,59 +70,119 @@ custom.ampSS.arg.list <- list(
 ###   Conduct Analysis Steps in Sequence
 #####
 
-##    STEP 0
+started.at.overall <- proc.time()
 
+##    STEP 0
+base.directory <- output.directory
+output.directory <- file.path(base.directory, paste0("MISSING_", custom.ampSS.arg.list$ampute.args$prop*100))
 setwd("Step_0_Data_Modification")
 print("BEGIN STEP 0")
 source("Demonstration_COVID_LOW_PARTICIPATION_AMPUTE.R")
 print("END STEP 0")
 
-# ## STEP 1 (2018)
-#setwd("Step_1_Pre_COVID")
-#print("BEGIN STEP 1")
-#source("Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R")
-#print("END STEP 1")
+
+if (run_prelim_steps) {
+  output.directory <- file.path(base.directory, "Pre_COVID")
+  # Choose one amputed dataset - all pre-covid now the same (possibly with reduced 2018/19 data)
+  Demonstration_COVID_Data_LONG <- rbindlist(list(
+      priors_to_add_1617, priors_to_add_2018, Amputed_Data_LONG[[3]][YEAR <= 2019]), use.names=TRUE)
+
+  ## STEP 1 (2018)
+  setwd("Step_1_Pre_COVID")
+  print("BEGIN STEP 1")
+  source("Demonstration_COVID_SGP_2017_to_2019_PreCOVID.R")
+  print("END STEP 1")
+
+  step_1_file <- file.path(output.directory, "Demonstration_COVID_SGP_STEP_1.Rdata")
+  file.remove(list.files(file.path(output.directory), full.names=TRUE) %w/o% step_1_file)
+
+  ## STEP 2 (2019)
+  # PART A
+
+  tmp.par.config <- parallel.config
+  if (!is.null(parallel.config)) {
+    parallel.config$WORKERS <- list(TAUS = max(unlist(parallel.config$WORKERS)))
+  }
+  setwd("Step_2_Baseline_Creation")
+  print("BEGIN STEP 2, PART A")
+  source("Demonstration_COVID_Baseline_PART_A_Matrix_Calculations.R")
+  print("END STEP 2, PART A")
+
+  tmp.par.config -> parallel.config
+  step_2a_file <- file.path(output.directory, "DEMO_COVID_Baseline_Matrices-SingleCohort.Rdata")
 
 
-# ## STEP 2 (2019)
-# # PART A
-#setwd("Step_2_Baseline_Creation")
-#print("BEGIN STEP 2, PART A")
-#source("Demonstration_COVID_Baseline_PART_A_Matrix_Calculations.R")
-#print("END STEP 2, PART A")
+  # PART B
+  setwd("Step_2_Baseline_Creation")
+  print("BEGIN STEP 2, PART B")
+  source("Demonstration_COVID_Baseline_PART_B_2019_Growth_Percentiles.R")
+  print("END STEP 2, PART B")
 
-# # PART B
-#setwd("Step_2_Baseline_Creation")
-#print("BEGIN STEP 2, PART B")
-#source("Demonstration_COVID_Baseline_PART_B_2019_Growth_Percentiles.R")
-#print("END STEP 2, PART B")
-
-# # PART C
-#setwd("Step_2_Baseline_Creation")
-#print("BEGIN STEP 2, PART C")
-#source("Demonstration_COVID_Baseline_PART_C_2019_Growth_Projections.R")
-#print("END STEP 2, PART C")
+  step_2b_file <- file.path(output.directory, "Demonstration_COVID_SGP_2019_STEP_2b.Rdata")
+  file.remove(list.files(file.path(output.directory), full.names=TRUE) %w/o% c(step_1_file, step_2a_file, step_2b_file))
 
 
-## STEP 3 (2021)
-# PART A
-started.at.overall <- proc.time()
-for (MM in 1:length(Amputed_Data_LONG)) {
-  Demonstration_COVID_Data_LONG_2021 <- Amputed_Data_LONG[[MM]][YEAR == "2021"]
-  output.directory <- file.path("Data", "LOW_PARTICIPATION_AMPUTE", missing.type, paste0("M_", MM))
-  if (!dir.exists(output.directory)) dir.create(output.directory, recursive = TRUE)
+  # PART C
+  setwd("Step_2_Baseline_Creation")
+  print("BEGIN STEP 2, PART C")
+  source("Demonstration_COVID_Baseline_PART_C_2019_Growth_Projections.R")
+  print("END STEP 2, PART C")
+
+  ## STEP 3 (2021) - "COMPLETE" data
+  # PART A
+  Demonstration_COVID_Data_LONG_2021 <- Amputed_Data_LONG[[3]][YEAR == "2021"] # Pick one
+  Demonstration_COVID_Data_LONG_2021[, SCALE_SCORE := SCALE_SCORE_COMPLETE]
+  input.directory <- file.path(base.directory, "Pre_COVID")
+
   setwd("Step_3_Skip_Year_Analyses")
-  print(paste("BEGIN STEP 3, PART A, Amputed dataset", MM))
+  print("BEGIN STEP 3, PART A, COMPLETE dataset")
   source("Demonstration_COVID_SGP_2021_PART_A.R")
-  print(paste("END STEP 3, PART A, Amputed dataset", MM))
+  print("END STEP 3, PART A, COMPLETE dataset")
 
   for(d in c("ELA.2021", "ELA.2021.BASELINE", "MATHEMATICS.2021", "MATHEMATICS.2021.BASELINE")) {
     if(!dir.exists(file.path(output.directory, "Goodness_of_Fit", d))) dir.create(file.path(output.directory, "Goodness_of_Fit", d), recursive = TRUE)
     file.copy(file.path("Goodness_of_Fit", d),
               file.path(output.directory, "Goodness_of_Fit"), recursive = TRUE)
   }
+  complete_sgps <- Demonstration_COVID_SGP@Data[YEAR=='2021' & !is.na(SGP), c("VALID_CASE", "ID", "YEAR", "CONTENT_AREA", "GRADE", "SCALE_SCORE_COMPLETE", "SGP", "SGP_BASELINE"),]
+  setnames(complete_sgps, c("SGP", "SGP_BASELINE"), c("SGP_COMPLETE", "SGP_BASELINE_COMPLETE"))
+  setkeyv(complete_sgps, c("VALID_CASE", "ID", "YEAR", "CONTENT_AREA", "GRADE", "SCALE_SCORE_COMPLETE"))
+} else {
+  load(file.path(base.directory, "Pre_COVID", "Demonstration_COVID_SGP_2021_STEP_3a.Rdata"))
+  complete_sgps <- Demonstration_COVID_SGP@Data[YEAR=='2021' & !is.na(SGP), c("VALID_CASE", "ID", "YEAR", "CONTENT_AREA", "GRADE", "SCALE_SCORE_COMPLETE", "SGP", "SGP_BASELINE"),]
+  setnames(complete_sgps, c("SGP", "SGP_BASELINE"), c("SGP_COMPLETE", "SGP_BASELINE_COMPLETE"))
+  setkeyv(complete_sgps, c("VALID_CASE", "ID", "YEAR", "CONTENT_AREA", "GRADE", "SCALE_SCORE_COMPLETE"))
+}
+
+## STEP 3 (2021)
+# PART A
+for (MM in 1:length(Amputed_Data_LONG)) {
+  Demonstration_COVID_Data_LONG_2021 <- Amputed_Data_LONG[[MM]][YEAR == "2021"]
+  setkeyv(Demonstration_COVID_Data_LONG_2021, c("VALID_CASE", "ID", "YEAR", "CONTENT_AREA", "GRADE", "SCALE_SCORE_COMPLETE"))
+  Demonstration_COVID_Data_LONG_2021 <- merge.data.table(Demonstration_COVID_Data_LONG_2021, complete_sgps, all.x=TRUE)
+
+  output.directory <- file.path(base.directory, paste0("MISSING_", custom.ampSS.arg.list$ampute.args$prop*100), missing.type, paste0("M_", MM))
+  input.directory <- file.path(base.directory, "Pre_COVID")
+
+  if (!dir.exists(output.directory)) dir.create(output.directory, recursive = TRUE)
+  setwd("Step_3_Skip_Year_Analyses")
+  print(paste("BEGIN STEP 3, PART A, Amputed dataset", MM))
+  source("Demonstration_COVID_SGP_2021_PART_A.R")
+
+  outputSGP(Demonstration_COVID_SGP, output.type="LONG_Data", outputSGP.directory=output.directory)
+  step_3a_file <- file.path(output.directory, "Demonstration_COVID_SGP_LONG_Data.Rdata")
+  file.remove(list.files(file.path(output.directory), full.names=TRUE) %w/o% step_3a_file)
+
+  for(d in c("ELA.2021", "ELA.2021.BASELINE", "MATHEMATICS.2021", "MATHEMATICS.2021.BASELINE")) {
+    if(!dir.exists(file.path(output.directory, "Goodness_of_Fit", d))) dir.create(file.path(output.directory, "Goodness_of_Fit", d), recursive = TRUE)
+    file.copy(file.path("Goodness_of_Fit", d),
+              file.path(output.directory, "Goodness_of_Fit"), recursive = TRUE)
+  }
+  rm(Demonstration_COVID_SGP);gc()
+  print(paste("END STEP 3, PART A, Amputed dataset", MM))
 }
 message("\n\tMstep with ", length(Amputed_Data_LONG), " datasets for STEP 3, PART A completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.at.overall)))
+
 output.directory <- "Data/LOW_PARTICIPATION_AMPUTE"
 
 # # PART B

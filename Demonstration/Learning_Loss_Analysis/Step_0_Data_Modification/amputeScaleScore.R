@@ -10,6 +10,7 @@
     ampute.var.weights = NULL, # list(SCALE_SCORE=3, FREE_REDUCED_LUNCH_STATUS=2, SCHOOL_NUMBER=1), # Put institution last (if used)
     reverse.weight = "SCALE_SCORE",
     ampute.args = list(prop=0.3, type="RIGHT"),
+    complete.cases.only = TRUE,
     partial.fill = TRUE,
     invalidate.repeater.dups = TRUE,
     seed = 4224L,
@@ -23,13 +24,8 @@
   ###   Utility functions from SGP package
   `%w/o%` <- function(x,y) x[!x %in% y]
 
-  `getKey` <- function(sgp_object) {
-  	if (is.SGP(sgp_object)) {
-  		if ("YEAR_WITHIN" %in% names(sgp_object@Data)) return(c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ID", "YEAR_WITHIN")) else return(c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ID"))
-  	}
-  	if (is.data.table(sgp_object)) {
-  		if ("YEAR_WITHIN" %in% names(sgp_object)) return(c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ID", "YEAR_WITHIN")) else return(c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ID"))
-  	}
+  `getKey` <- function(data) {
+		if ("YEAR_WITHIN" %in% names(data)) return(c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ID", "YEAR_WITHIN")) else return(c("VALID_CASE", "CONTENT_AREA", "YEAR", "GRADE", "ID"))
   } ### END getKey
 
   ###   Combine and augment config lists
@@ -80,12 +76,18 @@
       ###   convert long to wide
       tmp.wide <- dcast(tmp.long, ID ~ YEAR, sep=".", drop=FALSE, value.var=long.to.wide.vars)
 
-      ###   Exclude kids missing 2 or more most recent years
+      ###   Identify relevant years/scores
       prior.year <- tail(amp.iter$sgp.panel.years, 2)[1]
       current.year <- tail(amp.iter$sgp.panel.years, 1)
       prior.score <- paste("SCALE_SCORE", prior.year, sep=".")
       current.score <- paste("SCALE_SCORE", current.year, sep=".")
-      tmp.wide <- tmp.wide[!(is.na(get(prior.score)) & is.na(get(current.score))),]
+
+      ##    Remove existing missing (MCAR?) records (students without most recent prior.score and/or current.score)
+      if (complete.cases.only) {
+        tmp.wide <- tmp.wide[!(is.na(get(prior.score)) | is.na(get(current.score))),]
+      } else { # Exclude kids missing 2 or more most recent years (at a minimum)
+        tmp.wide <- tmp.wide[!(is.na(get(prior.score)) & is.na(get(current.score))),]
+      }
 
       if (partial.fill) {
         ###   Fill in missing content area and grades first
@@ -100,7 +102,9 @@
         ###   If using growth fill in missings with SGP = 50 to keep in complete data and give average weight
         if (any(grepl("^SGP", ampute.vars))) {
           tmp.growth.wide <- grep(prior.year, grep("^SGP", names(tmp.wide), value=TRUE), value=TRUE)
-          for (tgw in tmp.growth.wide) tmp.wide[is.na(get(tgw)), eval(tgw) := 50]
+          for (tgw in tmp.growth.wide) {
+            if (!all(is.na(tmp.wide[,get(tgw)]))) tmp.wide[is.na(get(tgw)), eval(tgw) := 50]
+          }
         }
 
         meas.list <- vector(mode = "list", length = length(long.to.wide.vars))
@@ -212,9 +216,9 @@
 
     ##    Subset out scale scores and demographics
     if (amp.iter$analysis.type == "GROWTH") {  #  done above for "STATUS"
-      ##    Convert character/factor to numeric (0/1) data
       wide.amp.vars <- paste(ampute.vars %w/o% institutions, prior.year, sep=".")
 
+      ##    Convert character/factor to numeric (0/1) data
       demog.amp.vars <- grep(paste(demographics, collapse="|"), wide.amp.vars, value=TRUE)
       if (length(demog.amp.vars) > 0) {
         for (demog in demog.amp.vars) {
@@ -222,6 +226,7 @@
         }
       }
 
+      ##    Reverse values requested
       if (!is.null(reverse.weight)) {
         for (rev.var in paste(reverse.weight, prior.year, sep=".")) {
           tmp.wide[, eval(rev.var) := -1*get(rev.var)]
@@ -246,17 +251,22 @@
       subset.wide <- na.omit(subset.wide)
 
       ##    Find the proportion relative to the complete data that needs to be amputated to give a total ~ ampute.args$prop
-      target.prop <- round((round(nrow(tmp.wide)*ampute.args$prop, 0)-sum(is.na(tmp.wide[[current.score]])))/nrow(subset.wide), 3)
+      if (!complete.cases.only) {
+        target.prop <- round((round(nrow(tmp.wide)*ampute.args$prop, 0)-sum(is.na(tmp.wide[[current.score]])))/nrow(subset.wide), 3)
+        ltol <- target.prop-c(0.06, rev(seq(0.001, 0.06, 0.0025)))
+        utol <- target.prop+c(0.06, rev(seq(0.001, 0.06, 0.0025)))
+      } else {
+        target.prop <- ampute.args$prop
+        ltol <- target.prop-c(0.03, rev(seq(0.001, 0.03, 0.00125)))
+        utol <- target.prop+c(0.03, rev(seq(0.001, 0.03, 0.00125)))
+      }
+
       if (target.prop < 0) {
         target.prop <- 0.001;too.low.tf <- TRUE
         pick.miss <- round(nrow(tmp.wide)*target.prop, 0)
         message("More than ", ampute.args$prop*100, "% missing cases already exist in Grade ", tail(amp.iter[["sgp.grade.sequences"]], 1), " ", tail(amp.iter[["sgp.content.areas"]], 1),
         " 'prop' will be temporarily set to 0.001 (0.1% - ", pick.miss, " records removed)")
-      } else {
-        ltol <- target.prop-c(0.06, rev(seq(0.001, 0.06, 0.0025)))
-        utol <- target.prop+c(0.06, rev(seq(0.001, 0.06, 0.0025)))
-        too.low.tf <- FALSE
-      }
+      } else too.low.tf <- FALSE
     } else {
       target.prop <- round((round(nrow(long.final)*ampute.args$prop, 0)-sum(is.na(long.final[, SCALE_SCORE])))/nrow(subset.wide), 3)
       ltol <- target.prop-c(0.03, rev(seq(0.001, 0.03, 0.00125)))

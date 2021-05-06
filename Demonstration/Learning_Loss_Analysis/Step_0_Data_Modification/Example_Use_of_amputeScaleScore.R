@@ -95,6 +95,14 @@ args(amputeScaleScore)
 ##          incomplete longitudinal data histories.  For example, if a cohort
 ##          starts with 5% students missing due to incomplete histories, an additional
 ##          25% will be made missing to get to the 30% (default) missingness.
+##        - This last point has been dealt with in some regards with the next
+##          (recently added) argument, which removes these cases first.
+
+##    complete.cases.only = TRUE
+##        - Should cases with the most recent prior and current score be removed?
+##        - This removes students with partial longitudinal histories from 2019
+##          to 2021, with the goal of ending up with a "complete" dataset that
+##          is easier to interpret.
 
 ##    partial.fill = TRUE
 ##        - Should an attempt be made to fill in some of the demographic and
@@ -140,8 +148,8 @@ require(data.table)
 ###   has been amputated.
 
 new_covid_data <- data.table::copy(SGPdata::sgpData_LONG_COVID)[,
-                                     SCALE_SCORE_ACTUAL := SCALE_SCORE][,
-                                     ACH_LEV_ACTUAL := ACHIEVEMENT_LEVEL]
+                                     SCALE_SCORE_COMPLETE := SCALE_SCORE][,
+                                     ACH_LEV_COMPLETE := ACHIEVEMENT_LEVEL]
 
 ###   Read in STEP 0 SGP configuration scripts
 source("SGP_CONFIG/STEP_0/Ampute_2021/Growth.R") # Based on STEP 3, PART A
@@ -182,9 +190,9 @@ priors_to_add <- new_covid_data[YEAR == "2019" & GRADE %in% c("7", "8")]
 MM = 10
 
 ##    Also need to add in the additiona variable names that we want returned in
-##    the data (SCALE_SCORE_ACTUAL and ACH_LEV_ACTUAL).  We'll add those to the `default.vars`
+##    the data (SCALE_SCORE_COMPLETE and ACH_LEV_COMPLETE).  We'll add those to the `default.vars`
 
-table(Test_Data_LONG[[1]][!is.na(SCALE_SCORE) & is.na(SCALE_SCORE_ACTUAL), GRADE, YEAR])  # nothing here - didn't return "SCALE_SCORE_ACTUAL"
+table(Test_Data_LONG[[1]][!is.na(SCALE_SCORE) & is.na(SCALE_SCORE_COMPLETE), GRADE, YEAR])  # nothing here - didn't return "SCALE_SCORE_COMPLETE"
 
 
 ###   Run 10 amputations with added priors
@@ -195,16 +203,16 @@ Test_Data_LONG <- amputeScaleScore(
                         status.config = status_config_2021,
                         M=MM,
                         default.vars = c("CONTENT_AREA", "GRADE",
-                                         "SCALE_SCORE", "SCALE_SCORE_ACTUAL",
-                                         "ACHIEVEMENT_LEVEL", "ACH_LEV_ACTUAL"))
+                                         "SCALE_SCORE", "SCALE_SCORE_COMPLETE",
+                                         "ACHIEVEMENT_LEVEL", "ACH_LEV_COMPLETE"))
 
 ##    All 2019 prior scores are now added
 table(Test_Data_LONG[[1]][, GRADE, YEAR])
 table(Test_Data_LONG[[10]][, GRADE, YEAR])
 
 ##    Total missing scores in 2021 (note that we still have their "actual" score)
-table(Test_Data_LONG[[3]][is.na(SCALE_SCORE) & !is.na(SCALE_SCORE_ACTUAL), GRADE, YEAR])
-table(Test_Data_LONG[[3]][is.na(SCALE_SCORE) & !is.na(SCALE_SCORE_ACTUAL), GRADE, CONTENT_AREA])
+table(Test_Data_LONG[[3]][is.na(SCALE_SCORE) & !is.na(SCALE_SCORE_COMPLETE), GRADE, YEAR])
+table(Test_Data_LONG[[3]][is.na(SCALE_SCORE) & !is.na(SCALE_SCORE_COMPLETE), GRADE, CONTENT_AREA])
 
 ##    Inspect score missingness for all amputations
 for (m in seq(MM)) {print(Test_Data_LONG[[m]][YEAR == "2021" & VALID_CASE == "VALID_CASE",
@@ -231,7 +239,7 @@ require(VIM)
 
 ###   Visualizations are easier with WIDE data, so we'll widen our datasets first.
 
-long.to.wide.vars <- c("GRADE", "SCALE_SCORE", "SCALE_SCORE_ACTUAL",
+long.to.wide.vars <- c("GRADE", "SCALE_SCORE", "SCALE_SCORE_COMPLETE",
                        "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "ETHNICITY")
 
 ###  Create a wide data set from each M amputated data sets
@@ -320,14 +328,14 @@ scattmatrixMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "8" & CONTENT_AR
 ###   scores to determine the probability of missingness.  Given their high correlation
 ###   we see that play out in the amputed data as well.
 
-histMiss(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE_ACTUAL.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
+histMiss(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
 
 ##    The "marginplot" shows that the "observed" 2021 scores are identical to the
 ##    "actual" scores (blue dots along a perfect diagonal) - those are unaltered.
 ##    The distribution of the missing scores is skewed towards the lower end of
 ##    achievement according to the (red) boxplot.
 
-marginplot(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE_ACTUAL.2021", "SCALE_SCORE.2021")]))
+marginplot(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]))
 
 
 #####
@@ -345,17 +353,17 @@ for (m in seq(MM)) {
   sch_mean <- Test_Data_LONG[[m]][YEAR %in% c("2019", "2021"), list(
     Mean_SS_SCHOOL = mean(SCALE_SCORE, na.rm=TRUE),
     SD_SS_SCHOOL = sd(SCALE_SCORE, na.rm=TRUE),
-    Mean_SS_SCHOOL_ACTUAL = mean(SCALE_SCORE_ACTUAL, na.rm=TRUE),
-    SD_SS_SCHOOL_ACTUAL = sd(SCALE_SCORE_ACTUAL, na.rm=TRUE),
+    Mean_SS_SCHOOL_COMPLETE = mean(SCALE_SCORE_COMPLETE, na.rm=TRUE),
+    SD_SS_SCHOOL_COMPLETE = sd(SCALE_SCORE_COMPLETE, na.rm=TRUE),
     N = .N, PRESENT = sum(!is.na(SCALE_SCORE)),
     MISSING = sum(is.na(SCALE_SCORE))), keyby = c("YEAR", "CONTENT_AREA", "GRADE", "SCHOOL_NUMBER")]
 
   school_means[[m]] <- dcast(sch_mean, CONTENT_AREA + GRADE + SCHOOL_NUMBER ~ YEAR,
-    value.var= c("Mean_SS_SCHOOL", "SD_SS_SCHOOL", "Mean_SS_SCHOOL_ACTUAL", "SD_SS_SCHOOL_ACTUAL", "N", "PRESENT", "MISSING"), sep=".", drop=FALSE)
+    value.var= c("Mean_SS_SCHOOL", "SD_SS_SCHOOL", "Mean_SS_SCHOOL_COMPLETE", "SD_SS_SCHOOL_COMPLETE", "N", "PRESENT", "MISSING"), sep=".", drop=FALSE)
 }
 
 school_means <- rbindlist(school_means)
-school_means[, c("Mean_SS_SCHOOL_ACTUAL.2019", "SD_SS_SCHOOL_ACTUAL.2019") := NULL]
+school_means[, c("Mean_SS_SCHOOL_COMPLETE.2019", "SD_SS_SCHOOL_COMPLETE.2019") := NULL]
 setkeyv(school_means, c("CONTENT_AREA", "GRADE", "SCHOOL_NUMBER"))
 
 pooled_school_means <- school_means[, list(
@@ -364,8 +372,8 @@ pooled_school_means <- school_means[, list(
   Mean_SS_SCHOOL__2021 = mean(Mean_SS_SCHOOL.2021, na.rm=TRUE),
   SD_Mean_SS_SCHOOL__2021 = sd(Mean_SS_SCHOOL.2021, na.rm=TRUE),
   Mean_SD_SCHOOL__2021 = mean(SD_SS_SCHOOL.2021, na.rm=TRUE),
-  Mean_SS_SCHOOL_ACTUAL__2021 = mean(Mean_SS_SCHOOL_ACTUAL.2021, na.rm=TRUE),
-  Mean_SD_SCHOOL_ACTUAL__2021 = mean(SD_SS_SCHOOL_ACTUAL.2021, na.rm=TRUE),
+  Mean_SS_SCHOOL_COMPLETE__2021 = mean(Mean_SS_SCHOOL_COMPLETE.2021, na.rm=TRUE),
+  Mean_SD_SCHOOL_COMPLETE__2021 = mean(SD_SS_SCHOOL_COMPLETE.2021, na.rm=TRUE),
   Mean_Present = mean(PRESENT.2021, na.rm=TRUE),
   Mean_Missing = mean(MISSING.2021, na.rm=TRUE)), keyby=c("CONTENT_AREA", "GRADE", "SCHOOL_NUMBER")]
 
@@ -374,9 +382,9 @@ pooled_school_means[(!is.na(Mean_SS_SCHOOL__2019) & !is.na(Mean_SS_SCHOOL__2021)
   as.list(summary(Mean_SS_SCHOOL__2021-Mean_SS_SCHOOL__2019, na.rm=TRUE)), keyby=c("CONTENT_AREA", "GRADE")]
 
 ###   Actual mean is smaller than in amputed
-pooled_school_means[(!is.na(Mean_SS_SCHOOL_ACTUAL__2021) & !is.na(Mean_SS_SCHOOL__2021)), # remove noted schools
-  as.list(summary(Mean_SS_SCHOOL_ACTUAL__2021-Mean_SS_SCHOOL__2021, na.rm=TRUE)), keyby=c("CONTENT_AREA", "GRADE")]
+pooled_school_means[(!is.na(Mean_SS_SCHOOL_COMPLETE__2021) & !is.na(Mean_SS_SCHOOL__2021)), # remove noted schools
+  as.list(summary(Mean_SS_SCHOOL_COMPLETE__2021-Mean_SS_SCHOOL__2021, na.rm=TRUE)), keyby=c("CONTENT_AREA", "GRADE")]
 
 ###   Actual standard deviation is larger than in amputed
-pooled_school_means[(!is.na(Mean_SD_SCHOOL_ACTUAL__2021) & !is.na(Mean_SD_SCHOOL__2021)), # remove noted schools
-  as.list(summary(Mean_SD_SCHOOL_ACTUAL__2021-Mean_SD_SCHOOL__2021, na.rm=TRUE)), keyby=c("CONTENT_AREA", "GRADE")]
+pooled_school_means[(!is.na(Mean_SD_SCHOOL_COMPLETE__2021) & !is.na(Mean_SD_SCHOOL__2021)), # remove noted schools
+  as.list(summary(Mean_SD_SCHOOL_COMPLETE__2021-Mean_SD_SCHOOL__2021, na.rm=TRUE)), keyby=c("CONTENT_AREA", "GRADE")]

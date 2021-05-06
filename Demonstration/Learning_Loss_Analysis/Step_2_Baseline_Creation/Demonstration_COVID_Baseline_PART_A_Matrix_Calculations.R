@@ -22,8 +22,9 @@ require(data.table)
 
 
 ###  Create a smaller subset of the LONG data to work with.
-Demonstration_COVID_Data_LONG <- data.table(sgpData_LONG_COVID[,
-	c("ID", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "VALID_CASE"),])
+if (!exists("Demonstration_COVID_Data_LONG"))
+	Demonstration_COVID_Data_LONG <- data.table(sgpData_LONG_COVID[,
+		c("ID", "CONTENT_AREA", "YEAR", "GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL", "VALID_CASE"),])
 
 
 ###   Read in Baseline SGP Configuration Scripts and Combine
@@ -48,8 +49,7 @@ DEMO_COVID_Baseline_Matrices <- baselineSGP(
 				return.matrices.only=TRUE,
 				calculate.baseline.sgps=FALSE,
 				goodness.of.fit.print=FALSE,
-				parallel.config=parallel.config  #  Optional parallel processing - see SGP
-				# 	 									 	 #  package documentation for details.
+				parallel.config=parallel.config  #  Optional parallel processing - see SGP package documentation for details.
 )
 
 

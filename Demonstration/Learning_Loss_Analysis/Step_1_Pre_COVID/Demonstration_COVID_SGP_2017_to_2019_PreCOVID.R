@@ -20,7 +20,8 @@ if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
 if (!exists("parallel.config")) parallel.config <- NULL
 
 ###   Create subset of pre-COVID (2016-2019) data
-Demonstration_COVID_Data_LONG <- sgpData_LONG_COVID[YEAR <= 2019]
+if (!exists("Demonstration_COVID_Data_LONG"))
+	Demonstration_COVID_Data_LONG <- sgpData_LONG_COVID[YEAR <= 2019]
 
 
 ###   Read in STEP 3 SGP Configuration Scripts and Combine
