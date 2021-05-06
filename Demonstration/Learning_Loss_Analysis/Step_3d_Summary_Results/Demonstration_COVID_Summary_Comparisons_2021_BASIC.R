@@ -26,12 +26,14 @@ load(file.path(output.directory, "Demonstration_COVID_SGP_2021_STEP_3a.Rdata"))
 aggregation_group <- c("CONTENT_AREA", "GRADE")
 
 
-### bootstrapSRS_SGP
+### bootstrapSRS_SGP (### NOTE USING CURRENT SCALE_SCORE_DECILE likely leads to biased proportions, especially if students have missing scores as in the COVID analyses)
 
-Demonstration_COVID_SGP_Summaries_STEP_6 <- bootstrapSRS_SGP(
+Demonstration_COVID_SGP_Summaries_STEP_3d <- bootstrapSRS_SGP(
                                 sgp_object=Demonstration_COVID_SGP,
+                                strata_summaries=c("STATUS", "GROWTH"),
                                 strata_variables=c("ETHNICITY", "FREE_REDUCED_LUNCH_STATUS", "SCALE_SCORE_DECILE"),
-                                strata_proportions_years="2021",
+                                strata_proportions_years_status="2019",
+                                strata_proportions_years_growth="2021",
                                 summary_years="2021",
                                 sample_size=10000,
                                 aggregation_group=aggregation_group)
@@ -39,4 +41,4 @@ Demonstration_COVID_SGP_Summaries_STEP_6 <- bootstrapSRS_SGP(
 
 ### Save results
 
-save(Demonstration_COVID_SGP_Summaries_STEP_6, file=file.path(output.directory, "Demonstration_COVID_SGP_Summaries_STEP_6.Rdata"))
+save(Demonstration_COVID_SGP_Summaries_STEP_3d, file=file.path(output.directory, "Demonstration_COVID_SGP_Summaries_STEP_3d.Rdata"))

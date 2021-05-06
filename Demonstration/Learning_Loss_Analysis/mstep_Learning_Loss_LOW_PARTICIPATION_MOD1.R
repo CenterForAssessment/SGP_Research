@@ -108,7 +108,7 @@ print("END STEP 3, PART A")
 ## STEP 6
 setwd("Step_6_Summary_Comparisons")
 print("BEGIN STEP 6")
-source("Demonstration_COVID_Summary_Comparisons_2021.R")
+source("Demonstration_COVID_Summary_Comparisons_2021_MOD1.R")
 print("END STEP 6")
 
 ## CLEANUP

@@ -144,7 +144,11 @@ output.directory <- "Data/LOW_PARTICIPATION_AMPUTE"
 # source("Demonstration_COVID_SGP_2023.R")
 # print("END STEP 5")
 
-
+## STEP 6
+setwd("Step_6_Summary_Comparisons")
+print("BEGIN STEP 6")
+source("Demonstration_COVID_Summary_Comparisons_2021_AMPUTE.R")
+print("END STEP 6")
 
 ## CLEANUP
 
