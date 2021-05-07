@@ -19,7 +19,7 @@ require(data.table)
 
 if (!exists("output.directory")) output.directory <- "Data/LOW_PARTICIPATION_AMPUTE/MISSING_30"
 if (!exists("output.file")) output.file <- "Demonstration_COVID_SGP_LONG_Data.Rdata"
-if (!exists("output.file.directories")) output.file.directories <- "MCAR" ##c("MCAR", "STATUS_w_DEMOG")
+if (!exists("output.file.directories")) output.file.directories <- "STATUS_w_DEMOG" ##c("MCAR", "STATUS_w_DEMOG")
 aggregation_group <- c("CONTENT_AREA", "GRADE")
 list_of_data_files_for_summary <- list()
 list_of_summary_files <- list()
