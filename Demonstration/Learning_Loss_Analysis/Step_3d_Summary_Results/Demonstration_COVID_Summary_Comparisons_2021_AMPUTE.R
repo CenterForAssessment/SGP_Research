@@ -17,6 +17,7 @@ require(data.table)
 
 ### Define parameters
 
+if (!exists("input.directory")) input.directory <- "Data/BASIC_ANALYSIS"
 if (!exists("output.directory")) output.directory <- "Data/LOW_PARTICIPATION_AMPUTE/MISSING_30"
 if (!exists("output.file")) output.file <- "Demonstration_COVID_SGP_LONG_Data.Rdata"
 if (!exists("output.file.directories")) output.file.directories <- "MCAR" ##c("MCAR", "STATUS_w_DEMOG")
@@ -27,7 +28,7 @@ list_of_summary_files <- list()
 
 ### Load Data
 
-load(file.path("Data/BASIC_ANALYSIS/Demonstration_COVID_SGP_Summaries_STEP_3d.Rdata"))
+load(file.path(input.directory, "Demonstration_COVID_SGP_Summaries_STEP_3d.Rdata"))
 setnames(Demonstration_COVID_SGP_Summaries_STEP_3d, c("MEAN_SCALE_SCORE", "MEAN_SGP", "MEAN_SGP_BASELINE"), c("MEAN_SCALE_SCORE_COMPLETE", "MEAN_SGP_COMPLETE", "MEAN_SGP_BASELINE_COMPLETE"))
 
 

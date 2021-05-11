@@ -53,8 +53,7 @@ Demonstration_COVID_SGP <- abcSGP(
         sgp.projections.lagged.baseline = FALSE,
         save.intermediate.results = FALSE,
         outputSGP.directory=output.directory,
-	parallel.config=parallel.config  #  Optional parallel processing - see SGP
-		# 	 									 	 #  package documentation for details.
+        parallel.config=parallel.config  #  Optional parallel processing - see SGP package documentation for details.
 )
 
 ###   Save results

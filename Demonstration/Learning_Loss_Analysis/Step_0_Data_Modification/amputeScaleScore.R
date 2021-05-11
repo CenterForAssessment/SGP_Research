@@ -1,6 +1,7 @@
 `amputeScaleScore` <- function(
     ampute.data = SGPdata::sgpData_LONG_COVID[YEAR <= 2021],
     additional.data = NULL,
+    compact.results = FALSE,
     growth.config = NULL,
     status.config = NULL,
     default.vars = c("CONTENT_AREA", "GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL"),
@@ -54,11 +55,14 @@
   long.to.wide.vars <- c(default.vars, institutions, demographics)
   if (any(!ampute.vars %in% long.to.wide.vars)) {
     vars.to.add <- ampute.vars[!ampute.vars %in% long.to.wide.vars]
+    long.to.wide.vars <- c(long.to.wide.vars, vars.to.add)
     message("\n\tampute.vars", vars.to.add, "not included in appropriate variable argument.  It has been temporarily added to the list of variables to return.")
   }
 
   ###   Cycle through amp.config to amputate by cohort
-  amp.list <- vector(mode = "list", length = M)
+  if (compact.results) {
+    amp.list <- vector(mode = "list", length = length(amp.config))
+  } else amp.list <- vector(mode = "list", length = M)
 
   for (K in seq(amp.config)) {
     amp.iter <- amp.config[[K]]
@@ -187,13 +191,19 @@
           # smry_eval_expression <- paste0("PERCENT_", gsub("_STATUS", "", demog.amp.vars), "_", strsplit(inst, "_")[[1]][1],
           #     " = ", "(100*(sum(",demog.amp.vars,")/.N))")
           # smry_eval_expression <- c(paste0("MEAN_SS", "_", strsplit(inst, "_")[[1]][1], " = ", "mean(SCALE_SCORE, na.rm=TRUE)"), smry_eval_expression)
-          smry_eval_expression <- paste0("TMP_IMV_", ampute.vars %w/o% institutions, "_", inst, " = ", "mean(", ampute.vars %w/o% institutions, ", na.rm=TRUE)")
+          smry_eval_expression <- paste0("TMP_IMV__", ampute.vars %w/o% institutions, "_", inst, " = ", "mean(", ampute.vars %w/o% institutions, ", na.rm=TRUE)")
           smry_eval_expression <- setNames(smry_eval_expression, sub('^(.*) = .*', '\\1', smry_eval_expression))
 
           tmp_inst_smry <- tmp.long.priors[!is.na(eval(inst)),
 	              										lapply(smry_eval_expression, function(f) eval(parse(text=f))), keyby = inst]
 
-          subset.wide <- merge(subset.wide, tmp_inst_smry, by=inst)
+          subset.wide <- merge(subset.wide, tmp_inst_smry, by=inst, all.x=TRUE)
+
+          ##    Put in cross school mean for institutions with no students in prior years
+          for (tmp.inst.smry in grep("TMP_IMV__", names(subset.wide), value=TRUE)) {
+            tmp.mean <- mean(subset.wide[, get(tmp.inst.smry)], na.rm=TRUE)
+            subset.wide[is.na(get(tmp.inst.smry)), eval(tmp.inst.smry) := tmp.mean]
+          }
           subset.wide[, eval(inst) := NULL]
           #  remove columns that are all NA (e.g., SGP for 3rd grade priors)
           subset.wide <- subset.wide[,
@@ -234,17 +244,17 @@
       }
 
       ##    Create institutional level averages of achievement and demographics
-      ##    TMP_IMV_  -  temp institutional mean variable
+      ##    TMP_IMV__  -  temp institutional mean variable
       if (length(inst.sum.var <- intersect(institutions, ampute.vars)) > 0) {
         for (inst in inst.sum.var) {
           tmp.inst.var <- paste0(inst, ".", prior.year)
           for (wav in wide.amp.vars) {
-            tmp.wide[, paste0("TMP_IMV_", wav, "_", inst) := mean(get(wav), na.rm=TRUE), by=list(get(tmp.inst.var))] # strsplit(inst, "_")[[1]][1]
+            tmp.wide[, paste0("TMP_IMV__", wav, "_", inst) := mean(get(wav), na.rm=TRUE), by=list(get(tmp.inst.var))] # strsplit(inst, "_")[[1]][1]
           }
         }
       }
       subset.wide <- tmp.wide[!is.na(get(current.score)),
-        grep(paste0("ID|TMP_IMV_|", paste(wide.amp.vars, collapse="|")), names(tmp.wide)), with=FALSE]
+        grep(paste0("ID|TMP_IMV__|", paste(wide.amp.vars, collapse="|")), names(tmp.wide)), with=FALSE]
       #  remove columns that are all NA (e.g., SGP for 3rd grade priors)
       subset.wide <- subset.wide[,
         names(subset.wide)[!unlist(lapply(names(subset.wide), function(f) all(is.na(subset.wide[,get(f)]))))], with=FALSE]
@@ -322,6 +332,13 @@
       if (!is.null(fin.props)) {
         fin.prop <- weighted.mean(x=fin.props, w=(1/abs(1-target.prop/res.props)))
       } else fin.prop <- target.prop
+
+      if (compact.results) {
+        amp.tf <- data.table(VALID_CASE = "VALID_CASE", ID = subset.wide$ID, CONTENT_AREA = tail(amp.iter[["sgp.content.areas"]], 1),
+                  GRADE = tail(amp.iter[["sgp.grade.sequences"]], 1), YEAR = tail(amp.iter[["sgp.panel.years"]], 1))
+        setkey(amp.tf)
+      }
+
       ##    Get M sets of amputation candidates
       for (amp.m in seq(M)) {
         set.seed(seed*amp.m)
@@ -329,14 +346,21 @@
                                 P = rep(2, nrow(subset.wide)), prop = fin.prop,
                                 scores = list(tmp.scores), type = ampute.args$type)
 
-        amp.ids <- subset.wide[which(mask_var[[1]]==0L), ID]
+        if (compact.results) {
+          amp.tf[, eval(paste0("AMP_", amp.m)) := mask_var[[1]]==0L]
+        } else {
+          amp.ids <- subset.wide[which(mask_var[[1]]==0L), ID]
 
-        ###   Amputate...  Finally!!!
-        amp.list[[amp.m]][[K]] <- copy(long.final)
-        amp.list[[amp.m]][[K]][YEAR == current.year & ID %in% amp.ids, SCALE_SCORE := NA]
-        if ("ACHIEVEMENT_LEVEL" %in% names(amp.list[[amp.m]][[K]])) {
-          amp.list[[amp.m]][[K]][YEAR == current.year & ID %in% amp.ids, ACHIEVEMENT_LEVEL := NA]
+          amp.list[[amp.m]][[K]] <- copy(long.final)
+          amp.list[[amp.m]][[K]][YEAR == current.year & ID %in% amp.ids, SCALE_SCORE := NA]
+          if ("ACHIEVEMENT_LEVEL" %in% names(amp.list[[amp.m]][[K]])) {
+            amp.list[[amp.m]][[K]][YEAR == current.year & ID %in% amp.ids, ACHIEVEMENT_LEVEL := NA]
+          }
         }
+      }
+      if (compact.results) {
+        setkeyv(long.final, key(amp.tf))
+        amp.list[[K]] <- amp.tf[long.final]
       }
       # for (amp.m in seq(M)) {print(sum(is.na(amp.list[[amp.m]][[K]][, SCALE_SCORE]))/nrow(long.final))} # debug for STATUS
       # for (amp.m in seq(M)) {print(amp.list[[amp.m]][[K]][, list(NAs = sum(is.na(SCALE_SCORE))/.N), keyby=list(YEAR, CONTENT_AREA, GRADE)])} # debug for GROWTH
@@ -356,22 +380,37 @@
     }
   }
 
-  final.amp.list <- vector(mode = "list", length = M)
-
-  for (L in seq(M)) {
-    final.amp.list[[L]] <- rbindlist(amp.list[[L]], fill=TRUE)
-
-    if (remove.tmp.amp.var) invisible(final.amp.list[[L]][, TMP_MCAR_PROB := NULL])
-
+  if (compact.results) {
+    final.amp.list <- rbindlist(amp.list, use.names = TRUE)
+    if (remove.tmp.amp.var) invisible(final.amp.list[, TMP_MCAR_PROB := NULL])
     if (!is.null(additional.data)) {
-      final.amp.list[[L]] <- rbindlist(
-        list(final.amp.list[[L]], additional.data[, names(final.amp.list[[L]]), with=FALSE]), fill=TRUE)
+      final.amp.list <- rbindlist(
+        list(final.amp.list, additional.data[, names(final.amp.list) %w/o% paste0("AMP_", seq(M)), with=FALSE]), fill=TRUE)
     }
     if (invalidate.repeater.dups) {
-      setkeyv(final.amp.list[[L]], getKey(final.amp.list[[L]]))
-      setkeyv(final.amp.list[[L]], key(final.amp.list[[L]]) %w/o% "GRADE")
-      dup.ids <- final.amp.list[[L]][which(duplicated(final.amp.list[[L]], by=key(final.amp.list[[L]]))), ID]
-      final.amp.list[[L]][ID %in% dup.ids & is.na(SCALE_SCORE), VALID_CASE := "INVALID_CASE"]
+      setkeyv(final.amp.list, getKey(final.amp.list))
+      setkeyv(final.amp.list, key(final.amp.list) %w/o% "GRADE")
+      dup.ids <- final.amp.list[which(duplicated(final.amp.list, by=key(final.amp.list))), ID]
+      final.amp.list[ID %in% dup.ids & is.na(SCALE_SCORE), VALID_CASE := "INVALID_CASE"]
+    }
+  } else {
+    final.amp.list <- vector(mode = "list", length = M)
+
+    for (L in seq(M)) {
+      final.amp.list[[L]] <- rbindlist(amp.list[[L]], fill=TRUE)
+
+      if (remove.tmp.amp.var) invisible(final.amp.list[[L]][, TMP_MCAR_PROB := NULL])
+
+      if (!is.null(additional.data)) {
+        final.amp.list[[L]] <- rbindlist(
+          list(final.amp.list[[L]], additional.data[, names(final.amp.list[[L]]), with=FALSE]), fill=TRUE)
+      }
+      if (invalidate.repeater.dups) {
+        setkeyv(final.amp.list[[L]], getKey(final.amp.list[[L]]))
+        setkeyv(final.amp.list[[L]], key(final.amp.list[[L]]) %w/o% "GRADE")
+        dup.ids <- final.amp.list[[L]][which(duplicated(final.amp.list[[L]], by=key(final.amp.list[[L]]))), ID]
+        final.amp.list[[L]][ID %in% dup.ids & is.na(SCALE_SCORE), VALID_CASE := "INVALID_CASE"]
+      }
     }
   }
   return(final.amp.list)
