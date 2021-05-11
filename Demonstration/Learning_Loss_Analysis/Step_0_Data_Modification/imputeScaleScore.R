@@ -1,6 +1,7 @@
 `imputeScaleScore` <- function(
     impute.data,
     additional.data = NULL,
+    compact.results = TRUE,
     diagnostics.dir = getwd(),
     growth.config = NULL,
     status.config = NULL,
@@ -56,7 +57,9 @@
   long.to.wide.vars <- c(default.vars, institutions, demographics)
 
   ###   Cycle through imp.config to amputate by cohort
-  imp.list <- vector(mode = "list", length = M)
+  if (compact.results) {
+    imp.list <- vector(mode = "list", length = length(imp.config))
+  } else imp.list <- vector(mode = "list", length = M)
 
   for (K in seq(imp.config)) {
     imp.iter <- imp.config[[K]]
@@ -84,6 +87,10 @@
       ###   Exclude kids missing current and most recent year's scale score
       tmp.wide <- tmp.wide[!(is.na(get(tail(prior.scores, 1))) & is.na(get(current.score))),]
 
+      meas.list <- vector(mode = "list", length = length(long.to.wide.vars))
+      meas.list <- lapply(long.to.wide.vars, function(f) meas.list[[f]] <- grep(paste0(f, "[.]"), names(tmp.wide)))
+      names(meas.list) <- long.to.wide.vars
+
       if (partial.fill) {
         ###   Fill in missing content area and grades first
         for (ca in seq(imp.iter$sgp.panel.years)) {
@@ -93,10 +100,6 @@
         for (g in seq(imp.iter$sgp.panel.years)) {
           tmp.wide[, paste("GRADE", imp.iter$sgp.panel.years[g], sep=".") := imp.iter$sgp.grade.sequences[g]]
         }
-
-        meas.list <- vector(mode = "list", length = length(long.to.wide.vars))
-        meas.list <- lapply(long.to.wide.vars, function(f) meas.list[[f]] <- grep(paste0(f, "[.]"), names(tmp.wide)))
-        names(meas.list) <- long.to.wide.vars
 
         ###   First stretch out to get missings in log data
         long.final <- melt(tmp.wide, id = "ID", variable.name = "YEAR", measure=meas.list)
@@ -178,11 +181,17 @@
           paste0("PRIOR_IMV__", impute.factors %w/o% c(demographics, institutions), "_", tmp.inst.var, " = ", "mean(", impute.factors %w/o% c(demographics, institutions), ", na.rm=TRUE)") # intersect(impute.factors, demographics)
         smry_eval_expression <- setNames(smry_eval_expression, sub('^(.*) = .*', '\\1', smry_eval_expression))
 
-        tmp_inst_smry <- tmp.long.priors[!is.na(eval(inst.sum.var)),
+        tmp_inst_smry <- tmp.long.priors[!is.na(get(inst.sum.var)),
               										lapply(smry_eval_expression, function(f) eval(parse(text=f))), keyby = inst.sum.var]
 
-        subset.wide <- merge(subset.wide, tmp_inst_smry, by=inst.sum.var)
+        subset.wide <- merge(subset.wide, tmp_inst_smry, by=inst.sum.var, all.x = TRUE)
         setnames(subset.wide, inst.sum.var, tmp.inst.var)
+
+        ##    Put in cross school mean for schools with no students in prior years
+        for (prior.smry in grep("PRIOR_IMV__", names(subset.wide), value=TRUE)) {
+          tmp.inst.mean <- mean(subset.wide[, get(prior.smry)], na.rm=TRUE)
+          subset.wide[is.na(get(prior.smry)), eval(prior.smry) := tmp.inst.mean]
+        }
       }
       setnames(subset.wide, "SCALE_SCORE", current.score)
 
@@ -263,10 +272,10 @@
 
     tmp.meth[current.score] <- impute.method
 
-    if (imp.iter$analysis.type == "GROWTH") {
-      # tmp.meth[prior.scores] <- ""  #  Seems to do a better job when imputing prior years too, but can turn them off here.
-      tmp.meth[prior.scores] <- "pmm"
-    }
+    # if (imp.iter$analysis.type == "GROWTH") {
+    #   # tmp.meth[prior.scores] <- ""  #  Seems to do a better job when imputing prior years too, but can turn them off here.
+    #   tmp.meth[prior.scores] <- "pmm" #  Already the default if any missing...
+    # }
 
     imp <- suppressWarnings(mice::mice(subset.wide, meth = tmp.meth, pred = tmp.pred, m = M, maxit = maxit, seed = seed, allow.na=TRUE, print=verbose, ...))
 
@@ -279,39 +288,70 @@
     print(densityplot(imp))
     invisible(dev.off())
 
-    tmp.wide[, IMPUTED := is.na(get(current.score))]
-    long.imputed <- as.data.table(complete(imp, action="long"))[, c(".imp", "ID", current.score), with=FALSE][, YEAR := eval(current.year)]
-    setkey(long.imputed, ID, YEAR)
-    setkey(long.final, ID, YEAR)
+    if (compact.results) {
+      long.imputed <- as.data.table(complete(imp, action="long", include=TRUE))[, c(".imp", "ID", current.score), with=FALSE]
+      wide.imputed <- dcast(long.imputed, ID ~ .imp, value.var=current.score)
+      # 1
+      setnames(wide.imputed, names(wide.imputed)[-1], c("SCALE_SCORE", paste0("SCORE_IMP_", names(wide.imputed)[-c(1:2)])))
+      wide.imputed[, YEAR := eval(current.year)]
+      setkey(wide.imputed, ID, YEAR, SCALE_SCORE)
+      setkey(long.final, ID, YEAR, SCALE_SCORE)
+      imp.list[[K]] <- wide.imputed[long.final]
 
-    for (m in seq(M)) {
-      imp.list[[m]][[K]] <- long.imputed[.imp==m][long.final]
-      imp.list[[m]][[K]][, IMPUTED_SS := FALSE]
-      imp.list[[m]][[K]][is.na(SCALE_SCORE) & YEAR == eval(current.year), IMPUTED_SS := TRUE]
-      imp.list[[m]][[K]][is.na(SCALE_SCORE) & YEAR == eval(current.year), SCALE_SCORE := get(current.score)]
-      imp.list[[m]][[K]][, c(".imp", current.score) := NULL]
-      #  Add ACHIEVEMENT_LEVEL for imputed
+      # 2
+      # wide.imputed <- wide.imputed[is.na(get("0"))][, eval("0") := NULL]
+      # putedl <- melt(wide.imputed, id = "ID", variable.name = ".imp", value.name = "SCALE_SCORE", measure=seq(ncol(wide.imputed))[-1])
+    } else {
+      tmp.wide[, IMPUTED := is.na(get(current.score))]
+      long.imputed <- as.data.table(complete(imp, action="long"))[, c(".imp", "ID", current.score), with=FALSE][, YEAR := eval(current.year)]
+      setkey(long.imputed, ID, YEAR)
+      setkey(long.final, ID, YEAR)
+      for (m in seq(M)) {
+        imp.list[[m]][[K]] <- long.imputed[.imp==m][long.final]
+        imp.list[[m]][[K]][, IMPUTED_SS := FALSE]
+        imp.list[[m]][[K]][is.na(SCALE_SCORE) & YEAR == eval(current.year), IMPUTED_SS := TRUE]
+        imp.list[[m]][[K]][is.na(SCALE_SCORE) & YEAR == eval(current.year), SCALE_SCORE := get(current.score)]
+        imp.list[[m]][[K]][, c(".imp", current.score) := NULL]
+        #  Add ACHIEVEMENT_LEVEL for imputed
+      }
     }
   }  ###  END K
 
-  final.imp.list <- vector(mode = "list", length = M)
-
-  for (L in seq(M)) {
-    final.imp.list[[L]] <- rbindlist(imp.list[[L]], fill=TRUE)
-    # final.imp.list[[L]][, .imp := L]
+  if (compact.results) {
+    final.imp.list <- rbindlist(imp.list, use.names = TRUE)
 
     if (!is.null(additional.data)) {
-      final.imp.list[[L]] <- rbindlist(
-        list(final.imp.list[[L]], additional.data[, names(final.imp.list[[L]]), with=FALSE]), fill=TRUE)
+      final.imp.list <- rbindlist(
+        list(final.imp.list, additional.data[, names(final.imp.list), with=FALSE]), fill=TRUE)
     }
 
     ##    remove dups for repeaters created from long to wide to long reshaping
-    setkeyv(final.imp.list[[L]], getKey(final.imp.list[[L]]))
-    setkeyv(final.imp.list[[L]], key(final.imp.list[[L]]) %w/o% "GRADE")
-    dup.ids <- final.imp.list[[L]][which(duplicated(final.imp.list[[L]], by=key(final.imp.list[[L]]))), ID]
-    final.imp.list[[L]][ID %in% dup.ids & is.na(SCALE_SCORE), VALID_CASE := "NEW_DUP"] # INVALID_CASE
+    setkeyv(final.imp.list, getKey(final.imp.list))
+    setkeyv(final.imp.list, key(final.imp.list) %w/o% "GRADE")
+    dup.ids <- final.imp.list[which(duplicated(final.imp.list, by=key(final.imp.list))), ID]
+    final.imp.list[ID %in% dup.ids & is.na(SCALE_SCORE), VALID_CASE := "NEW_DUP"] # INVALID_CASE
 
-    final.imp.list[[L]] <- final.imp.list[[L]][VALID_CASE != "NEW_DUP"]
+    final.imp.list <- final.imp.list[VALID_CASE != "NEW_DUP"]
+  } else {
+    final.imp.list <- vector(mode = "list", length = M)
+
+    for (L in seq(M)) {
+      final.imp.list[[L]] <- rbindlist(imp.list[[L]], fill=TRUE)
+      # final.imp.list[[L]][, .imp := L]
+
+      if (!is.null(additional.data)) {
+        final.imp.list[[L]] <- rbindlist(
+          list(final.imp.list[[L]], additional.data[, names(final.imp.list[[L]]), with=FALSE]), fill=TRUE)
+      }
+
+      ##    remove dups for repeaters created from long to wide to long reshaping
+      setkeyv(final.imp.list[[L]], getKey(final.imp.list[[L]]))
+      setkeyv(final.imp.list[[L]], key(final.imp.list[[L]]) %w/o% "GRADE")
+      dup.ids <- final.imp.list[[L]][which(duplicated(final.imp.list[[L]], by=key(final.imp.list[[L]]))), ID]
+      final.imp.list[[L]][ID %in% dup.ids & is.na(SCALE_SCORE), VALID_CASE := "NEW_DUP"] # INVALID_CASE
+
+      final.imp.list[[L]] <- final.imp.list[[L]][VALID_CASE != "NEW_DUP"]
+    }
   }
   return(final.imp.list)
 }
