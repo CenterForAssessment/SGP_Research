@@ -13,9 +13,11 @@
 ###   Utility functions from SGP package
 `%w/o%` <- function(x,y) x[!x %in% y]
 
-###   Setup input/output.directory
+### Setup input/output.directory
 input.directory <- output.directory <- base.directory <- file.path("Data", "LOW_PARTICIPATION_AMPUTE")
 
+### Setup whether to run preliminary steps
+run_prelim_steps <- FALSE
 
 ### Setup parallel.config
 if (!exists("cores")) cores <- 4
@@ -23,7 +25,7 @@ parallel.config <- list(BACKEND="PARALLEL", WORKERS=list(PERCENTILES=cores, BASE
 
 ###   Define missingness type (before sourcing mstep script!)
 # missing.type <- "MCAR"
-# missing.type <- "STATUS_w_GROWTH"
+missing.type <- "STATUS_w_GROWTH"
 # missing.type <- "STATUS_w_DEMOG"
 
 if (missing.type=="MCAR") {
