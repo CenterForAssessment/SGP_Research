@@ -21,6 +21,15 @@ args(amputeScaleScore)
 ##          a SGP analysis (based on growth.config).  This allows for
 ##          the addition of more data (e.g. 2019 grades not used as priors)
 
+##    compact.results = FALSE
+##        - By default (FALSE), the function will return a list of longitudinal
+##          datassets with the current (amputed) and prior (unchanged) student
+##          records.  This is helpful for diagnostics and ease of use, but also
+##          produces more redundant prior data than needed. Setting this argument
+##          to TRUE returns a single data.table object with a TRUE/FALSE indicator
+##          column added for each requested amputation. This flag can be used to
+##          make the SCALE_SCORE (and/or other variables) NA in subsequent use cases.
+
 ##    growth.config = NULL
 ##        - an elongated SGP config script. This needs to have an entry
 ##          for each grade/content_area/year cohort that will be analyzed
@@ -100,9 +109,9 @@ args(amputeScaleScore)
 
 ##    complete.cases.only = TRUE
 ##        - Should cases with the most recent prior and current score be removed?
-##        - This removes students with partial longitudinal histories from 2019
-##          to 2021, with the goal of ending up with a "complete" dataset that
-##          is easier to interpret.
+##        - This removes students with partial longitudinal histories from the
+##          most recent prior (e.g., 2019) to the current year (e.g., 2021), producing
+##          a "complete" dataset that is easier to interpret.
 
 ##    partial.fill = TRUE
 ##        - Should an attempt be made to fill in some of the demographic and
@@ -158,6 +167,8 @@ source("SGP_CONFIG/STEP_0/Ampute_2021/Status.R")
 ###   To begin with we'll run a quick test using the package defaults along with
 ###   the augmented data and config scripts we just read in.
 
+###   NOTE: the amputeScaleScore function requires the `mice` package!
+
 Test_Data_LONG <- amputeScaleScore(
                         ampute.data=new_covid_data,
                         growth.config = growth_config_2021,
@@ -186,6 +197,14 @@ table(Test_Data_LONG[[1]][, GRADE, YEAR])
 ##    in to the amputed data via the `additional.data` argument.
 priors_to_add <- new_covid_data[YEAR == "2019" & GRADE %in% c("7", "8")]
 
+##    We also want to produce an interesting missingness pattern.  For example,
+##    here we will simulate missingness that is correlated with (low) achievement
+##    and economic disadvantage (as indicated by Free/Reduced lunch status).  We
+##    will also assume that these factors are compounded by the school level
+##    concentration of low achievement and economic disadvantage.
+
+my.amp.vars <- c("SCHOOL_NUMBER", "SCALE_SCORE", "FREE_REDUCED_LUNCH_STATUS")
+
 ###   Specify the number of amputed data sets to create - 10 is the default.
 MM = 10
 
@@ -197,14 +216,15 @@ table(Test_Data_LONG[[1]][!is.na(SCALE_SCORE) & is.na(SCALE_SCORE_COMPLETE), GRA
 
 ###   Run 10 amputations with added priors
 Test_Data_LONG <- amputeScaleScore(
-                        ampute.data=new_covid_data,
-                        additional.data = priors_to_add,
-                        growth.config = growth_config_2021,
-                        status.config = status_config_2021,
-                        M=MM,
-                        default.vars = c("CONTENT_AREA", "GRADE",
-                                         "SCALE_SCORE", "SCALE_SCORE_COMPLETE",
-                                         "ACHIEVEMENT_LEVEL", "ACH_LEV_COMPLETE"))
+                      ampute.data=new_covid_data,
+                      additional.data = priors_to_add,
+                      growth.config = growth_config_2021,
+                      status.config = status_config_2021,
+                      M=MM,
+                      default.vars = c("CONTENT_AREA", "GRADE",
+                                       "SCALE_SCORE", "SCALE_SCORE_COMPLETE",
+                                       "ACHIEVEMENT_LEVEL", "ACH_LEV_COMPLETE"),
+                      ampute.vars = my.amp.vars)
 
 ##    All 2019 prior scores are now added
 table(Test_Data_LONG[[1]][, GRADE, YEAR])
@@ -248,7 +268,8 @@ Test_Data_WIDE <- vector(mode = "list", length = MM)
 for (m in seq(MM)) {
   Test_Data_WIDE[[m]] <- dcast(Test_Data_LONG[[m]][VALID_CASE == "VALID_CASE" & YEAR %in% c("2019", "2021")],
                     ID + CONTENT_AREA ~ YEAR, sep=".", drop=FALSE, value.var=long.to.wide.vars) # can also do ID ~ YEAR + CONTENT_AREA - extra wide
-  ##  Trim data of (79) cases with no data in 2019 or 2021
+
+  ##  Trim data of (107) cases with no data in 2019 or 2021
   Test_Data_WIDE[[m]] <- Test_Data_WIDE[[m]][!(is.na(GRADE.2019) & is.na(GRADE.2021))]
 
   ##  Fill in GRADE according to our expectations of normal progression
@@ -256,8 +277,8 @@ for (m in seq(MM)) {
   Test_Data_WIDE[[m]][is.na(GRADE.2021), GRADE.2021 := as.numeric(GRADE.2019)+2L]
 
   ##  Exclude irrelevant GRADE levels
-  Test_Data_WIDE[[m]] <- Test_Data_WIDE[[m]][GRADE.2021 %in% 5:8] # Current relevant GRADEs
-  Test_Data_WIDE[[m]] <- Test_Data_WIDE[[m]][GRADE.2019 %in% 3:6] # Prior relevant GRADEs
+  Test_Data_WIDE[[m]] <- Test_Data_WIDE[[m]][GRADE.2021 %in% 3:8] # Current relevant GRADEs
+  Test_Data_WIDE[[m]][!GRADE.2019 %in% 3:6, GRADE.2019 := NA] # Clean up prior GRADEs
 
   ##  Fill some more (but not all) - Demographics used in missing data plots ONLY
   Test_Data_WIDE[[m]][is.na(FREE_REDUCED_LUNCH_STATUS.2019), FREE_REDUCED_LUNCH_STATUS.2019 := FREE_REDUCED_LUNCH_STATUS.2021]
@@ -321,6 +342,12 @@ marginplot(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "8" & CONTENT_AREA=="
 scattmatrixMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "8" & CONTENT_AREA=="ELA",
     c("SCALE_SCORE.2019", "SCALE_SCORE.2021")]), interactive=FALSE)
 
+###   Check status only grades for desired missing patterns
+histMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "3" & CONTENT_AREA=="ELA", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
+
+mosaicMiss(Test_Data_WIDE[[m]][GRADE.2021 == "3" & CONTENT_AREA=="ELA", c("FREE_REDUCED_LUNCH_STATUS.2019", "ELL_STATUS.2019", "SCALE_SCORE.2021")],
+           highlight = 3, plotvars = 1:2, miss.labels = FALSE)
+
 
 ###   Lastly, we can look at the amputed data relative to what we know to be "true"
 ###   Even though we didn't specify a MNAR missing pattern, we see that missingness
@@ -329,6 +356,8 @@ scattmatrixMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "8" & CONTENT_AR
 ###   we see that play out in the amputed data as well.
 
 histMiss(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
+histMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "3" & CONTENT_AREA=="ELA", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
+histMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "8" & CONTENT_AREA=="ELA", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
 
 ##    The "marginplot" shows that the "observed" 2021 scores are identical to the
 ##    "actual" scores (blue dots along a perfect diagonal) - those are unaltered.
@@ -336,6 +365,7 @@ histMiss(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE_COMPLETE.2021", "SCA
 ##    achievement according to the (red) boxplot.
 
 marginplot(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]))
+marginplot(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "3" & CONTENT_AREA=="ELA", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]))
 
 
 #####
