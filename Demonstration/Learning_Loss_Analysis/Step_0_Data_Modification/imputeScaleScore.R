@@ -12,6 +12,7 @@
     impute.method = NULL,
     cluster.institution = FALSE, # set to TRUE for multilevel (cross-sectional) methods
     partial.fill = TRUE,
+    parallel.config = NULL, # define cores, packages, cluster.type
     seed = 4224L,
     M = 10,
     maxit = 5,
@@ -41,6 +42,28 @@
     cluster.institution <- TRUE
     message("\n\tArgument 'cluster.institution' set to TRUE with 2l.* method\n")
   }
+
+  if (is.null(parallel.config)) {
+    parexecute <- "SEQ"
+  } else {
+    parexecute <- "PAR"
+    require(parallel)
+    require(abind)
+    if (is.logical(parallel.config)) parallel.config <- list()
+    if (is.null(parallel.config$packages)) {
+      parallel.config$packages <- "mice"
+    }
+
+    if (is.null(parallel.config$cores)) {
+      parallel.config$cores <- parallel::detectCores()-1L
+    }
+
+    if (is.null(parallel.config$cluster.type)) {
+      parallel.config$cluster.type <- ifelse(.Platform$OS.type == "unix", "FORK", "PSOCK")
+    }
+  }
+
+
   ###   Combine and augment config lists
   imp.config <- growth.config
 
@@ -260,7 +283,13 @@
 
     tmp.grp.means <- names(tmp.meth)[grepl("IMV___", names(tmp.meth)) & tmp.meth != ""]
     if (length(tmp.grp.means) > 0) {
-      require(miceadds)
+      if (parexecute=="SEQ") {
+        require(miceadds)
+      } else {
+        if (!"miceadds" %in% parallel.config$packages)
+          parallel.config$packages <- c(parallel.config$packages, "miceadds")
+      }
+
       tmp.meth[tmp.grp.means] <- "2l.groupmean"
       for(f in seq(tmp.grp.means)) {
         tmp.f <- strsplit(tmp.grp.means[f], "___")[[1]]
@@ -277,30 +306,30 @@
     #   tmp.meth[prior.scores] <- "pmm" #  Already the default if any missing...
     # }
 
-    imp <- suppressWarnings(mice::mice(subset.wide, meth = tmp.meth, pred = tmp.pred, m = M, maxit = maxit, seed = seed, allow.na=TRUE, print=verbose, ...))
+    switch(parexecute,
+      SEQ = imp <- suppressWarnings(mice::mice(subset.wide, meth = tmp.meth, pred = tmp.pred, m = M, maxit = maxit, seed = seed, print=verbose, ...)),
+      PAR = imp <- suppressWarnings(parMICE(subset.wide, meth = tmp.meth, predictorMatrix = tmp.pred, m = M, maxit = maxit, seed = seed,
+                                             nnodes = parallel.config$cores, packages = parallel.config$packages, cluster.type = parallel.config$cluster.type, ...)))
 
     ##    Save some diagnostic plots
     if (!dir.exists(file.path(diagnostics.dir, "diagnostics"))) dir.create(file.path(diagnostics.dir, "diagnostics"))
-    pdf(file.path(diagnostics.dir, "diagnostics", paste0("Grade_", current.grade, "_", current.subject, "_", impute.method, "_M_", M, "__maxit_", maxit, "__converge", ".pdf")))
-    print(plot(imp, names(tmp.meth[tmp.meth != ""]))) # [1:2]
+    pdf(file.path(diagnostics.dir, "diagnostics", paste0("Grade_", current.grade, "_", current.subject, "_", impute.method, "_M_", M, "__maxit_", maxit, "__converge.pdf")))
+    print(plot(imp)) #, names(tmp.meth[tmp.meth != ""]))) # [1:2]
     invisible(dev.off())
-    pdf(file.path(diagnostics.dir, "diagnostics", paste0("Grade_", current.grade, "_", current.subject, "_", impute.method, "_M_", M, "__maxit_", maxit, "__density", ".pdf")))
+    pdf(file.path(diagnostics.dir, "diagnostics", paste0("Grade_", current.grade, "_", current.subject, "_", impute.method, "_M_", M, "__maxit_", maxit, "__density.pdf")))
     print(densityplot(imp))
     invisible(dev.off())
 
     if (compact.results) {
       long.imputed <- as.data.table(complete(imp, action="long", include=TRUE))[, c(".imp", "ID", current.score), with=FALSE]
       wide.imputed <- dcast(long.imputed, ID ~ .imp, value.var=current.score)
-      # 1
+
       setnames(wide.imputed, names(wide.imputed)[-1], c("SCALE_SCORE", paste0("SCORE_IMP_", names(wide.imputed)[-c(1:2)])))
       wide.imputed[, YEAR := eval(current.year)]
       setkey(wide.imputed, ID, YEAR, SCALE_SCORE)
       setkey(long.final, ID, YEAR, SCALE_SCORE)
       imp.list[[K]] <- wide.imputed[long.final]
 
-      # 2
-      # wide.imputed <- wide.imputed[is.na(get("0"))][, eval("0") := NULL]
-      # putedl <- melt(wide.imputed, id = "ID", variable.name = ".imp", value.name = "SCALE_SCORE", measure=seq(ncol(wide.imputed))[-1])
     } else {
       tmp.wide[, IMPUTED := is.na(get(current.score))]
       long.imputed <- as.data.table(complete(imp, action="long"))[, c(".imp", "ID", current.score), with=FALSE][, YEAR := eval(current.year)]
@@ -312,7 +341,6 @@
         imp.list[[m]][[K]][is.na(SCALE_SCORE) & YEAR == eval(current.year), IMPUTED_SS := TRUE]
         imp.list[[m]][[K]][is.na(SCALE_SCORE) & YEAR == eval(current.year), SCALE_SCORE := get(current.score)]
         imp.list[[m]][[K]][, c(".imp", current.score) := NULL]
-        #  Add ACHIEVEMENT_LEVEL for imputed
       }
     }
   }  ###  END K
@@ -337,7 +365,6 @@
 
     for (L in seq(M)) {
       final.imp.list[[L]] <- rbindlist(imp.list[[L]], fill=TRUE)
-      # final.imp.list[[L]][, .imp := L]
 
       if (!is.null(additional.data)) {
         final.imp.list[[L]] <- rbindlist(
