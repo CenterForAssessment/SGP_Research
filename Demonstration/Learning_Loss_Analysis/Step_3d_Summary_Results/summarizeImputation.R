@@ -91,9 +91,9 @@ summarizeImputation <- function(
   smry_amp_pool[, SGPB_RIV := (SGPB_Lamda/(1-SGPB_Lamda))]
 
   ##    Adjusted Degrees of Freedom -- eq 2.31
-  smry_amp_pool[, SS_ADF := (N/(N+3))*((N-1)*(1-SS_Lamda))]
-  smry_amp_pool[, SGP_ADF := (N/(N+3))*((N-1)*(1-SGP_Lamda))]
-  smry_amp_pool[, SGPB_ADF := (N/(N+3))*((N-1)*(1-SGPB_Lamda))]
+  smry_amp_pool[, SS_ADF := (((N-1)+1)/((N-1)+3))*((N-1)*(1-SS_Lamda))]
+  smry_amp_pool[, SGP_ADF := (((N-1)+1)/((N-1)+3))*((N-1)*(1-SGP_Lamda))]
+  smry_amp_pool[, SGPB_ADF := (((N-1)+1)/((N-1)+3))*((N-1)*(1-SGPB_Lamda))]
 
   ##    Gamma -- fraction of information about Q missing due to nonresponse
   # smry_amp_pool[, SS_Gamma2 := (((SS_ADF+1)/(SS_ADF+3))*SS_Lamda) + (2/(SS_ADF+3))]
