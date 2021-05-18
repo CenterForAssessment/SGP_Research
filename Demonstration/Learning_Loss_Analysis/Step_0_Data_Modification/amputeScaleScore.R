@@ -166,38 +166,44 @@
 
     } else {  #  END "GROWTH"  --  Begin "STATUS"
       ###   Create institution level summaries
-      prior.years <- head(amp.iter$sgp.panel.years, -1)
-      tmp.grades <- unique(head(amp.iter$sgp.grade.sequences, -1))
+      # prior.years <- head(amp.iter$sgp.panel.years, -1)
+      # tmp.grades <- unique(head(amp.iter$sgp.grade.sequences, -1))
       current.year <- tail(amp.iter$sgp.panel.years, 1)
 
-      subset.wide <- tmp.long[YEAR %in% current.year, c("ID", ampute.vars %w/o% "SCALE_SCORE"), with=FALSE] # assuming not using any other current year data.
-      tmp.long.priors <- tmp.long[YEAR %in% prior.years & GRADE %in% tmp.grades, ampute.vars, with=FALSE] # assuming not MNAR - all prior values for amp.vars
+      subset.wide <- tmp.long[YEAR %in% current.year, c("ID", ampute.vars), with=FALSE] # assuming not using any other current year data.
+      # subset.wide <- tmp.long[YEAR %in% current.year, c("ID", ampute.vars %w/o% "SCALE_SCORE"), with=FALSE] # assuming not using any other current year data.
+      ##  Original ampute STATUS attempt - base on prior year data
+      # tmp.long.priors <- tmp.long[YEAR %in% prior.years & GRADE %in% tmp.grades, ampute.vars, with=FALSE] # assuming not MNAR - all prior values for amp.vars
 
       if (!is.null(reverse.weight)) {
         for (rev.var in reverse.weight) {
-          tmp.long.priors[, eval(rev.var) := -1*get(rev.var)]
+          # tmp.long.priors[, eval(rev.var) := -1*get(rev.var)]
+          subset.wide[, eval(rev.var) := -1*get(rev.var)]
         }
       }
 
       if (length(demog.amp.vars <- intersect(demographics, ampute.vars)) > 0) {
         for (demog in demog.amp.vars) {
-          tmp.long.priors[, eval(demog) := as.integer(factor(get(demog)))-1L]
+          # tmp.long.priors[, eval(demog) := as.integer(factor(get(demog)))-1L]
           subset.wide[, eval(demog) := as.integer(factor(get(demog)))-1L]
         }
       }
 
       if (length(inst.sum.var <- intersect(institutions, ampute.vars)) > 0) {
         for (inst in inst.sum.var) {
-          # smry_eval_expression <- paste0("PERCENT_", gsub("_STATUS", "", demog.amp.vars), "_", strsplit(inst, "_")[[1]][1],
-          #     " = ", "(100*(sum(",demog.amp.vars,")/.N))")
-          # smry_eval_expression <- c(paste0("MEAN_SS", "_", strsplit(inst, "_")[[1]][1], " = ", "mean(SCALE_SCORE, na.rm=TRUE)"), smry_eval_expression)
-          smry_eval_expression <- paste0("TMP_IMV__", ampute.vars %w/o% institutions, "_", inst, " = ", "mean(", ampute.vars %w/o% institutions, ", na.rm=TRUE)")
-          smry_eval_expression <- setNames(smry_eval_expression, sub('^(.*) = .*', '\\1', smry_eval_expression))
+          ##  Original ampute STATUS attempt - base on prior year data
+          ##  Didn't do a very good job...
+          # smry_eval_expression <- paste0("TMP_IMV__", ampute.vars %w/o% institutions, "_", inst, " = ", "mean(", ampute.vars %w/o% institutions, ", na.rm=TRUE)")
+          # smry_eval_expression <- setNames(smry_eval_expression, sub('^(.*) = .*', '\\1', smry_eval_expression))
 
-          tmp_inst_smry <- tmp.long.priors[!is.na(eval(inst)),
-	              										lapply(smry_eval_expression, function(f) eval(parse(text=f))), keyby = inst]
+          # tmp_inst_smry <- tmp.long.priors[!is.na(eval(inst)),
+	        #       										lapply(smry_eval_expression, function(f) eval(parse(text=f))), keyby = inst]
 
-          subset.wide <- merge(subset.wide, tmp_inst_smry, by=inst, all.x=TRUE)
+          # subset.wide <- merge(subset.wide, tmp_inst_smry, by=inst, all.x=TRUE)
+
+          for (wav in ampute.vars %w/o% institutions) {
+            subset.wide[, paste0("TMP_IMV__", wav, "_", inst) := mean(get(wav), na.rm=TRUE), by=list(get(inst))]
+          }
 
           ##    Put in cross school mean for institutions with no students in prior years
           for (tmp.inst.smry in grep("TMP_IMV__", names(subset.wide), value=TRUE)) {
@@ -205,12 +211,14 @@
             subset.wide[is.na(get(tmp.inst.smry)), eval(tmp.inst.smry) := tmp.mean]
           }
           subset.wide[, eval(inst) := NULL]
-          #  remove columns that are all NA (e.g., SGP for 3rd grade priors)
-          subset.wide <- subset.wide[,
-            names(subset.wide)[!unlist(lapply(names(subset.wide), function(f) all(is.na(subset.wide[,get(f)]))))], with=FALSE]
-          subset.wide <- na.omit(subset.wide)
         }
       }
+
+      #  remove columns that are all NA (e.g., SGP for 3rd grade priors)
+      subset.wide <- subset.wide[,
+        names(subset.wide)[!unlist(lapply(names(subset.wide), function(f) all(is.na(subset.wide[,get(f)]))))], with=FALSE]
+      subset.wide <- na.omit(subset.wide)
+
       ###   Create long.final with only the "current" year (last elements of the config)
       ###   More thorough to do it with config than just long.final <- tmp.long[YEAR %in% current.year]
       tmp.lookup <- SJ("VALID_CASE", tail(amp.iter[["sgp.content.areas"]], 1),
@@ -293,6 +301,13 @@
         tmp.weights[grep(n, names(subset.wide)[-1])] <- ampute.var.weights[[n]]
       }
     }
+    #  moderate the STATUS weight for (now current) achievement (0.65 is approx low correlation between current & prior)
+    if (amp.iter$analysis.type == "STATUS") {
+      if (length(ss.indx <- grep("^SCALE_SCORE$", names(subset.wide)[-1])) > 0) {
+        tmp.weights[ss.indx] <- tmp.weights[ss.indx]*0.65
+      }
+    }
+
     tmp.scores <- apply(subset.wide.std, 1, function (x) tmp.weights %*% x)
     if (is.null(ampute.args$type)) ampute.args$type <- "RIGHT"
 

@@ -364,8 +364,20 @@ histMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "8" & CONTENT_AREA=="EL
 ##    The distribution of the missing scores is skewed towards the lower end of
 ##    achievement according to the (red) boxplot.
 
+histMiss(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
 marginplot(as.data.frame(Test_Data_WIDE[[m]][, c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]))
-marginplot(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "3" & CONTENT_AREA=="ELA", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]))
+
+##    GROWTH grades only
+histMiss(as.data.frame(Test_Data_WIDE[[m]][!GRADE.2021 %in% c("3", "4") & CONTENT_AREA=="ELA", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
+histMiss(as.data.frame(Test_Data_WIDE[[m]][!GRADE.2021 %in% c("3", "4") & CONTENT_AREA=="MATHEMATICS", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
+marginplot(as.data.frame(Test_Data_WIDE[[m]][!GRADE.2021 %in% c("3", "4") & CONTENT_AREA=="ELA", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]))
+marginplot(as.data.frame(Test_Data_WIDE[[m]][!GRADE.2021 %in% c("3", "4") & CONTENT_AREA=="MATHEMATICS", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]))
+
+##    STATUS grades only
+histMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 %in% c("3", "4") & CONTENT_AREA=="ELA", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
+histMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 %in% c("3", "4") & CONTENT_AREA=="MATHEMATICS", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
+marginplot(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 %in% c("3", "4") & CONTENT_AREA=="ELA", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]))
+marginplot(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 %in% c("3", "4") & CONTENT_AREA=="MATHEMATICS", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]))
 
 
 #####
