@@ -73,13 +73,13 @@ args(amputeScaleScore)
 ##          A named list can be provided with the desired relative weights. For
 ##          example, 'list(SCALE_SCORE=3, FREE_REDUCED_LUNCH_STATUS=2, SCHOOL_NUMBER=1)'
 ##          will weight a student's scale scores by a factor of 3 and FRL by 2,
-##          with all (any other ampute.vars) remaining at the default of 1. In
-##          this example, this includes any school level aggregates.  Note that
-##          differential weights for institutions should be placed at the end of
-##          the list.  If institution IDs (e.g., SCHOOL_NUMBER) are omitted from
-##          the list, the aggregates will be given the same weight as the
-##          associated student level variable.  In the given example, SCALE_SCORE
-##          and school mean scale score would be given a relative weight of 3.
+##          with all (any other ampute.vars) remaining at the default of 1. This
+##          includes school level aggregates in this example.  Note that differential
+##          weights for institutions should be placed at the end of the list. If
+##          institution IDs (e.g., SCHOOL_NUMBER) are omitted from the list, the
+##          aggregates will be given the same weight as the associated student
+##          level variable.  In the given example, SCALE_SCORE and school mean
+##          scale score would be given a relative weight of 3.
 ##        - This argument is ignored when `ampute.vars = NULL`.
 
 ##    reverse.weight = "SCALE_SCORE"
@@ -283,7 +283,7 @@ for (m in seq(MM)) {
   ##  Fill some more (but not all) - Demographics used in missing data plots ONLY
   Test_Data_WIDE[[m]][is.na(FREE_REDUCED_LUNCH_STATUS.2019), FREE_REDUCED_LUNCH_STATUS.2019 := FREE_REDUCED_LUNCH_STATUS.2021]
   Test_Data_WIDE[[m]][is.na(ELL_STATUS.2019), ELL_STATUS.2019 := ELL_STATUS.2021]
-  Test_Data_WIDE[[m]][is.na(ETHNICITY.2019), ETHNICITY.2019 := ETHNICITY.2019]
+  Test_Data_WIDE[[m]][is.na(ETHNICITY.2019), ETHNICITY.2019 := ETHNICITY.2021]
 }
 
 
@@ -343,8 +343,6 @@ scattmatrixMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "8" & CONTENT_AR
     c("SCALE_SCORE.2019", "SCALE_SCORE.2021")]), interactive=FALSE)
 
 ###   Check status only grades for desired missing patterns
-histMiss(as.data.frame(Test_Data_WIDE[[m]][GRADE.2021 == "3" & CONTENT_AREA=="ELA", c("SCALE_SCORE_COMPLETE.2021", "SCALE_SCORE.2021")]), breaks=25, interactive=FALSE)
-
 mosaicMiss(Test_Data_WIDE[[m]][GRADE.2021 == "3" & CONTENT_AREA=="ELA", c("FREE_REDUCED_LUNCH_STATUS.2019", "ELL_STATUS.2019", "SCALE_SCORE.2021")],
            highlight = 3, plotvars = 1:2, miss.labels = FALSE)
 
