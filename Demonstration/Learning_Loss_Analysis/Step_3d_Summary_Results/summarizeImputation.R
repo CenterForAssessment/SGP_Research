@@ -26,17 +26,17 @@ summarizeImputation <- function(
   smry_amp <- data[, list(
         Mean_SS_Complete = mean(SCALE_SCORE_COMPLETE, na.rm = TRUE),
         Mean_SS_Observed = mean(SCALE_SCORE_OBSERVED, na.rm = TRUE),
-        Mean_SS_Imputed = mean(SCALE_SCORE, na.rm = TRUE),  #  Q_l_SS
-        SS_U_Imp = var(SCALE_SCORE, na.rm = TRUE),  #  Ubar_l_SS
+        Mean_SS_Imputed = mean(SCALE_SCORE_IMPUTED, na.rm = TRUE),  #  Q_l_SS
+        SS_U_Imp = var(SCALE_SCORE_IMPUTED, na.rm = TRUE),  #  Ubar_l_SS
         # SS_U_Imp2 = ((mean(SCALE_SCORE^2, na.rm = TRUE)) - mean(SCALE_SCORE, na.rm = TRUE)^2),  #  Ubar_l_SS alternative (always smaller)
         Mean_SGP_Complete = mean(SGP_COMPLETE, na.rm = TRUE),
         Mean_SGP_Observed = mean(SGP_OBSERVED, na.rm = TRUE),
-        Mean_SGP_Imputed = mean(SGP, na.rm = TRUE),  #  Q_l_SGP
-        SGP_U_Imp = var(SGP, na.rm = TRUE),  #  Ubar_l_SGP
+        Mean_SGP_Imputed = mean(SGP_IMPUTED, na.rm = TRUE),  #  Q_l_SGP
+        SGP_U_Imp = var(SGP_IMPUTED, na.rm = TRUE),  #  Ubar_l_SGP
         Mean_SGPB_Complete = mean(SGP_BASELINE_COMPLETE, na.rm = TRUE),
         Mean_SGPB_Observed = mean(SGP_BASELINE_OBSERVED, na.rm = TRUE),
-        Mean_SGPB_Imputed = mean(SGP_BASELINE, na.rm = TRUE),  #  Q_l_SGP_Baseline
-        SGPB_U_Imp = var(SGP_BASELINE, na.rm = TRUE),  #  Ubar_l_SGP_Baseline
+        Mean_SGPB_Imputed = mean(SGP_BASELINE_IMPUTED, na.rm = TRUE),  #  Q_l_SGP_Baseline
+        SGPB_U_Imp = var(SGP_BASELINE_IMPUTED, na.rm = TRUE),  #  Ubar_l_SGP_Baseline
         Percent_Missing = (sum(is.na(SCALE_SCORE_OBSERVED))/.N)*100, N=.N),
     keyby=c(institution.level, summary.level, "AMP_N", "IMP_N")]
 
