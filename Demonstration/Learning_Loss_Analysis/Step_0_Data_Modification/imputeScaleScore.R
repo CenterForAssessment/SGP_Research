@@ -9,8 +9,9 @@
     demographics = c("FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "IEP_STATUS", "ETHNICITY", "GENDER"),
     institutions = c("SCHOOL_NUMBER", "DISTRICT_NUMBER"),
     impute.factors = "SCALE_SCORE",
+    impute.long = FALSE,
     impute.method = NULL,
-    cluster.institution = FALSE, # set to TRUE for multilevel (cross-sectional) methods
+    cluster.institution = FALSE, # set to TRUE for multilevel (cross-sectional & STATUS) methods
     partial.fill = TRUE,
     parallel.config = NULL, # define cores, packages, cluster.type
     seed = 4224L,
@@ -162,41 +163,55 @@
 
         long.final[, YEAR := as.character(factor(YEAR, labels = imp.iter[["sgp.panel.years"]]))]
 
-        ###   re-widen
-        ##    This could probably be made more parsimonious!  Really only need
-        ##    current & most recent prior year w/ impute.factors
-        tmp.wide <- dcast(long.final, ID ~ YEAR, sep=".", drop=FALSE, value.var=long.to.wide.vars)
-      }  else { #  END partial.fill
+        if (!impute.long) {
+          ###   re-widen
+          ##    This could probably be made more parsimonious!  Really only need
+          ##    current & most recent prior year w/ impute.factors
+          tmp.wide <- dcast(long.final, ID ~ YEAR, sep=".", drop=FALSE, value.var=long.to.wide.vars)
+        }
+      } else { #  END partial.fill
         long.final <- melt(tmp.wide, id = "ID", variable.name = "YEAR", measure=meas.list)
         long.final[, YEAR := as.character(factor(YEAR, labels = imp.iter[["sgp.panel.years"]]))]
       }
 
+      if (impute.long) {
+        ##    Convert character/factor to numeric (0/1) data
+        demog.imp.vars <- grep(paste(demographics, collapse="|"), impute.factors, value=TRUE)
+        if (length(demog.imp.vars) > 0) {
+          for (demog in demog.imp.vars) {
+            long.final[, eval(demog) := as.integer(factor(get(demog)))-1L]
+          }
+        }
+
+        long.final[, ID := as.integer(ID)]
+        long.final[, GRADE := as.numeric(GRADE)]
+      }
       long.final[, VALID_CASE := "VALID_CASE"]
 
     } else {  #  END "GROWTH"  --  Begin "STATUS"
       ###   Create institution level summaries
       tmp.grades <- unique(head(imp.iter$sgp.grade.sequences, -1))
 
-      subset.wide <- tmp.long[YEAR %in% current.year, c("ID", impute.factors), with=FALSE] # %w/o% "SCALE_SCORE" assuming not using any other current year data.
+      impute.subset <- tmp.long[YEAR %in% current.year, c("ID", impute.factors), with=FALSE] # %w/o% "SCALE_SCORE" assuming not using any other current year data.
       #  remove columns that are all NA (e.g., SGP for 3rd grade priors)
-      subset.wide <- subset.wide[,
-        names(subset.wide)[!unlist(lapply(names(subset.wide), function(f) all(is.na(subset.wide[,get(f)]))))], with=FALSE]
+      impute.subset <- impute.subset[,
+        names(impute.subset)[!unlist(lapply(names(impute.subset), function(f) all(is.na(impute.subset[,get(f)]))))], with=FALSE]
 
       tmp.long.priors <- tmp.long[YEAR %in% prior.years & GRADE %in% tmp.grades, impute.factors, with=FALSE] # assuming not MNAR - all prior values for imp.vars
 
       if (length(demog.imp.vars <- intersect(demographics, impute.factors)) > 0) {
         for (demog in demog.imp.vars) {
           tmp.long.priors[, eval(demog) := as.integer(factor(get(demog)))-1L]
-          subset.wide[, eval(demog) := as.integer(factor(get(demog)))-1L]
+          impute.subset[, eval(demog) := as.integer(factor(get(demog)))-1L]
         }
       }
 
       if (length(inst.sum.var) > 0) {
         tmp.inst.var <- paste0(inst.sum.var, ".", current.year)
         # smry_eval_expression <- paste0("IMV__", impute.factors %w/o% c(institutions, demographics)
-        subset.wide[, paste0("IMV___SCALE_SCORE.", current.year, "___", tmp.inst.var) := as.numeric(NA)]
+        impute.subset[, paste0("IMV___SCALE_SCORE.", current.year, "___", tmp.inst.var) := as.numeric(NA)]
         for (demog in intersect(impute.factors, demographics)) {
-          subset.wide[, paste0("IMV___", demog, "___", tmp.inst.var) := mean(get(demog), na.rm=TRUE), by=list(get(inst.sum.var))]
+          impute.subset[, paste0("IMV___", demog, "___", tmp.inst.var) := mean(get(demog), na.rm=TRUE), by=list(get(inst.sum.var))]
         }
 
         ##    Prior year(s) summaries to use
@@ -207,16 +222,16 @@
         tmp_inst_smry <- tmp.long.priors[!is.na(get(inst.sum.var)),
               										lapply(smry_eval_expression, function(f) eval(parse(text=f))), keyby = inst.sum.var]
 
-        subset.wide <- merge(subset.wide, tmp_inst_smry, by=inst.sum.var, all.x = TRUE)
-        setnames(subset.wide, inst.sum.var, tmp.inst.var)
+        impute.subset <- merge(impute.subset, tmp_inst_smry, by=inst.sum.var, all.x = TRUE)
+        setnames(impute.subset, inst.sum.var, tmp.inst.var)
 
         ##    Put in cross school mean for schools with no students in prior years
-        for (prior.smry in grep("PRIOR_IMV__", names(subset.wide), value=TRUE)) {
-          tmp.inst.mean <- mean(subset.wide[, get(prior.smry)], na.rm=TRUE)
-          subset.wide[is.na(get(prior.smry)), eval(prior.smry) := tmp.inst.mean]
+        for (prior.smry in grep("PRIOR_IMV__", names(impute.subset), value=TRUE)) {
+          tmp.inst.mean <- mean(impute.subset[, get(prior.smry)], na.rm=TRUE)
+          impute.subset[is.na(get(prior.smry)), eval(prior.smry) := tmp.inst.mean]
         }
       }
-      setnames(subset.wide, "SCALE_SCORE", current.score)
+      setnames(impute.subset, "SCALE_SCORE", current.score)
 
       ###   Create long.final with only the "current" year (last elements of the config)
       ###   More thorough to do it with config than just long.final <- tmp.long[YEAR %in% current.year]
@@ -232,21 +247,21 @@
     #####
 
     ##    Subset out scale scores and demographics
-    if (imp.iter$analysis.type == "GROWTH") {  #  done above for "STATUS"
+    if (imp.iter$analysis.type == "GROWTH" & !impute.long) {  #  done above for "STATUS"
       wide.imp.vars <- grep(paste0(impute.factors %w/o% institutions, "[.]", collapse="|"), names(tmp.wide), value=TRUE)
       wide.imp.vars <- c(wide.imp.vars, paste(intersect(impute.factors, institutions), current.year, sep="."))
 
       #  create subset of wide data with only variables to be used in imputation
-      subset.wide <- tmp.wide[, grep(paste0("ID|", paste(wide.imp.vars, collapse="|")), names(tmp.wide)), with=FALSE]
+      impute.subset <- tmp.wide[, grep(paste0("ID|", paste(wide.imp.vars, collapse="|")), names(tmp.wide)), with=FALSE]
       #  remove columns that are all NA (e.g., SGP for 3rd grade priors)
-      subset.wide <- subset.wide[,
-        names(subset.wide)[!unlist(lapply(names(subset.wide), function(f) all(is.na(subset.wide[,get(f)]))))], with=FALSE]
+      impute.subset <- impute.subset[,
+        names(impute.subset)[!unlist(lapply(names(impute.subset), function(f) all(is.na(impute.subset[,get(f)]))))], with=FALSE]
 
       ##    Convert character/factor to numeric (0/1) data
       demog.imp.vars <- grep(paste(demographics, collapse="|"), wide.imp.vars, value=TRUE)
       if (length(demog.imp.vars) > 0) {
         for (demog in demog.imp.vars) {
-          subset.wide[, eval(demog) := as.integer(factor(get(demog)))-1L]
+          impute.subset[, eval(demog) := as.integer(factor(get(demog)))-1L]
         }
       }
 
@@ -254,8 +269,8 @@
       if (length(demog.imp.vars) > 0) {
         for (demog in intersect(impute.factors, demographics)) {
           tmp.dmg <- grep(demog, demog.imp.vars, value=TRUE)
-          subset.wide[, paste0("SUMSCORE__", demog) := rowSums(.SD, na.rm = TRUE)/length(tmp.dmg), .SDcols = tmp.dmg]
-          subset.wide[, eval(tmp.dmg) := NULL]
+          impute.subset[, paste0("SUMSCORE__", demog) := rowSums(.SD, na.rm = TRUE)/length(tmp.dmg), .SDcols = tmp.dmg]
+          impute.subset[, eval(tmp.dmg) := NULL]
           wide.imp.vars <- c(wide.imp.vars %w/o% tmp.dmg, paste0("SUMSCORE__", demog))
         }
       }
@@ -263,78 +278,99 @@
       ##    IMV__  -  institutional mean variable
       if (length(inst.sum.var) > 0) {
         tmp.inst.var <- paste0(inst.sum.var, ".", current.year)
-        subset.wide[, paste0("IMV___SCALE_SCORE.", current.year, "___", tmp.inst.var) := as.numeric(NA)]
+        impute.subset[, paste0("IMV___SCALE_SCORE.", current.year, "___", tmp.inst.var) := as.numeric(NA)]
 
         tmp.demg.vars <- grep(paste(demographics, collapse="|"), wide.imp.vars, value=TRUE)
         for (wiv in tmp.demg.vars) {
-          subset.wide[, paste0("IMV___", wiv, "___", inst.sum.var) := mean(get(wiv), na.rm=TRUE), by=list(get(tmp.inst.var))] # tail(tmp.inst.vars, 1)
+          impute.subset[, paste0("IMV___", wiv, "___", inst.sum.var) := mean(get(wiv), na.rm=TRUE), by=list(get(tmp.inst.var))] # tail(tmp.inst.vars, 1)
         }
       }
     }  ###  END "GROWTH"
 
-    tmp.meth <- mice::make.method(data=subset.wide)
-    tmp.pred <- mice::make.predictorMatrix(data=subset.wide)
-    tmp.pred[, "ID"] <- 0
-    if (length(inst.sum.var) > 0) {
-      if (cluster.institution) {
-        tmp.pred[, tmp.inst.var] <- -2
-      } else tmp.pred[, tmp.inst.var] <- 0
-    }
-
-    tmp.grp.means <- names(tmp.meth)[grepl("IMV___", names(tmp.meth)) & tmp.meth != ""]
-    if (length(tmp.grp.means) > 0) {
-      if (parexecute=="SEQ") {
-        require(miceadds)
-      } else {
-        if (!"miceadds" %in% parallel.config$packages)
-          parallel.config$packages <- c(parallel.config$packages, "miceadds")
+    if (!impute.long | imp.iter$analysis.type == "STATUS") {
+      tmp.meth <- mice::make.method(data=impute.subset)
+      tmp.pred <- mice::make.predictorMatrix(data=impute.subset)
+      tmp.pred[, "ID"] <- 0
+      if (length(inst.sum.var) > 0) {
+        if (cluster.institution) {
+          tmp.pred[, tmp.inst.var] <- -2
+        } else tmp.pred[, tmp.inst.var] <- 0
       }
 
-      tmp.meth[tmp.grp.means] <- "2l.groupmean"
-      for(f in seq(tmp.grp.means)) {
-        tmp.f <- strsplit(tmp.grp.means[f], "___")[[1]]
-        tmp.pred[tmp.grp.means[f], tmp.f[2]] <- 2
-        tmp.pred[tmp.grp.means[f], tmp.f[3]] <- -2
-        subset.wide[, eval(tmp.f[3]) := as.integer(get(tmp.f[3]))]
+      tmp.grp.means <- names(tmp.meth)[grepl("IMV___", names(tmp.meth)) & tmp.meth != ""]
+      if (length(tmp.grp.means) > 0) {
+        if (parexecute=="SEQ") {
+          require(miceadds)
+        } else {
+          if (!"miceadds" %in% parallel.config$packages)
+            parallel.config$packages <- c(parallel.config$packages, "miceadds")
+        }
+
+        tmp.meth[tmp.grp.means] <- "2l.groupmean"
+        for(f in seq(tmp.grp.means)) {
+          tmp.f <- strsplit(tmp.grp.means[f], "___")[[1]]
+          tmp.pred[tmp.grp.means[f], tmp.f[2]] <- 2
+          tmp.pred[tmp.grp.means[f], tmp.f[3]] <- -2
+          impute.subset[, eval(tmp.f[3]) := as.integer(get(tmp.f[3]))]
+        }
       }
+
+      tmp.meth[current.score] <- impute.method
+    } else {
+      impute.subset <- long.final[, c("ID", "GRADE", impute.factors %w/o% institutions), with=FALSE]
+      tmp.meth <- mice::make.method(data=impute.subset)
+      tmp.meth[1:length(tmp.meth)] <- ""
+
+      if (is.null(impute.method)) {
+        tmp.meth["SCALE_SCORE"] <- "2l.pan" # "2l.pmm" -- miceadds
+      } else tmp.meth["SCALE_SCORE"] <- impute.method
+
+      tmp.pred <- mice::make.predictorMatrix(data=impute.subset)
+
+      tmp.pred["SCALE_SCORE", "ID"] <- -2
+      tmp.pred["SCALE_SCORE", "GRADE"] <- 2 # random effect for GRADE (time)
+      tmp.pred["SCALE_SCORE", demog.imp.vars] <- 1 # fixed x effects for Demographics
     }
-
-    tmp.meth[current.score] <- impute.method
-
-    # if (imp.iter$analysis.type == "GROWTH") {
-    #   # tmp.meth[prior.scores] <- ""  #  Seems to do a better job when imputing prior years too, but can turn them off here.
-    #   tmp.meth[prior.scores] <- "pmm" #  Already the default if any missing...
-    # }
 
     switch(parexecute,
-      SEQ = imp <- suppressWarnings(mice::mice(subset.wide, meth = tmp.meth, pred = tmp.pred, m = M, maxit = maxit, seed = seed, print=verbose, ...)),
-      PAR = imp <- suppressWarnings(parMICE(subset.wide, meth = tmp.meth, predictorMatrix = tmp.pred, m = M, maxit = maxit, seed = seed,
-                                             nnodes = parallel.config$cores, packages = parallel.config$packages, cluster.type = parallel.config$cluster.type, ...)))
+      SEQ = imp <- suppressWarnings(mice::mice(impute.subset, method = tmp.meth, predictorMatrix = tmp.pred,
+                                               m = M, maxit = maxit, seed = seed, print=verbose, ...)),
+      PAR = imp <- suppressWarnings(parMICE(impute.subset, method = tmp.meth, predictorMatrix = tmp.pred,
+                                            m = M, maxit = maxit, seed = seed, nnodes = parallel.config$cores,
+                                            packages = parallel.config$packages, cluster.type = parallel.config$cluster.type, ...)))
 
     ##    Save some diagnostic plots
     if (!dir.exists(file.path(diagnostics.dir, "diagnostics"))) dir.create(file.path(diagnostics.dir, "diagnostics"))
-    pdf(file.path(diagnostics.dir, "diagnostics", paste0("Grade_", current.grade, "_", current.subject, "_", impute.method, "_M_", M, "__maxit_", maxit, "__converge.pdf")))
+    pdf(file.path(diagnostics.dir, "diagnostics", paste0("Grade_", current.grade, "_", current.subject, "_",
+                  gsub("[.]", "", impute.method), ifelse(impute.long, "_LONG", ""), "_M_", M, "__maxit_", maxit, "__converge.pdf")))
     print(plot(imp)) #, names(tmp.meth[tmp.meth != ""]))) # [1:2]
     invisible(dev.off())
-    pdf(file.path(diagnostics.dir, "diagnostics", paste0("Grade_", current.grade, "_", current.subject, "_", impute.method, "_M_", M, "__maxit_", maxit, "__density.pdf")))
+    pdf(file.path(diagnostics.dir, "diagnostics", paste0("Grade_", current.grade, "_", current.subject, "_",
+                  gsub("[.]", "", impute.method), ifelse(impute.long, "_LONG", ""), "_M_", M, "__maxit_", maxit, "__density.pdf")))
     print(densityplot(imp))
     invisible(dev.off())
 
-    if (compact.results) {
+    if (!impute.long | imp.iter$analysis.type == "STATUS") {
       long.imputed <- as.data.table(complete(imp, action="long", include=TRUE))[, c(".imp", "ID", current.score), with=FALSE]
       wide.imputed <- dcast(long.imputed, ID ~ .imp, value.var=current.score)
+    } else {
+      long.imputed <- as.data.table(complete(imp, action="long", include=TRUE))[, c(".imp", "ID", "GRADE", "SCALE_SCORE"), with=FALSE]
+      wide.imputed <- dcast(long.imputed[GRADE == current.grade,], ID ~ .imp, value.var="SCALE_SCORE")
+    }
 
+    if (compact.results) {
       setnames(wide.imputed, names(wide.imputed)[-1], c("SCALE_SCORE", paste0("SCORE_IMP_", names(wide.imputed)[-c(1:2)])))
       wide.imputed[, YEAR := eval(current.year)]
       setkey(wide.imputed, ID, YEAR, SCALE_SCORE)
       setkey(long.final, ID, YEAR, SCALE_SCORE)
       imp.list[[K]] <- wide.imputed[long.final]
-
     } else {
-      tmp.wide[, IMPUTED := is.na(get(current.score))]
-      long.imputed <- as.data.table(complete(imp, action="long"))[, c(".imp", "ID", current.score), with=FALSE][, YEAR := eval(current.year)]
-      setkey(long.imputed, ID, YEAR)
-      setkey(long.final, ID, YEAR)
+      if (!impute.long | imp.iter$analysis.type == "STATUS") {
+        tmp.wide[, IMPUTED := is.na(get(current.score))]
+        long.imputed <- as.data.table(complete(imp, action="long"))[, c(".imp", "ID", current.score), with=FALSE][, YEAR := eval(current.year)]
+        setkey(long.imputed, ID, YEAR)
+        setkey(long.final, ID, YEAR)
+      }
       for (m in seq(M)) {
         imp.list[[m]][[K]] <- long.imputed[.imp==m][long.final]
         imp.list[[m]][[K]][, IMPUTED_SS := FALSE]
