@@ -149,7 +149,7 @@ if (low_participation) {
   } else {
     load(file.path(complete.directory, "Demonstration_COVID_SGP_Complete.rda"))
   }
-  tmp.messages <- c(tmp.messages, paste("\n\tLow Participation data modification completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.lowpart))))
+  tmp.messages <- c(tmp.messages, paste("\n\tLow Participation data modification completed in", SGP:::convertTime(SGP:::timetakenSGP(started.lowpart))))
 } else {
   load(file.path(ampute.directory, "Demonstration_COVID_Observed_Wide.rda"))
   load(file.path(complete.directory, "Demonstration_COVID_SGP_Complete.rda"))
@@ -213,9 +213,9 @@ if (imputation_analysis) {
 
     Imputed_Data[[imp.m]] <- Temp_Imputed_Scores
     rm(Demonstration_COVID_SGP_LONG_Data);rm(Temp_Imputed_Scores);gc()
-    message(paste("Scale Score Imputation on Amputed dataset ", imp.m, " completed ", date()))
+    message(paste0("Scale Score ", my.impute.method, " LONG"[my.impute.long], " Imputation on ", missing.type, " Amputed dataset -", imp.m, "- completed ", date()))
   }
-  tmp.messages <- c(tmp.messages, paste("\n\t\t Raw Scale Score Imputation completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.ss.imp))))
+  tmp.messages <- c(tmp.messages, paste("\n\t\t Raw Scale Score", my.impute.method, "LONG"[my.impute.long], "Imputation completed in", SGP:::convertTime(SGP:::timetakenSGP(started.ss.imp))))
   rm(list=c("Demonstration_COVID_Observed_Wide", "Demonstration_COVID_SGP_Complete")); gc()
   # save(Imputed_Data, file=file.path(ampute.directory, "Imputed_Data_2L_PAN.rda"))
 
@@ -287,7 +287,7 @@ if (imputation_analysis) {
       } else {
         Imputed_SGP_Data[[AMP]] <- rbindlist(list(TEMP_RESULTS, TEMP_SGP@Data[YEAR == "2021", variables.to.keep, with = FALSE][, IMP_N := IMP]))[, AMP_N := AMP]
       }
-      message(paste("\n\tSGP Imputation analysis -- AMP:", AMP, " IMP:", IMP, "-- completed", date()))
+      message(paste("\n\tSGP", my.impute.method, "LONG"[my.impute.long], "Imputation analysis -- AMP:", AMP, " IMP:", IMP, "-- completed", date()))
     }  #  END IMP
     tmp.messages <- c(tmp.messages, paste("\n\t\t", AMP, "amputed datasets with", IMP, "imputations", "completed in", SGP:::convertTime(SGP:::timetakenSGP(started.amp))))
   }  #  END AMP
@@ -295,7 +295,7 @@ if (imputation_analysis) {
   assign(imputed.file.name, rbindlist(Imputed_SGP_Data))
   setnames(get(imputed.file.name), c("SCALE_SCORE", "SGP", "SGP_BASELINE"), c("SCALE_SCORE_IMPUTED", "SGP_IMPUTED", "SGP_BASELINE_IMPUTED"))
   save(list=imputed.file.name, file=file.path(ampute.directory, paste0(imputed.file.name, ".rda")), compress="xz")
-  tmp.messages <- c(tmp.messages, paste("\n\tSGP Imputation analysis with ", M.AMP, " datasets with ", M.IMP, " imputations per dataset completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.impute.analysis))))
+  tmp.messages <- c(tmp.messages, paste("\n\tSGP", my.impute.method, "LONG"[my.impute.long], "Imputation analysis on", M.AMP, missing.type, "datasets with", M.IMP, "imputations per dataset completed in", SGP:::convertTime(SGP:::timetakenSGP(started.impute.analysis))))
 }
 
 #####
@@ -308,12 +308,15 @@ if (imputation_summaries) {
 
   started.smry <- proc.time()
   Tmp_Summaries <- list()
+  Tmp_Summaries[["STATE"]][["GRADE"]] <- summarizeImputation(data = get(imputed.file.name), summary.level = "GRADE")
   Tmp_Summaries[["STATE"]][["CONTENT"]] <- summarizeImputation(data = get(imputed.file.name), summary.level = "CONTENT_AREA")
   Tmp_Summaries[["STATE"]][["GRADE_CONTENT"]] <- summarizeImputation(data = get(imputed.file.name), summary.level = c("GRADE", "CONTENT_AREA"))
   Tmp_Summaries[["DISTRICT"]][["GLOBAL"]] <- summarizeImputation(data = get(imputed.file.name), summary.level = NULL, institution.level = "DISTRICT_NUMBER")
+  Tmp_Summaries[["DISTRICT"]][["GRADE"]] <- summarizeImputation(data = get(imputed.file.name), summary.level = "GRADE", institution.level = "DISTRICT_NUMBER")
   Tmp_Summaries[["DISTRICT"]][["CONTENT"]] <- summarizeImputation(data = get(imputed.file.name), summary.level = "CONTENT_AREA", institution.level = "DISTRICT_NUMBER")
   Tmp_Summaries[["DISTRICT"]][["GRADE_CONTENT"]] <- summarizeImputation(data = get(imputed.file.name), summary.level = c("GRADE", "CONTENT_AREA"), institution.level = "DISTRICT_NUMBER")
   Tmp_Summaries[["SCHOOL"]][["GLOBAL"]] <- summarizeImputation(data = get(imputed.file.name), summary.level = NULL, institution.level = "SCHOOL_NUMBER")
+  Tmp_Summaries[["SCHOOL"]][["GRADE"]] <- summarizeImputation(data = get(imputed.file.name), summary.level = "GRADE", institution.level = "SCHOOL_NUMBER")
   Tmp_Summaries[["SCHOOL"]][["CONTENT"]] <- summarizeImputation(data = get(imputed.file.name), summary.level = "CONTENT_AREA", institution.level = "SCHOOL_NUMBER")
   Tmp_Summaries[["SCHOOL"]][["GRADE_CONTENT"]] <- summarizeImputation(data = get(imputed.file.name), summary.level = c("GRADE", "CONTENT_AREA"), institution.level = "SCHOOL_NUMBER")
   tmp.messages <- c(tmp.messages, paste("\n\tSGP Imputation summaries with ", M.AMP, " datasets with ", M.IMP, " imputations per dataset completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.smry))))
@@ -326,6 +329,6 @@ steps.completed <-
   c("Academic Impact", "Data Amputation", "Complete Data Analysis", "Data Imputation", "Imputation Summaries")[
     c(covid_impact, low_participation, complete_analysis, imputation_analysis, imputation_summaries)]
 
-tmp.messages <- c(tmp.messages, "\n\tSimulation with Steps ", paste(paste(head(steps.completed, -1), collapse=", "), tail(steps.completed, 1), sep=" and "), "completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.at.overall)))
+tmp.messages <- c(tmp.messages, "\n\tSimulation with Steps ", paste(paste(head(steps.completed, -1), collapse=", "), tail(steps.completed, 1), sep=" and "), " completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.at.overall)))
 tmp.messages <- c(tmp.messages, "\n\t#####  END Full Amputation/Imputation Simulation  #####")
 messageLog(log.message = tmp.messages, logfile = my.logfile, log.directory = my.log.directory)

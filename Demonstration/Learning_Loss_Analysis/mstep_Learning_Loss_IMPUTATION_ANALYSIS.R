@@ -18,7 +18,7 @@
 cores <- 8
 covid_impact <- FALSE
 low_participation <- FALSE
-missing.type <- "MCAR" # "STATUS_w_DEMOG" #
+missing.type <- "STATUS_w_DEMOG" # "MCAR" #
 complete_analysis <- FALSE
 imputation_analysis <- TRUE
 imputation_summaries <- TRUE
@@ -94,35 +94,32 @@ if (low_participation) {
 
 ampute.directory <- file.path(base.directory, covid.impact.directory, paste0("MISSING_", my.ampute.args$prop*100), missing.type)
 
-# if (complete_analysis) {
-#
-# }
 
 if (imputation_analysis) {
   ##  Arguments passed to imputeScaleScore
   my.impute.factors <- c("SCHOOL_NUMBER", "SCALE_SCORE", "FREE_REDUCED_LUNCH_STATUS", "ELL_STATUS", "IEP_STATUS", "GENDER")
   imp.demographics <- c('FREE_REDUCED_LUNCH_STATUS', 'ELL_STATUS', 'IEP_STATUS', 'GENDER')
-  my.impute.long <- FALSE
+  my.impute.long <- TRUE
   # my.impute.method <- "pmm"
   # my.impute.method <- "rq"
-  # my.impute.method <- "2l.pan"
-  my.impute.method <- "2l.lmer"
+  my.impute.method <- "2l.pan"
+  # my.impute.method <- "2l.lmer"
   my.parallel.config <- list(packages = "mice", cores=20) # c("mice", "Qtools"), cores=20) # # define cores, packages, cluster.type
-  my.cluster.institution <- TRUE # set to TRUE for multilevel (cross-sectional) methods
+  my.cluster.institution <- TRUE # set to TRUE for multilevel methods (cross-sectional required, LONG to avoid unnecesary message)
   imputation.m <- 20
 
   ##  Final filename to be saved
-  imputed.file.name <- "Imputed_SGP_Data_L2LMER"
+  imputed.file.name <- "Imputed_SGP_Data_L2PAN_LONG"
 }
 
 if (imputation_summaries) {
-  summary.file.name <- "L2LMER_Summaries"
+  summary.file.name <- "L2PAN_LONG_Summaries"
 }
 
 ###   Info for log files
 log.imp.meth <- ifelse(exists("my.impute.method"), paste0(toupper(gsub("[.]", "", my.impute.method)), "LONG"[my.impute.long]), "NO_IMP")
 my.logfile <- paste0("impute_", gsub(" ", "", SGP::capwords(covid.impact.directory)), "_",
-                     paste0(missing.type, my.ampute.args$prop*100), "_", log.imp.meth)
+                     paste0(missing.type, "_", my.ampute.args$prop*100), "_", log.imp.meth)
 my.log.directory <- file.path(ampute.directory, "Logs")
 
 ###   Run requested analyses

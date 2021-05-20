@@ -7,56 +7,19 @@
 ###   Load packages
 require(data.table)
 
-source("Step_3d_Summary_Results/summarizeImputation.R")
+###   Set working directory to the "Summary_Tables" subdirectory
+setwd("Data/IMPUTATION_SIMULATION/NO_IMPACT/MISSING_30/MCAR/Summary_Tables")
 
-###   Predictive Mean Matching (PMM)
-###   Load data
-load("Data/LOW_PARTICIPATION_AMPUTE/MISSING_30/STATUS_w_DEMOG/Imputed_SGP_Data_PMM.rda")
-
-PMM_Summaries <- list()
-PMM_Summaries[["STATE"]][["CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = "CONTENT_AREA")
-PMM_Summaries[["STATE"]][["GRADE_CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = c("GRADE", "CONTENT_AREA"))
-PMM_Summaries[["DISTRICT"]][["CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = "CONTENT_AREA", institution.level = "DISTRICT_NUMBER")
-PMM_Summaries[["DISTRICT"]][["GRADE_CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = c("GRADE", "CONTENT_AREA"), institution.level = "DISTRICT_NUMBER")
-PMM_Summaries[["SCHOOL"]][["GLOBAL"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = NULL, institution.level = "SCHOOL_NUMBER")
-PMM_Summaries[["SCHOOL"]][["CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = "CONTENT_AREA", institution.level = "SCHOOL_NUMBER")
-PMM_Summaries[["SCHOOL"]][["GRADE_CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = c("GRADE", "CONTENT_AREA"), institution.level = "SCHOOL_NUMBER")
-
-
-###   Quantile Regression (RQ - Qtools)
-###   Load data
-load("Data/LOW_PARTICIPATION_AMPUTE/MISSING_30/STATUS_w_DEMOG/Imputed_SGP_Data_RQ.rda")
-
-RQ_Summaries <- list()
-RQ_Summaries[["STATE"]][["CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = "CONTENT_AREA")
-RQ_Summaries[["STATE"]][["GRADE_CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = c("GRADE", "CONTENT_AREA"))
-RQ_Summaries[["DISTRICT"]][["CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = "CONTENT_AREA", institution.level = "DISTRICT_NUMBER")
-RQ_Summaries[["DISTRICT"]][["GRADE_CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = c("GRADE", "CONTENT_AREA"), institution.level = "DISTRICT_NUMBER")
-RQ_Summaries[["SCHOOL"]][["GLOBAL"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = NULL, institution.level = "SCHOOL_NUMBER")
-RQ_Summaries[["SCHOOL"]][["CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = "CONTENT_AREA", institution.level = "SCHOOL_NUMBER")
-RQ_Summaries[["SCHOOL"]][["GRADE_CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = c("GRADE", "CONTENT_AREA"), institution.level = "SCHOOL_NUMBER")
-
-
-###   2-Level (Cross Sectional/Schools) PAN
-###   Load data
-load("Data/LOW_PARTICIPATION_AMPUTE/MISSING_30/STATUS_w_DEMOG/Imputed_SGP_Data_2L_PAN.rda")
-
-L2PAN_Summaries <- list()
-L2PAN_Summaries[["STATE"]][["CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = "CONTENT_AREA")
-L2PAN_Summaries[["STATE"]][["GRADE_CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = c("GRADE", "CONTENT_AREA"))
-L2PAN_Summaries[["DISTRICT"]][["CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = "CONTENT_AREA", institution.level = "DISTRICT_NUMBER")
-L2PAN_Summaries[["DISTRICT"]][["GRADE_CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = c("GRADE", "CONTENT_AREA"), institution.level = "DISTRICT_NUMBER")
-L2PAN_Summaries[["SCHOOL"]][["GLOBAL"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = NULL, institution.level = "SCHOOL_NUMBER")
-L2PAN_Summaries[["SCHOOL"]][["CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = "CONTENT_AREA", institution.level = "SCHOOL_NUMBER")
-L2PAN_Summaries[["SCHOOL"]][["GRADE_CONTENT"]] <- summarizeImputation(data = Imputed_SGP_Data_LONG, summary.level = c("GRADE", "CONTENT_AREA"), institution.level = "SCHOOL_NUMBER")
-
-save(list=c("PMM_Summaries", "RQ_Summaries", "L2PAN_Summaries"),
-     file = "Data/LOW_PARTICIPATION_AMPUTE/MISSING_30/STATUS_w_DEMOG/Demonstration_COVID_SGP_Imputation_Summaries.Rdata")
+###   Load summary tables
+for (f in list.files()) load(f)
 
 ###   Algorithm Comparison
 PMM_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Comparison"]][, 1:6]  #  Scale Scores
 RQ_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Comparison"]][, 1:6]  #  Scale Scores
 L2PAN_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Comparison"]][, 1:6]  #  Scale Scores
+L2LMER_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Comparison"]][, 1:6]  #  Scale Scores
+L2PAN_LONG_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Comparison"]][, 1:6]  #  Scale Scores
+L2LMER_LONG_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Comparison"]][, 1:6]  #  Scale Scores
 
 na.omit(PMM_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Comparison"]][, c(1:2,7:10)])  #  Cohort SGPs
 na.omit(RQ_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Comparison"]][, c(1:2,7:10)])  #  Cohort SGPs
@@ -82,15 +45,16 @@ Observed[, SGP_Raw_Bias := SGP_Obs_Raw_Bias]
 Observed[, SGPB_Raw_Bias := SGPB_Obs_Raw_Bias]
 
 ALL_Summaries_SCH_GC <- rbindlist(list(
-      # copy(L2PMM_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Evaluation"]])[, Algorithm := "2L_PMM"],
-      # copy(L2NORM_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Evaluation"]])[, Algorithm := "2L_NORM"],
-      copy(L2PAN_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Evaluation"]])[, Algorithm := "2L_PAN"],
-      copy(RQ_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Evaluation"]])[, Algorithm := "RQ"],
-      copy(PMM_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Evaluation"]])[, Algorithm := "PMM"],
+      copy(L2LMER_LONG_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Evaluation"]])[, Algorithm := "2l.lmer LONG"],
+      copy(L2PAN_LONG_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Evaluation"]])[, Algorithm := "2l.pan LONG"],
+      copy(L2LMER_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Evaluation"]])[, Algorithm := "2l.lmer"],
+      copy(L2PAN_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Evaluation"]])[, Algorithm := "2l.pan"],
+      copy(RQ_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Evaluation"]])[, Algorithm := "rq"],
+      copy(PMM_Summaries[["SCHOOL"]][["GRADE_CONTENT"]][["Evaluation"]])[, Algorithm := "pmm"],
       Observed
 ))
 
-ALL_Summaries_SCH_GC[, Algorithm := factor(Algorithm, levels = rev(c("None", "PMM", "RQ", "2L_PAN")))] # , "2L_PMM", "2L_NORM"
+ALL_Summaries_SCH_GC[, Algorithm := factor(Algorithm, levels = rev(c("None", "pmm", "rq", "2l.pan", "2l.lmer", "2l.pan LONG", "2l.lmer LONG")))] # , "2L_PMM", "2L_NORM"
 
 p <- ggplot(ALL_Summaries_SCH_GC, aes(x=SS_Raw_Bias, y=Algorithm)) + geom_boxplot() +
       labs(title="School-Level Mean Scale Score by Grade by Content Area: ", x="Raw Bias", y = "Algorithm")

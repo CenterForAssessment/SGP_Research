@@ -263,10 +263,8 @@
         for (demog in demog.imp.vars) {
           impute.subset[, eval(demog) := as.integer(factor(get(demog)))-1L]
         }
-      }
 
-      ##    Create a single demographic average value for demographics in impute.factors
-      if (length(demog.imp.vars) > 0) {
+        ##    Create a single demographic average value for demographics in impute.factors
         for (demog in intersect(impute.factors, demographics)) {
           tmp.dmg <- grep(demog, demog.imp.vars, value=TRUE)
           impute.subset[, paste0("SUMSCORE__", demog) := rowSums(.SD, na.rm = TRUE)/length(tmp.dmg), .SDcols = tmp.dmg]
