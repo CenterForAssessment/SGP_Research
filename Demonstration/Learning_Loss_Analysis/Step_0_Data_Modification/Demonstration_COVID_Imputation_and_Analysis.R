@@ -8,6 +8,7 @@ require(mice)
 source("Step_0_Data_Modification/amputeScaleScore.R")
 source("Step_0_Data_Modification/imputeScaleScore.R")
 source("Step_0_Data_Modification/parMICE.R")
+source("Step_0_Data_Modification/messageLog.R")
 source("Step_3d_Summary_Results/summarizeImputation.R")
 
 #####
@@ -286,9 +287,9 @@ if (imputation_analysis) {
       } else {
         Imputed_SGP_Data[[AMP]] <- rbindlist(list(TEMP_RESULTS, TEMP_SGP@Data[YEAR == "2021", variables.to.keep, with = FALSE][, IMP_N := IMP]))[, AMP_N := AMP]
       }
-      message(paste("\n\tSGP Imputation analysis AMP ", AMP, " IMP ", IMP, " completed", date()))
+      message(paste("\n\tSGP Imputation analysis -- AMP:", AMP, " IMP:", IMP, "-- completed", date()))
     }  #  END IMP
-    tmp.messages <- c(tmp.messages, paste("\n\t\t Amputed dataset ", AMP, " completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.amp))))
+    tmp.messages <- c(tmp.messages, paste("\n\t\t", AMP, "amputed datasets with", IMP, "imputations", "completed in", SGP:::convertTime(SGP:::timetakenSGP(started.amp))))
   }  #  END AMP
 
   assign(imputed.file.name, rbindlist(Imputed_SGP_Data))
@@ -327,4 +328,4 @@ steps.completed <-
 
 tmp.messages <- c(tmp.messages, "\n\tSimulation with Steps ", paste(paste(head(steps.completed, -1), collapse=", "), tail(steps.completed, 1), sep=" and "), "completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.at.overall)))
 tmp.messages <- c(tmp.messages, "\n\t#####  END Full Amputation/Imputation Simulation  #####")
-SGP:::messageSGP(tmp.messages)
+messageLog(log.message = tmp.messages, logfile = my.logfile, log.directory = my.log.directory)
