@@ -7,6 +7,7 @@
 
 ### Load package
 require(data.table)
+require(SGP)
 
 ### LOAD WIDE file output and load
 load("Data/Demonstration_COVID_SGP_WIDE_Data.Rdata")
@@ -46,8 +47,8 @@ Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2016[,SCALE_SCORE.2016.MATHE
 Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2016[,SCALE_SCORE.2016.ELA:=SCALE_SCORE.2016.ELA + ela.change]
 
 save(Demonstration_COVID_SGP_WIDE_Data_ACTUAL, file="Data/ACTUAL/Demonstration_COVID_SGP_WIDE_Data_ACTUAL.Rdata")
-save(Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2016, file="Data/ACTUAL/Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2016.Rdata")
-save(Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2017, file="Data/ACTUAL/Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2017.Rdata")
+save(Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2016, file="Data/ASSESSMENT_CHANGE_2016/Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2016.Rdata")
+save(Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2017, file="Data/ASSESSMENT_CHANGE_2017/Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2017.Rdata")
 
 ### Look at correlations between scale scores from adjacent years
 
@@ -118,7 +119,17 @@ Demonstration_COVID_SGP_LONG_Data_ACTUAL <-
                     DISTRICT_NUMBER.2016.ELA, DISTRICT_NUMBER.2017.ELA, DISTRICT_NUMBER.2018.ELA, DISTRICT_NUMBER.2019.ELA, DISTRICT_NUMBER.2021.ELA))
 detach(Demonstration_COVID_SGP_WIDE_Data_ACTUAL)
 Demonstration_COVID_SGP_LONG_Data_ACTUAL <- Demonstration_COVID_SGP_LONG_Data_ACTUAL[!is.na(GRADE)]
+for (content_area.iter in c("ELA", "MATHEMATICS")) {
+    for (grade.iter in as.character(3:8)) {
+        tmp.loss.hoss <- SGPstateData[['DEMO_COVID']][['Achievement']][['Knots_Boundaries']][[content_area.iter]][[paste('loss.hoss', grade.iter, sep="_")]]
+        Demonstration_COVID_SGP_LONG_Data_ACTUAL[SCALE_SCORE < tmp.loss.hoss[1], SCALE_SCORE:=tmp.loss.hoss[1]]
+        Demonstration_COVID_SGP_LONG_Data_ACTUAL[SCALE_SCORE > tmp.loss.hoss[2], SCALE_SCORE:=tmp.loss.hoss[2]]
+    }
+}
 setkey(Demonstration_COVID_SGP_LONG_Data_ACTUAL, VALID_CASE, CONTENT_AREA, YEAR, ID)
+
+
+### CREATE LONG data for Assessment change 2016
 
 attach(Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2016)
 Demonstration_COVID_SGP_LONG_Data_ASSESSMENT_CHANGE_2016 <-
@@ -138,6 +149,9 @@ Demonstration_COVID_SGP_LONG_Data_ASSESSMENT_CHANGE_2016 <-
 detach(Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2016)
 Demonstration_COVID_SGP_LONG_Data_ASSESSMENT_CHANGE_2016 <- Demonstration_COVID_SGP_LONG_Data_ASSESSMENT_CHANGE_2016[!is.na(GRADE)]
 setkey(Demonstration_COVID_SGP_LONG_Data_ASSESSMENT_CHANGE_2016, VALID_CASE, CONTENT_AREA, YEAR, ID)
+
+
+### CREATE LONG data for Assessment change 2017
 
 attach(Demonstration_COVID_SGP_WIDE_Data_ASSESSMENT_CHANGE_2017)
 Demonstration_COVID_SGP_LONG_Data_ASSESSMENT_CHANGE_2017 <-
