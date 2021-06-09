@@ -1,22 +1,23 @@
 ##########
 #####
-###   Summarize SGP and Imputed Scale Score Results by 1) Amputation and 2) Imputation
+###   Summarize SGP and Imputed Scale Score Results by 1) Imputation and 2) Amputation
 #####
 ##########
 
 summarizeImputation <- function(
   data,
   institution.level = NULL,
-  summary.level = NULL
+  summary.level = NULL,
+  extra.table=FALSE
 ) {
 
   ###   Load packages
   require(data.table)
 
-  se <- function(x, na.rm=FALSE) {
-    if (na.rm) x <- na.omit(x)
-    sqrt(var(x)/length(x))
-  }
+  # se <- function(x, na.rm=FALSE) {
+  #   if (na.rm) x <- na.omit(x)
+  #   sqrt(var(x)/length(x))
+  # }
 
 #####
 ###   summarize at institution.level and summary.level first -- 1 for each IMP/AMP
@@ -45,6 +46,19 @@ summarizeImputation <- function(
   # smry_amp[, Mean_SGP_Qbar := mean(Mean_SGP_Imputed, na.rm = TRUE), keyby=c(summary.level)]
   # smry_amp[, Mean_SGPB_Qbar := mean(Mean_SGPB_Imputed, na.rm = TRUE), keyby=c(summary.level)]
 
+  ##  Does not add anything to do regressions at this high level of summaries
+  # if (extra.table) {
+  #   smry_amp_extra <- copy(smry_amp[,
+  #     c(institution.level, summary.level, "AMP_N", "IMP_N", grep("Mean_", names(smry_amp), value=T), "Percent_Missing", "N"), with=FALSE])
+  #   smry_amp_extra[, SS_Obs_Raw_Bias := Mean_SS_Observed - Mean_SS_Complete]
+  #   smry_amp_extra[, SGP_Obs_Raw_Bias := Mean_SGP_Observed - Mean_SGP_Complete]
+  #   smry_amp_extra[, SGPB_Obs_Raw_Bias := Mean_SGPB_Observed - Mean_SGPB_Complete]
+  #
+  #   smry_amp_extra[, SS_Raw_Bias := Mean_SS_Imputed - Mean_SS_Complete]
+  #   smry_amp_extra[, SGP_Raw_Bias := Mean_SGP_Imputed - Mean_SGP_Complete]
+  #   smry_amp_extra[, SGPB_Raw_Bias := Mean_SGPB_Imputed - Mean_SGPB_Complete]
+  # }
+
   #####
   ###   Pool results at institution.level and summary.level over imputations -- 1 for each IMP
   #####
@@ -71,6 +85,18 @@ summarizeImputation <- function(
       SGPB_B = var(Mean_SGPB_Imputed),
       Percent_Missing = Percent_Missing[1], N=N[1]),
     keyby=c(institution.level, summary.level, "AMP_N")]
+
+  if (extra.table) {
+    smry_amp_extra <- copy(smry_amp_pool[,
+      c(institution.level, summary.level, "AMP_N", grep("Mean_", names(smry_amp_pool), value=T), "Percent_Missing", "N"), with=FALSE])
+    smry_amp_extra[, SS_Obs_Raw_Bias := Mean_SS_Observed - Mean_SS_Complete]
+    smry_amp_extra[, SGP_Obs_Raw_Bias := Mean_SGP_Observed - Mean_SGP_Complete]
+    smry_amp_extra[, SGPB_Obs_Raw_Bias := Mean_SGPB_Observed - Mean_SGPB_Complete]
+
+    smry_amp_extra[, SS_Raw_Bias := Mean_SS_Imputed - Mean_SS_Complete]
+    smry_amp_extra[, SGP_Raw_Bias := Mean_SGP_Imputed - Mean_SGP_Complete]
+    smry_amp_extra[, SGPB_Raw_Bias := Mean_SGPB_Imputed - Mean_SGPB_Complete]
+  }
 
   ##    T - Total Variance
   smry_amp_pool[, SS_T := SS_U_bar + (1 + 1/MM)*SS_B]
@@ -216,34 +242,34 @@ summarizeImputation <- function(
 
   ##    F-test of NULL hypotheses (F1 - Complete vs Imputed, F2 - Observed vs Imputed)
   smry_all_pool[, SS_F1_Stat := ((Mean_SS_Complete - Mean_SS_Imputed)^2)/SS_T]
-  smry_all_pool[!is.na(SS_ADF) & SS_ADF != 0, SS_F1_pValue := pf(SS_F1_Stat, df1=1, df2=SS_ADF)]
+  smry_all_pool[!is.na(SS_ADF) & SS_ADF != 0, SS_F1_pValue := pf(SS_F1_Stat, df1=1, df2=SS_ADF, lower.tail=FALSE)]
   smry_all_pool[, SS_F2_Stat := ((Mean_SS_Observed - Mean_SS_Imputed)^2)/SS_T]
-  smry_all_pool[!is.na(SS_ADF) & SS_ADF != 0, SS_F2_pValue := pf(SS_F2_Stat, df1=1, df2=SS_ADF)]
+  smry_all_pool[!is.na(SS_ADF) & SS_ADF != 0, SS_F2_pValue := pf(SS_F2_Stat, df1=1, df2=SS_ADF, lower.tail=FALSE)]
 
   smry_all_pool[, SS_F1_Simp := ((Mean_SS_Complete - Mean_SS_Imputed)^2)/((1 + 1/MM)*SS_B)]
-  smry_all_pool[, SS_F1_pSimp := pf(SS_F1_Stat, df1=1, df2=nu)]
+  smry_all_pool[, SS_F1_pSimp := pf(SS_F1_Simp, df1=1, df2=nu, lower.tail=FALSE)]
   smry_all_pool[, SS_F2_Simp := ((Mean_SS_Observed - Mean_SS_Imputed)^2)/((1 + 1/MM)*SS_B)]
-  smry_all_pool[, SS_F2_pSimp := pf(SS_F2_Stat, df1=1, df2=nu)]
+  smry_all_pool[, SS_F2_pSimp := pf(SS_F2_Simp, df1=1, df2=nu, lower.tail=FALSE)]
 
   smry_all_pool[, SGP_F1_Stat := ((Mean_SGP_Complete - Mean_SGP_Imputed)^2)/SGP_T]
-  smry_all_pool[!is.na(SGP_ADF) & SGP_ADF != 0, SGP_F1_pValue := pf(SGP_F1_Stat, df1=1, df2=SGP_ADF)]
+  smry_all_pool[!is.na(SGP_ADF) & SGP_ADF != 0, SGP_F1_pValue := pf(SGP_F1_Stat, df1=1, df2=SGP_ADF, lower.tail=FALSE)]
   smry_all_pool[, SGP_F2_Stat := ((Mean_SGP_Observed - Mean_SGP_Imputed)^2)/SGP_T]
-  smry_all_pool[!is.na(SGP_ADF) & SGP_ADF != 0, SGP_F2_pValue := pf(SGP_F2_Stat, df1=1, df2=SGP_ADF)]
+  smry_all_pool[!is.na(SGP_ADF) & SGP_ADF != 0, SGP_F2_pValue := pf(SGP_F2_Stat, df1=1, df2=SGP_ADF, lower.tail=FALSE)]
 
   smry_all_pool[, SGP_F1_Simp := ((Mean_SGP_Complete - Mean_SGP_Imputed)^2)/((1 + 1/MM)*SGP_B)]
-  smry_all_pool[, SGP_F1_pSimp := pf(SGP_F1_Stat, df1=1, df2=nu)]
+  smry_all_pool[, SGP_F1_pSimp := pf(SGP_F1_Simp, df1=1, df2=nu, lower.tail=FALSE)]
   smry_all_pool[, SGP_F2_Simp := ((Mean_SGP_Observed - Mean_SGP_Imputed)^2)/((1 + 1/MM)*SGP_B)]
-  smry_all_pool[, SGP_F2_pSimp := pf(SGP_F2_Stat, df1=1, df2=nu)]
+  smry_all_pool[, SGP_F2_pSimp := pf(SGP_F2_Simp, df1=1, df2=nu, lower.tail=FALSE)]
 
   smry_all_pool[, SGPB_F1_Stat := ((Mean_SGPB_Complete - Mean_SGPB_Imputed)^2)/SGPB_T]
-  smry_all_pool[!is.na(SGPB_ADF) & SGPB_ADF != 0, SGPB_F1_pValue := pf(SGPB_F1_Stat, df1=1, df2=SGPB_ADF)]
+  smry_all_pool[!is.na(SGPB_ADF) & SGPB_ADF != 0, SGPB_F1_pValue := pf(SGPB_F1_Stat, df1=1, df2=SGPB_ADF, lower.tail=FALSE)]
   smry_all_pool[, SGPB_F2_Stat := ((Mean_SGPB_Observed - Mean_SGPB_Imputed)^2)/SGPB_T]
-  smry_all_pool[!is.na(SGPB_ADF) & SGPB_ADF != 0, SGPB_F2_pValue := pf(SGPB_F2_Stat, df1=1, df2=SGPB_ADF)]
+  smry_all_pool[!is.na(SGPB_ADF) & SGPB_ADF != 0, SGPB_F2_pValue := pf(SGPB_F2_Stat, df1=1, df2=SGPB_ADF, lower.tail=FALSE)]
 
   smry_all_pool[, SGPB_F1_Simp := ((Mean_SGPB_Complete - Mean_SGPB_Imputed)^2)/((1 + 1/MM)*SGPB_B)]
-  smry_all_pool[, SGPB_F1_pSimp := pf(SGPB_F1_Stat, df1=1, df2=nu)]
+  smry_all_pool[, SGPB_F1_pSimp := pf(SGPB_F1_Simp, df1=1, df2=nu, lower.tail=FALSE)]
   smry_all_pool[, SGPB_F2_Simp := ((Mean_SGPB_Observed - Mean_SGPB_Imputed)^2)/((1 + 1/MM)*SGPB_B)]
-  smry_all_pool[, SGPB_F2_pSimp := pf(SGPB_F2_Stat, df1=1, df2=nu)]
+  smry_all_pool[, SGPB_F2_pSimp := pf(SGPB_F1_Simp, df1=1, df2=nu, lower.tail=FALSE)]
 
   #####
   ###   Overall Summary/Comparison of Imputed vs Observed (w.r.t. Complete)
@@ -265,6 +291,7 @@ summarizeImputation <- function(
       Cor_SGPB_Comp_Obs = round(cor(Mean_SGPB_Complete, Mean_SGPB_Observed, use="na.or.complete"), 3),
       Cor_SGPB_Comp_Imp = round(cor(Mean_SGPB_Complete, Mean_SGPB_Imputed, use="na.or.complete"), 3)
   ), keyby=summary.level]
-
-  list(Evaluation = smry_all_pool, Comparison = overall_smry)
+  if (extra.table) {
+    list(Amp_Level = smry_amp_extra, Evaluation = smry_all_pool, Comparison = overall_smry)
+  } else list(Evaluation = smry_all_pool, Comparison = overall_smry)
 }

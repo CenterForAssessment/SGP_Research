@@ -346,6 +346,7 @@
       }
       if (!is.null(fin.props)) {
         fin.prop <- weighted.mean(x=fin.props, w=(1/abs(1-target.prop/res.props)))
+        if (is.na(fin.prop)) fin.prop <- mean(fin.props)
       } else fin.prop <- target.prop
 
       if (compact.results) {
