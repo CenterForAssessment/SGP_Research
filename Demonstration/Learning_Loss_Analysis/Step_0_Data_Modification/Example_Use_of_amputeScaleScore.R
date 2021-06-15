@@ -12,18 +12,20 @@
 source("Step_0_Data_Modification/amputeScaleScore.R")
 args(amputeScaleScore)
 
-##    ampute.data = SGPdata::sgpData_LONG_COVID[YEAR <= 2021]
+##    ampute.data
 ##        - the dataset we want to begin with and add missing values
-##        - the default is the COVID dataset from SGPdata for 2021 and prior
+##        - Here the COVID impacted dataset from SGPdata for years 2021 and prior:
+##          SGPdata::sgpData_LONG_COVID[YEAR <= 2021]
 
 ##    additional.data = NULL
 ##        - the function will return only data that is required for
-##          a SGP analysis (based on growth.config).  This allows for
-##          the addition of more data (e.g. 2019 grades not used as priors)
+##          a SGP analysis (based on growth.config) or a status analysis (based
+##          on `status.config`). This allows for the addition of more data (e.g., 
+##          2019 grades not used as priors)
 
 ##    compact.results = FALSE
 ##        - By default (FALSE), the function will return a list of longitudinal
-##          datassets with the current (amputed) and prior (unchanged) student
+##          datasets with the current (amputed) and prior (unchanged) student
 ##          records.  This is helpful for diagnostics and ease of use, but also
 ##          produces more redundant prior data than needed. Setting this argument
 ##          to TRUE returns a single data.table object with a TRUE/FALSE indicator

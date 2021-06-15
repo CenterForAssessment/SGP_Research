@@ -221,13 +221,13 @@ output.directory <- base.directory
 # setwd("Step_3_Skip_Year_Analyses")
 # print("BEGIN STEP 3, PART B")
 # source("Demonstration_COVID_SGP_2021_PART_B.R")
-# print("END STEP 3, PART A")
+# print("END STEP 3, PART B")
 #
 # # PART C
 # setwd("Step_3_Skip_Year_Analyses")
 # print("BEGIN STEP 3, PART C")
 # source("Demonstration_COVID_SGP_2021_PART_C.R")
-# print("END STEP 3, PART A")
+# print("END STEP 3, PART C")
 
 # PART D (Create summaries)
 
