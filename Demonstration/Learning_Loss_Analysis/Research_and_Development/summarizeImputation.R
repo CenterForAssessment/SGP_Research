@@ -269,7 +269,7 @@ summarizeImputation <- function(
   smry_all_pool[, SGPB_F1_Simp := ((Mean_SGPB_Complete - Mean_SGPB_Imputed)^2)/((1 + 1/MM)*SGPB_B)]
   smry_all_pool[, SGPB_F1_pSimp := pf(SGPB_F1_Simp, df1=1, df2=nu, lower.tail=FALSE)]
   smry_all_pool[, SGPB_F2_Simp := ((Mean_SGPB_Observed - Mean_SGPB_Imputed)^2)/((1 + 1/MM)*SGPB_B)]
-  smry_all_pool[, SGPB_F2_pSimp := pf(SGPB_F1_Simp, df1=1, df2=nu, lower.tail=FALSE)]
+  smry_all_pool[, SGPB_F2_pSimp := pf(SGPB_F2_Simp, df1=1, df2=nu, lower.tail=FALSE)]
 
   #####
   ###   Overall Summary/Comparison of Imputed vs Observed (w.r.t. Complete)
