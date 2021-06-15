@@ -14,6 +14,8 @@ if (!exists("output.directory")) output.directory <- "Data/BASIC_ANALYSIS"
 require(SGP)
 require(cfaTools)
 require(data.table)
+#debug(bootstrapSRS)
+
 
 setwd("..")
 
@@ -24,6 +26,7 @@ load(file.path(output.directory, "Demonstration_COVID_SGP_2021_STEP_3a.Rdata"))
 ### Define parameters
 
 aggregation_group <- c("CONTENT_AREA", "GRADE")
+#aggregation_group <- c("CONTENT_AREA", "SCHOOL_NUMBER")
 
 
 ### bootstrapSRS_SGP (### NOTE USING CURRENT SCALE_SCORE_DECILE likely leads to biased proportions, especially if students have missing scores as in the COVID analyses)

@@ -87,7 +87,7 @@ print("END STEP 3, PART C")
 
 # PART D (Create summaries)
 
-setwd(" Step_3d_Summary_Results")
+setwd("Step_3d_Summary_Results")
 print("BEGIN STEP 3, PART D")
 source("Demonstration_COVID_Summary_Comparisons_2021_BASIC.R")
 print("END STEP 3, PART D")
