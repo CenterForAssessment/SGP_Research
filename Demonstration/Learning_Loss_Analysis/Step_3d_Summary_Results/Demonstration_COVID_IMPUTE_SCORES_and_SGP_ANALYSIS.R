@@ -83,9 +83,7 @@ if (imputated_sgp_analysis) {
 
   DEMO_COVID_CONFIG_STEP_3 <- c(ELA_2021.config, MATHEMATICS_2021.config)
 
-  M.IMP <- length(grep("SCORE_IMP_", names(Demonstration_COVID_Imputed)))
-
-  priors.to.get <- c("VALID_CASE", "ID", "YEAR", "CONTENT_AREA", "GRADE", "SCALE_SCORE", "ACHIEVEMENT_LEVEL")
+  imputation.n <- length(grep("SCORE_IMP_", names(Demonstration_COVID_Imputed)))
 
   variables.to.get <- c("VALID_CASE", "ID", "YEAR", "CONTENT_AREA", "GRADE",
                         "SCALE_SCORE", "ACHIEVEMENT_LEVEL")
@@ -95,7 +93,7 @@ if (imputated_sgp_analysis) {
 
   started.sgp <- proc.time()
   Imputed_SGP_Data <- data.table()
-  for (IMP in seq(M.IMP)) {
+  for (IMP in seq(imputation.n)) {
     Demonstration_COVID_Data_LONG_2021 <- copy(Demonstration_COVID_Imputed[, c(variables.to.get, paste0("SCORE_IMP_", IMP)), with=FALSE])
     setnames(Demonstration_COVID_Data_LONG_2021, c("SCALE_SCORE", paste0("SCORE_IMP_", IMP)), c("SCALE_SCORE_OBSERVED", "SCALE_SCORE"))
 
@@ -154,9 +152,6 @@ if (imputation_summaries) {
   Summary_Data <- Demonstration_COVID_SGP_LONG_Data[Imputed_SGP_Data_Wide]
   setnames(Summary_Data, c("SCALE_SCORE", "SGP", "SGP_BASELINE"), c("SCALE_SCORE_OBSERVED", "SGP_OBSERVED", "SGP_BASELINE_OBSERVED"))
 
-  institution.level = "SCHOOL_NUMBER"
-  summary.level = c("GRADE", "CONTENT_AREA")
-
   if (imputation_summaries) {
     setDTthreads(threads = min(imp.cores, parallel::detectCores(logical = FALSE)), throttle = 1024)
     if (!dir.exists(file.path(output.directory, "Summary_Tables"))) dir.create(file.path(output.directory, "Summary_Tables"), recursive = TRUE)
@@ -174,7 +169,7 @@ if (imputation_summaries) {
     Tmp_Summaries[["SCHOOL"]][["GRADE"]] <- imputationSummary(Summary_Data, summary.level = "GRADE", institution.level = "SCHOOL_NUMBER")
     Tmp_Summaries[["SCHOOL"]][["CONTENT"]] <- imputationSummary(Summary_Data, summary.level = "CONTENT_AREA", institution.level = "SCHOOL_NUMBER")
     Tmp_Summaries[["SCHOOL"]][["GRADE_CONTENT"]] <- imputationSummary(Summary_Data, summary.level = c("GRADE", "CONTENT_AREA"), institution.level = "SCHOOL_NUMBER")
-    tmp.messages <- c(tmp.messages, paste("\n\t\tSGP Imputation summaries with", M.IMP, "imputations completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.smry))))
+    tmp.messages <- c(tmp.messages, paste("\n\t\tSGP Imputation summaries with", imputation.n, "imputations completed in ", SGP:::convertTime(SGP:::timetakenSGP(started.smry))))
 
     assign(summary.file.name, Tmp_Summaries)
     save(list=summary.file.name, file=file.path(output.directory, "Summary_Tables", paste0(summary.file.name, ".rda")))
