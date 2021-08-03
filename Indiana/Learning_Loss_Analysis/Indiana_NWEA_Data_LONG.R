@@ -11,10 +11,10 @@ require(data.table)
 
 ### Load data
 
-#tmp.fall <- fread("Data/Base_Files/NWEA_FALL_2020_2021.txt")
-#tmp.winter <- fread("Data/Base_Files/NWEA_WINTER_2020_2021.txt")
+tmp.fall <- fread("Data/Base_Files/NWEA_FALL_2020_2021.txt")
+tmp.winter <- fread("Data/Base_Files/NWEA_WINTER_2020_2021.txt")
 
-#tmp.nwea.data <- rbindlist(list(tmp.fall, tmp.winter))
+tmp.nwea.data <- rbindlist(list(tmp.fall, tmp.winter))
 
 ### Investigate properties of SGPs
 
@@ -42,9 +42,9 @@ require(data.table)
 
 ### Look at some summaries
 
-tmp.nwea.FALL_to_FALL.data <- tmp.nwea.data[!is.na(FallToFallConditionalGrowthPercentile),list(MEAN_FALL_TO_FALL_SGP=round(mean(FallToFallConditionalGrowthPercentile, na.rm=TRUE), digits=1), COUNT=.N), keyby=c("Subject","GRADE_ID")]
-tmp.nwea.WINTER_to_WINTER.data <- tmp.nwea.data[!is.na(WinterToWinterConditionalGrowthPercentile),list(MEAN_WINTER_TO_WINTER_SGP=round(mean(WinterToWinterConditionalGrowthPercentile, na.rm=TRUE), digits=1), COUNT=.N), keyby=c("Subject", "GRADE_ID")]
-tmp.nwea.FALL_to_WINTER.data <- tmp.nwea.data[!is.na(FallToWinterConditionalGrowthPercentile),list(MEAN_FALL_TO_WINTER_SGP=round(mean(FallToWinterConditionalGrowthPercentile, na.rm=TRUE), digits=1), COUNT=.N), keyby=c("Subject", "GRADE_ID")]
+tmp.nwea.FALL_to_FALL.data <- tmp.nwea.data[!is.na(FallToFallConditionalGrowthPercentile),list(MEAN_FALL_TO_FALL_SGP=round(mean(FallToFallConditionalGrowthPercentile, na.rm=TRUE), digits=1), MEDIAN_FALL_TO_FALL_SGP=median(as.numeric(FallToFallConditionalGrowthPercentile), na.rm=TRUE), COUNT=.N), keyby=c("Subject","GRADE_ID")]
+tmp.nwea.WINTER_to_WINTER.data <- tmp.nwea.data[!is.na(WinterToWinterConditionalGrowthPercentile),list(MEAN_WINTER_TO_WINTER_SGP=round(mean(WinterToWinterConditionalGrowthPercentile, na.rm=TRUE), digits=1), MEDIAN_FALL_TO_FALL_SGP=median(as.numeric(FallToFallConditionalGrowthPercentile), na.rm=TRUE), COUNT=.N), keyby=c("Subject", "GRADE_ID")]
+tmp.nwea.FALL_to_WINTER.data <- tmp.nwea.data[!is.na(FallToWinterConditionalGrowthPercentile),list(MEAN_FALL_TO_WINTER_SGP=round(mean(FallToWinterConditionalGrowthPercentile, na.rm=TRUE), digits=1), MEDIAN_FALL_TO_FALL_SGP=median(as.numeric(FallToFallConditionalGrowthPercentile), na.rm=TRUE), COUNT=.N), keyby=c("Subject", "GRADE_ID")]
 
 tmp.nwea.FALL_to_FALL.data.ethnicity <- tmp.nwea.data[!is.na(FallToFallConditionalGrowthPercentile),list(MEAN_FALL_TO_FALL_SGP=round(mean(FallToFallConditionalGrowthPercentile, na.rm=TRUE), digits=1), COUNT=.N), keyby=c("Subject", "ETHNICITY")]
 tmp.nwea.WINTER_to_WINTER.data.ethnicity <- tmp.nwea.data[!is.na(WinterToWinterConditionalGrowthPercentile),list(MEAN_WINTER_TO_WINTER_SGP=round(mean(WinterToWinterConditionalGrowthPercentile, na.rm=TRUE), digits=1), COUNT=.N), keyby=c("Subject",  "ETHNICITY")]
